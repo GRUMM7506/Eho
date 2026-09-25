@@ -1,0 +1,24 @@
+{
+  "id": "w0-1",
+  "world": 0,
+  "index": 1,
+  "name": { "ru": "Пробуждение", "en": "Awakening" },
+  "map": [
+    "#########",
+    "#S......#",
+    "#.......#",
+    "#......X#",
+    "#########"
+  ],
+  "tickLimit": 30,
+  "maxEchoes": 0,
+  "par": { "echoes": 0, "ticks": 8 },
+  "hints": [
+    {
+      "text": { "ru": "Иди к светящемуся выходу: WASD или стрелки", "en": "Walk to the glowing exit: WASD or arrows" },
+      "touch": { "ru": "Свайпни, чтобы сделать шаг к выходу", "en": "Swipe to step towards the exit" },
+      "arrow": [7, 3],
+      "keys": ["up", "left", "down", "right"]
+    }
+  ]
+}

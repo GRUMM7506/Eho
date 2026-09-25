@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ЭХО</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;800&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  color-scheme: dark;
+  --bg:#0D0B1E; --panel:#15122B; --line:#2A2452; --wall:#221D45; --wall-hi:#342C69;
+  --ink:#ECE8FF; --muted:#9C95C9; --player:#FFE45E; --echo:#8C9EFF; --broken:#FF4D5E;
+  --pink:#FF5D8F; --cyan:#3DDCFF; --violet:#B388FF; --exit:#5CF2B5;
+  --display:"Unbounded", "Arial Black", system-ui, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+[hidden]{display:none!important}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:var(--mono);font-size:14px;line-height:1.5}
+.wrap{max-width:760px;margin:0 auto;padding-inline:16px;padding-block:20px 40px;display:flex;flex-direction:column;gap:14px}
+header{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+h1{font-family:var(--display);font-weight:800;font-size:44px;letter-spacing:.08em;margin:0;line-height:1;
+  color:var(--player);text-shadow:6px 0 0 rgba(140,158,255,.45),12px 0 0 rgba(140,158,255,.2)}
+.tag{margin:0;color:var(--muted);max-width:40ch}
+#levels{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font:600 12px var(--mono);background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:6px 10px;cursor:pointer;display:flex;gap:6px;align-items:center}
+.chip .st{color:var(--player);letter-spacing:1px}
+.chip[aria-current="true"]{border-color:var(--player);box-shadow:0 0 0 1px var(--player) inset}
+.chip:disabled{opacity:.35;cursor:not-allowed}
+.stage{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.hud{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.lvname{font-family:var(--display);font-weight:500;font-size:17px;letter-spacing:.02em}
+.lvname small{font-family:var(--mono);color:var(--muted);font-size:12px;margin-right:8px}
+.meta{display:flex;gap:16px;align-items:center;font-variant-numeric:tabular-nums}
+.slots{display:flex;gap:5px;align-items:center}
+.slots i{width:12px;height:12px;border-radius:50%;border:2px solid var(--echo);display:block}
+.slots i.on{background:var(--echo);box-shadow:0 0 8px var(--echo)}
+.label{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.12em}
+.clock{font-weight:600;min-width:4.5ch;text-align:right}
+.timebar{height:6px;background:#0A0818;border-radius:3px;overflow:hidden}
+.timebar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--echo),var(--player))}
+.canvas-box{display:flex;justify-content:center}
+canvas{display:block;max-width:100%;border-radius:6px;touch-action:none}
+#status{min-height:1.5em;margin:0;color:var(--muted);text-align:center}
+#status.hot{color:var(--broken)}
+#status.good{color:var(--exit)}
+.overlay{position:absolute;inset:0;background:rgba(13,11,30,.86);backdrop-filter:blur(3px);border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:20px}
+.overlay h2{font-family:var(--display);font-weight:800;margin:0;font-size:26px;text-wrap:balance}
+.stars{font-size:38px;letter-spacing:6px;color:var(--player);text-shadow:0 0 16px rgba(255,228,94,.5)}
+.stars .off{color:#3A335F;text-shadow:none}
+.row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.btn{font:600 13px var(--mono);border-radius:8px;padding:10px 14px;cursor:pointer;border:1px solid var(--line);background:#1C1838;color:var(--ink)}
+.btn.primary{background:var(--player);color:#1A1500;border-color:var(--player)}
+.btn:hover{border-color:var(--echo)}
+.btn kbd{font:inherit;opacity:.6;margin-left:6px}
+button:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.controls{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:center}
+.actions{display:flex;flex-wrap:wrap;gap:8px}
+.dpad{display:grid;grid-template-columns:repeat(3,52px);grid-template-rows:repeat(3,52px);gap:4px;user-select:none;-webkit-user-select:none}
+.dpad button{border-radius:10px;border:1px solid var(--line);background:#1C1838;color:var(--ink);font-size:20px;touch-action:none;cursor:pointer}
+.dpad button:active,.dpad button.down{background:var(--line)}
+.dpad .c{font:600 10px var(--mono);letter-spacing:.06em}
+.hint{margin:0;padding:12px 14px;border-left:3px solid var(--echo);background:rgba(140,158,255,.07);border-radius:0 8px 8px 0;max-width:70ch}
+details{border-top:1px solid var(--line);padding-top:12px}
+summary{cursor:pointer;font-family:var(--display);font-weight:500;font-size:14px}
+.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px 18px;margin-top:12px}
+.legend div{display:flex;gap:10px;align-items:flex-start}
+.legend b{flex:none;width:18px;height:18px;border-radius:50%;margin-top:2px}
+.keys{color:var(--muted);margin:10px 0 0}
+@media (max-width:560px){
+  h1{font-size:36px}
+  .controls{grid-template-columns:1fr}
+  .dpad{justify-self:center}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<main class="wrap">
+  <header>
+    <h1>ЭХО</h1>
+    <p class="tag">Одному не пройти. Каждая попытка остаётся в комнате копией, которая повторяет твои шаги.</p>
+  </header>
+
+  <nav id="levels" aria-label="Уровни"></nav>
+
+  <section class="stage">
+    <div class="hud">
+      <div class="lvname" id="lvname"></div>
+      <div class="meta">
+        <div><div class="label">Эхо</div><div class="slots" id="slots"></div></div>
+        <div><div class="label">Время</div><div class="clock" id="clock">0.0 с</div></div>
+      </div>
+    </div>
+    <div class="timebar"><i id="timefill"></i></div>
+    <div class="canvas-box" id="cbox"><canvas id="cv" aria-label="Игровое поле"></canvas></div>
+    <p id="status" aria-live="polite"></p>
+    <div class="overlay" id="win" hidden>
+      <h2 id="wintitle">Выход найден</h2>
+      <div class="stars" id="winstars"></div>
+      <div id="wininfo" class="label"></div>
+      <div class="row">
+        <button class="btn" id="replay">Переиграть</button>
+        <button class="btn primary" id="next">Следующая комната</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="controls">
+    <div class="actions">
+      <button class="btn" id="bCommit">Записать эхо сейчас<kbd>E</kbd></button>
+      <button class="btn" id="bUndo">Убрать последнее эхо<kbd>Z</kbd></button>
+      <button class="btn" id="bReset">Начать комнату заново<kbd>R</kbd></button>
+    </div>
+    <div class="dpad" id="dpad">
+      <span></span><button data-d="1" aria-label="Вверх">▲</button><span></span>
+      <button data-d="4" aria-label="Влево">◀</button><button class="c" data-d="0" aria-label="Старт, стоять на месте">СТАРТ</button><button data-d="2" aria-label="Вправо">▶</button>
+      <span></span><button data-d="3" aria-label="Вниз">▼</button><span></span>
+    </div>
+  </div>
+
+  <p class="hint" id="hint"></p>
+
+  <details>
+    <summary>Как играть</summary>
+    <div class="legend">
+      <div><b style="background:var(--player);box-shadow:0 0 8px var(--player)"></b><span>Это ты. Время пошло с первого шага.</span></div>
+      <div><b style="border:2px solid var(--echo);background:rgba(140,158,255,.25)"></b><span>Эхо: твоя прошлая попытка. Повторяет её шаг в шаг, пунктир показывает маршрут.</span></div>
+      <div><b style="border:3px solid var(--pink)"></b><span>Плита. Пока на ней кто-то стоит, дверь того же цвета открыта.</span></div>
+      <div><b style="border:3px solid var(--violet);border-radius:3px;transform:rotate(45deg) scale(.8)"></b><span>Плита эха. Реагирует только на копии, на тебя нет.</span></div>
+      <div><b style="background:repeating-linear-gradient(45deg,var(--cyan) 0 3px,transparent 3px 6px);border-radius:3px"></b><span>Дверь с косой штриховкой работает наоборот: закрывается, когда плита нажата.</span></div>
+      <div><b style="background:var(--broken)"></b><span>Парадокс: если эхо упрётся в закрытую дверь, оно сбивается и застывает на месте.</span></div>
+    </div>
+    <p class="keys">Стрелки или WASD для движения, пробел запускает время стоя на месте. Когда время кончается, попытка сама становится новым эхом. Звёзды даются за решение с минимумом копий.</p>
+  </details>
+</main>
+
+<script>
+(() => {
+const TICK = 170;
+const COLORS = {a:'#FF5D8F', b:'#3DDCFF', q:'#B388FF'};
+const LEVELS = [
+  {name:'Кнопка', limit:24, min:1, max:3,
+   hint:'Дверь открыта, только пока плита нажата. Встань на плиту и дождись конца времени: эта попытка станет эхом и будет держать плиту за тебя.',
+   map:['###########','#S..#.....#','#...#.....#','#.a.A...X.#','#...#.....#','###########']},
+  {name:'Двое', limit:26, min:2, max:3,
+   hint:'Две плиты, две двери. Чтобы не ждать, нажми E: попытка сразу станет эхом, и начнётся новая.',
+   map:['#############','#S....#..#..#','#.....#..#..#','#.a.b.A..B.X#','#.....#..#..#','#############']},
+  {name:'Только эхо', limit:22, min:1, max:2,
+   hint:'Фиолетовая плита тебя не замечает. На ней должна стоять копия.',
+   map:['###########','#S....#...#','#.....Q.X.#','#..q..#...#','###########']},
+  {name:'Эстафета', limit:26, min:2, max:3,
+   hint:'Вторая плита за первой дверью. Кто-то должен держать вход, пока другой идёт дальше.',
+   map:['#############','#S..#...#...#','#...#...#...#','#.a.A.b.B..X#','#...#...#...#','#############']},
+  {name:'Парадокс', limit:26, min:2, max:3,
+   hint:'Дверь со штриховкой закрывается, когда розовая плита нажата. Если копия с плитой придёт слишком рано, она запрёт путь старшей копии.',
+   map:['#############','#S.....1...b#','#.###########','#...a...A...#','#########B###','#########.###','#########X###','#############']},
+  {name:'Хор', limit:26, min:3, max:4,
+   hint:'Три копии, три задачи. Думай о порядке: каждая следующая проходит там, где её держат предыдущие.',
+   map:['###############','#...#...#.....#','#S.aA.b.B..q..#','#...#...#.....#','##########Q####','##########.####','##########X####','###############']},
+];
+const DIRS = [[0,0],[0,-1],[1,0],[0,1],[-1,0]];
+
+const $ = id => document.getElementById(id);
+const cv = $('cv'), ctx = cv.getContext('2d');
+let progress = {};
+try { progress = JSON.parse(localStorage.getItem('echo-progress') || '{}') || {}; } catch(e) { progress = {}; }
+const saveProgress = () => { try { localStorage.setItem('echo-progress', JSON.stringify(progress)); } catch(e) {} };
+
+let li = 0, L, W, H, wall, start, exit, plates, doors, doorAt;
+let echoes = [], player, rec, t, state, lastTick = 0, cs = 40;
+let heldDir = 0, tapDir = 0, statusTimer = 0, flash = [];
+
+function load(i, keepEchoes){
+  li = i; L = LEVELS[i];
+  H = L.map.length; W = L.map[0].length;
+  wall = new Uint8Array(W*H); plates = []; doors = []; doorAt = new Map();
+  L.map.forEach((row, y) => [...row].forEach((ch, x) => {
+    const k = y*W + x;
+    if (ch === '#') wall[k] = 1;
+    else if (ch === 'S') start = {x, y};
+    else if (ch === 'X') exit = {x, y};
+    else if (ch === 'q') plates.push({x, y, key:'q', echoOnly:true});
+    else if (ch >= 'a' && ch <= 'p') plates.push({x, y, key:ch, echoOnly:false});
+    else if (ch >= 'A' && ch <= 'Z') { const d = {x, y, key:ch.toLowerCase(), inv:false, open:false, vis:0}; doors.push(d); doorAt.set(k, d); }
+    else if (ch >= '1' && ch <= '9') { const d = {x, y, key:String.fromCharCode(96 + +ch), inv:true, open:true, vis:1}; doors.push(d); doorAt.set(k, d); }
+  }));
+  if (!keepEchoes) echoes = [];
+  $('win').hidden = true;
+  $('hint').textContent = L.hint;
+  $('lvname').innerHTML = `<small>${String(i+1).padStart(2,'0')}/${String(LEVELS.length).padStart(2,'0')}</small>${L.name}`;
+  renderChips(); resize(); resetLoop();
+  doors.forEach(d => d.vis = d.open ? 1 : 0);
+}
+
+function resetLoop(){
+  t = 0; rec = []; state = 'ready';
+  player = {x:start.x, y:start.y, px:start.x, py:start.y};
+  echoes.forEach(e => { e.x = e.px = start.x; e.y = e.py = start.y; e.broken = false; });
+  updateDoors(); updateHud();
+}
+
+function occupants(x, y){
+  const list = [];
+  if (player.x === x && player.y === y) list.push(player);
+  echoes.forEach(e => { if (e.x === x && e.y === y) list.push(e); });
+  return list;
+}
+function updateDoors(){
+  const pressed = {};
+  plates.forEach(p => {
+    const on = occupants(p.x, p.y).some(o => !(p.echoOnly && o === player));
+    p.on = on; if (on) pressed[p.key] = true;
+  });
+  doors.forEach(d => {
+    d.open = d.inv ? !pressed[d.key] : !!pressed[d.key];
+    if (occupants(d.x, d.y).length) d.open = true;
+  });
+}
+function blocked(x, y){
+  if (x < 0 || y < 0 || x >= W || y >= H) return true;
+  const k = y*W + x;
+  if (wall[k]) return true;
+  const d = doorAt.get(k);
+  return d ? !d.open : false;
+}
+
+function step(){
+  echoes.forEach((e, i) => {
+    e.px = e.x; e.py = e.y;
+    if (e.broken) return;
+    const m = e.rec[t] || 0;
+    if (!m) return;
+    const nx = e.x + DIRS[m][0], ny = e.y + DIRS[m][1];
+    if (blocked(nx, ny)) { e.broken = true; e.brokeAt = performance.now(); say(`Парадокс: эхо ${i+1} упёрлось в закрытую дверь и сбилось`, 'hot', 2600); }
+    else { e.x = nx; e.y = ny; }
+  });
+  player.px = player.x; player.py = player.y;
+  let m = tapDir || heldDir; tapDir = 0;
+  if (m) {
+    const nx = player.x + DIRS[m][0], ny = player.y + DIRS[m][1];
+    if (blocked(nx, ny)) m = 0; else { player.x = nx; player.y = ny; }
+  }
+  rec.push(m);
+  t++;
+  updateDoors();
+  if (player.x === exit.x && player.y === exit.y) return win();
+  if (t >= L.limit) endLoop();
+  updateHud();
+}
+
+function endLoop(){
+  if (echoes.length < L.max) {
+    echoes.push({rec: rec.slice(), x:0, y:0, px:0, py:0, broken:false});
+    say(`Эхо ${echoes.length} записано. Новая попытка`, 'good', 2200);
+  } else {
+    say('Копии закончились. Убери последнее эхо (Z) или начни заново (R)', 'hot', 3200);
+  }
+  resetLoop();
+}
+
+function win(){
+  state = 'won'; updateHud();
+  const used = echoes.length;
+  const stars = used <= L.min ? 3 : used <= L.min + 1 ? 2 : 1;
+  const best = Math.max(stars, (progress[li] || 0));
+  progress[li] = best; saveProgress(); renderChips();
+  const last = li === LEVELS.length - 1;
+  setTimeout(() => {
+    $('wintitle').textContent = last ? 'Все комнаты пройдены' : 'Выход найден';
+    $('winstars').innerHTML = [0,1,2].map(i => `<span class="${i < stars ? '' : 'off'}">★</span>`).join('');
+    $('wininfo').textContent = `Копий: ${used} · минимум: ${L.min}`;
+    $('next').hidden = last;
+    $('win').hidden = false;
+    (last ? $('replay') : $('next')).focus();
+  }, 350);
+}
+
+function say(msg, cls = '', ms = 2000){
+  const s = $('status'); s.textContent = msg; s.className = cls;
+  clearTimeout(statusTimer);
+  statusTimer = setTimeout(() => { s.textContent = state === 'ready' ? readyText() : ''; s.className = ''; }, ms);
+}
+const readyText = () => 'Сделай шаг или нажми пробел, чтобы запустить время';
+
+function updateHud(){
+  $('slots').innerHTML = Array.from({length:L.max}, (_, i) => `<i class="${i < echoes.length ? 'on' : ''}"></i>`).join('');
+  $('clock').textContent = ((L.limit - t) * TICK / 1000).toFixed(1) + ' с';
+  $('timefill').style.width = (t / L.limit * 100) + '%';
+  if (state === 'ready' && !$('status').className) $('status').textContent = readyText();
+  if (state === 'running' && !$('status').className) $('status').textContent = '';
+}
+
+function renderChips(){
+  $('levels').innerHTML = LEVELS.map((lv, i) => {
+    const open = i === 0 || progress[i-1] || progress[i];
+    const s = progress[i] || 0;
+    return `<button class="chip" data-i="${i}" ${open ? '' : 'disabled'} aria-current="${i === li}">${i+1}. ${lv.name}<span class="st">${s ? '★'.repeat(s) : ''}</span></button>`;
+  }).join('');
+}
+$('levels').addEventListener('click', e => { const b = e.target.closest('.chip'); if (b && !b.disabled) load(+b.dataset.i); });
+
+/* ---------- input ---------- */
+function press(d){
+  if (state === 'won') return;
+  if (state === 'ready') { state = 'running'; lastTick = performance.now(); tapDir = d; step(); return; }
+  if (d) tapDir = d;
+}
+function commit(){
+  if (state === 'won') return;
+  if (state === 'ready' && !rec.length) { say('Сначала сделай хотя бы шаг', '', 1600); return; }
+  endLoop();
+}
+function undo(){ if (!echoes.length) return; echoes.pop(); $('win').hidden = true; resetLoop(); say('Последнее эхо убрано', '', 1600); }
+function resetAll(){ echoes = []; $('win').hidden = true; resetLoop(); say('Комната сброшена', '', 1400); }
+
+const KEYMAP = {ArrowUp:1, KeyW:1, ArrowRight:2, KeyD:2, ArrowDown:3, KeyS:3, ArrowLeft:4, KeyA:4};
+const heldKeys = [];
+addEventListener('keydown', e => {
+  if (e.target.closest && e.target.closest('input,textarea')) return;
+  const d = KEYMAP[e.code];
+  if (d) { e.preventDefault(); if (!heldKeys.includes(d)) heldKeys.push(d); heldDir = d; if (!e.repeat) press(d); return; }
+  if (e.code === 'Space') { if (e.target.tagName === 'BUTTON') return; e.preventDefault(); press(0); }
+  else if (e.code === 'KeyE') commit();
+  else if (e.code === 'KeyZ') undo();
+  else if (e.code === 'KeyR') resetAll();
+  else if (e.code === 'Enter' && state === 'won' && !$('next').hidden && e.target.tagName !== 'BUTTON') load(li + 1);
+});
+addEventListener('keyup', e => {
+  const d = KEYMAP[e.code]; if (!d) return;
+  const i = heldKeys.indexOf(d); if (i >= 0) heldKeys.splice(i, 1);
+  heldDir = heldKeys[heldKeys.length - 1] || 0;
+});
+addEventListener('blur', () => { heldKeys.length = 0; heldDir = 0; });
+
+$('dpad').querySelectorAll('button').forEach(b => {
+  const d = +b.dataset.d;
+  b.addEventListener('pointerdown', e => { e.preventDefault(); b.setPointerCapture(e.pointerId); b.classList.add('down'); if (d) heldDir = d; press(d); });
+  const up = () => { b.classList.remove('down'); if (heldDir === d) heldDir = 0; };
+  b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up); b.addEventListener('lostpointercapture', up);
+  b.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); press(d); } });
+});
+// swipe on canvas
+let sw = null;
+cv.addEventListener('pointerdown', e => { sw = {x:e.clientX, y:e.clientY}; });
+cv.addEventListener('pointerup', e => {
+  if (!sw) return; const dx = e.clientX - sw.x, dy = e.clientY - sw.y; sw = null;
+  if (Math.max(Math.abs(dx), Math.abs(dy)) < 18) { press(0); return; }
+  press(Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 2 : 4) : (dy > 0 ? 3 : 1));
+});
+$('bCommit').onclick = commit; $('bUndo').onclick = undo; $('bReset').onclick = resetAll;
+$('replay').onclick = () => load(li);
+$('next').onclick = () => load(Math.min(li + 1, LEVELS.length - 1));
+
+/* ---------- render ---------- */
+function resize(){
+  const avail = $('cbox').clientWidth;
+  cs = Math.max(18, Math.min(52, Math.floor(avail / W)));
+  const dpr = window.devicePixelRatio || 1;
+  cv.width = W*cs*dpr; cv.height = H*cs*dpr;
+  cv.style.width = W*cs + 'px'; cv.style.height = H*cs + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+addEventListener('resize', () => { if (L) resize(); });
+
+function rr(x, y, w, h, r){ ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y, w, h, r) : ctx.rect(x, y, w, h); }
+const ease = a => a < .5 ? 2*a*a : 1 - Math.pow(-2*a + 2, 2)/2;
+function pathOf(r){
+  const pts = [[start.x, start.y]]; let x = start.x, y = start.y;
+  r.forEach(m => { if (m) { x += DIRS[m][0]; y += DIRS[m][1]; pts.push([x, y]); } });
+  return pts;
+}
+function drawPath(pts, color, dash, alpha){
+  if (pts.length < 2) return;
+  ctx.save(); ctx.globalAlpha = alpha; ctx.strokeStyle = color; ctx.lineWidth = Math.max(1.5, cs*.06);
+  ctx.setLineDash(dash); ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+  ctx.beginPath(); pts.forEach(([x, y], i) => { const X = (x+.5)*cs, Y = (y+.5)*cs; i ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y); });
+  ctx.stroke(); ctx.restore();
+}
+
+function draw(now){
+  if (state === 'running') {
+    while (now - lastTick >= TICK && state === 'running') { lastTick += TICK; step(); }
+  }
+  const a = state === 'running' ? ease(Math.min(1, (now - lastTick) / TICK)) : 1;
+  ctx.fillStyle = '#0D0B1E'; ctx.fillRect(0, 0, W*cs, H*cs);
+
+  // floor & walls
+  for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+    const k = y*W + x;
+    if (wall[k]) {
+      ctx.fillStyle = '#221D45'; rr(x*cs + 1, y*cs + 1, cs - 2, cs - 2, cs*.14); ctx.fill();
+      ctx.fillStyle = '#342C69'; rr(x*cs + 1, y*cs + 1, cs - 2, cs*.22, cs*.14); ctx.fill();
+    } else {
+      ctx.fillStyle = '#1D1940'; ctx.beginPath(); ctx.arc((x+.5)*cs, (y+.5)*cs, Math.max(1, cs*.035), 0, 7); ctx.fill();
+    }
+  }
+
+  // echo routes
+  echoes.forEach(e => drawPath(pathOf(e.rec), e.broken ? '#FF4D5E' : '#8C9EFF', [cs*.08, cs*.14], .45));
+  drawPath(pathOf(rec), '#FFE45E', [], .22);
+
+  // exit
+  const pulse = (Math.sin(now/380) + 1) / 2;
+  ctx.save(); ctx.strokeStyle = '#5CF2B5'; ctx.lineWidth = 2;
+  ctx.shadowColor = '#5CF2B5'; ctx.shadowBlur = 10 + pulse*10;
+  rr(exit.x*cs + cs*.14, exit.y*cs + cs*.14, cs*.72, cs*.72, cs*.12); ctx.stroke();
+  ctx.globalAlpha = .25 + pulse*.2; ctx.fillStyle = '#5CF2B5';
+  rr(exit.x*cs + cs*.26, exit.y*cs + cs*.26, cs*.48, cs*.48, cs*.08); ctx.fill();
+  ctx.restore();
+
+  // plates
+  plates.forEach(p => {
+    const c = COLORS[p.key] || '#FF5D8F', X = (p.x+.5)*cs, Y = (p.y+.5)*cs, r = cs*.3;
+    ctx.save(); ctx.strokeStyle = c; ctx.fillStyle = c; ctx.lineWidth = Math.max(2, cs*.07);
+    if (p.on) { ctx.shadowColor = c; ctx.shadowBlur = 16; }
+    ctx.beginPath();
+    if (p.echoOnly) { ctx.moveTo(X, Y - r); ctx.lineTo(X + r, Y); ctx.lineTo(X, Y + r); ctx.lineTo(X - r, Y); ctx.closePath(); }
+    else ctx.arc(X, Y, r, 0, 7);
+    ctx.globalAlpha = p.on ? .9 : .12; ctx.fill(); ctx.globalAlpha = 1; ctx.stroke();
+    ctx.restore();
+  });
+
+  // doors
+  doors.forEach(d => {
+    d.vis += ((d.open ? 1 : 0) - d.vis) * .3;
+    const c = COLORS[d.key] || '#FF5D8F', x0 = d.x*cs, y0 = d.y*cs;
+    ctx.save();
+    // open outline
+    ctx.globalAlpha = .35; ctx.strokeStyle = c; ctx.lineWidth = 1.5; ctx.setLineDash([cs*.1, cs*.08]);
+    rr(x0 + cs*.08, y0 + cs*.08, cs*.84, cs*.84, cs*.1); ctx.stroke(); ctx.setLineDash([]);
+    // closed slab shrinks as it opens
+    const k = 1 - d.vis;
+    if (k > .02) {
+      ctx.globalAlpha = 1;
+      const inset = cs*.08, w = (cs - 2*inset), h = w * k;
+      ctx.beginPath(); ctx.rect(x0 + inset, y0 + inset + (w - h)/2, w, h); ctx.save(); ctx.clip();
+      ctx.fillStyle = c; ctx.shadowColor = c; ctx.shadowBlur = 8; ctx.fillRect(x0 + inset, y0 + inset, w, w);
+      ctx.shadowBlur = 0; ctx.strokeStyle = 'rgba(13,11,30,.55)'; ctx.lineWidth = Math.max(2, cs*.07);
+      ctx.beginPath();
+      for (let i = -1; i <= 4; i++) {
+        const o = inset + i*w/3.5;
+        if (d.inv) { ctx.moveTo(x0 + o, y0 + inset); ctx.lineTo(x0 + o + w, y0 + inset + w); }
+        else { ctx.moveTo(x0 + o, y0); ctx.lineTo(x0 + o, y0 + cs); }
+      }
+      ctx.stroke(); ctx.restore();
+    }
+    ctx.restore();
+  });
+
+  // echoes
+  echoes.forEach((e, i) => {
+    let X = (e.px + (e.x - e.px)*a + .5)*cs, Y = (e.py + (e.y - e.py)*a + .5)*cs;
+    if (e.broken && now - e.brokeAt < 500) X += Math.sin(now/25) * cs*.06;
+    const c = e.broken ? '#FF4D5E' : '#8C9EFF', r = cs*.28;
+    ctx.save();
+    ctx.fillStyle = e.broken ? 'rgba(255,77,94,.25)' : 'rgba(140,158,255,.22)';
+    ctx.strokeStyle = c; ctx.lineWidth = Math.max(2, cs*.06); ctx.shadowColor = c; ctx.shadowBlur = 10;
+    ctx.beginPath(); ctx.arc(X, Y, r, 0, 7); ctx.fill(); ctx.stroke();
+    ctx.shadowBlur = 0; ctx.fillStyle = c; ctx.font = `600 ${Math.round(cs*.3)}px "IBM Plex Mono", monospace`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(e.broken ? '×' : i + 1, X, Y + 1);
+    ctx.restore();
+  });
+
+  // player
+  const PX = (player.px + (player.x - player.px)*a + .5)*cs, PY = (player.py + (player.y - player.py)*a + .5)*cs;
+  ctx.save(); ctx.fillStyle = '#FFE45E'; ctx.shadowColor = '#FFE45E'; ctx.shadowBlur = 18 + (state === 'ready' ? pulse*10 : 0);
+  ctx.beginPath(); ctx.arc(PX, PY, cs*.3, 0, 7); ctx.fill();
+  ctx.shadowBlur = 0; ctx.fillStyle = '#1A1500'; ctx.beginPath(); ctx.arc(PX, PY, cs*.09, 0, 7); ctx.fill();
+  ctx.restore();
+
+  requestAnimationFrame(draw);
+}
+
+/* ---------- boot ---------- */
+function boot(data){
+  let i = 0;
+  if (data && Number.isInteger(data.level) && LEVELS[data.level]) i = data.level;
+  else { for (let k = 0; k < LEVELS.length; k++) if (progress[k]) i = Math.min(k + 1, LEVELS.length - 1); }
+  load(i);
+  if (data && Array.isArray(data.echoes)) { echoes = data.echoes.map(r => ({rec:r, x:0, y:0, px:0, py:0, broken:false})); resetLoop(); }
+  requestAnimationFrame(draw);
+}
+try { window.claude?.hot?.snapshot?.(() => ({level: li, echoes: echoes.map(e => e.rec)})); } catch(e) {}
+try {
+  if (window.claude?.hot?.ready) window.claude.hot.ready(boot);
+  else boot(window.claude?.hot?.data ?? {});
+} catch(e) { boot({}); }
+})();
+</script>
+</body>
+</html>
