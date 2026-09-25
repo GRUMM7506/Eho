@@ -30,6 +30,7 @@ export const en: Dict = {
   'world.desc.custom': 'Levels from the editor',
   'world.locked': 'Beat the exam of «{world}»',
   'world.map': 'Worlds',
+  'world.label': 'World',
   'world.progress': '{done} of {total}',
 
   'levels.title': 'Levels',

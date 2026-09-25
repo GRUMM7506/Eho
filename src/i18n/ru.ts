@@ -28,6 +28,7 @@ export const ru = {
   'world.desc.custom': 'Уровни из редактора',
   'world.locked': 'Пройдите экзамен мира «{world}»',
   'world.map': 'Миры',
+  'world.label': 'Мир',
   'world.progress': '{done} из {total}',
 
   'levels.title': 'Уровни',

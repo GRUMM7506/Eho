@@ -169,7 +169,7 @@ export class WorldMap extends BaseScreen {
       const card = h(
         `button.world-card${w.unlocked ? '' : '.locked'}` as 'button',
         { type: 'button', style: `--accent:${accent}`, 'aria-disabled': w.unlocked ? null : 'true', onclick: () => w.unlocked && a.goLevels(w.world), 'data-autofocus': i === lastUnlocked(info) ? true : null },
-        h('span.num', null, `${t('world.map').toUpperCase()} ${w.world}`),
+        h('span.num', null, `${t('world.label').toUpperCase()} ${w.world}`),
         h('span.name', null, t(`world.${w.world}` as 'world.0')),
         h('span.desc', null, t(`world.desc.${w.world}` as 'world.desc.0')),
       );
