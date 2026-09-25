@@ -72,7 +72,9 @@ async function main(): Promise<void> {
     await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
     await page.setUserAgent('Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Mobile Safari/537.36');
   } else {
-    await page.setViewport({ width: 1280, height: 800 });
+    const sizeIdx = flags.indexOf('--size');
+    const [w, hgt] = sizeIdx >= 0 ? (flags[sizeIdx + 1] ?? '1280x800').split('x').map(Number) : [1280, 800];
+    await page.setViewport({ width: w!, height: hgt! });
   }
   const errors: string[] = [];
   page.on('console', (m) => {

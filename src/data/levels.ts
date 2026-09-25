@@ -17,3 +17,17 @@ export function loadBuiltinLevels(): Level[] {
   out.sort((a, b) => a.world - b.world || Number(a.bonus) - Number(b.bonus) || a.index - b.index);
   return out;
 }
+
+/** Уровни из редактора: битые пропускаются, чтобы не ломать список. */
+export function loadCustomLevels(raw: readonly unknown[]): Level[] {
+  const out: Level[] = [];
+  raw.forEach((r, i) => {
+    try {
+      const l = compileLevel(r);
+      out.push({ ...l, world: -1, index: i + 1, bonus: false });
+    } catch {
+      // пропускаем
+    }
+  });
+  return out;
+}

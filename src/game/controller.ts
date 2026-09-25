@@ -11,6 +11,7 @@ import {
   undoEcho,
   type Session,
 } from '../core/session';
+import { inputToAction } from '../core/sim';
 import type { Action, Level, SimEvent, WorldState } from '../core/types';
 import type { InputHub, ScreenAction } from '../input/input';
 import type { GameView } from '../render/gameView';
@@ -124,7 +125,21 @@ export class GameController {
     this.view.render(dt, alpha);
   }
 
+  /** Отладка: выполнить тики с заданным вводом немедленно (строка . U R D L E, сеточные направления). */
+  debugRun(inputs: string): void {
+    for (const c of inputs) {
+      if (this.state.outcome !== 'playing') break;
+      this.forced = c;
+      this.running = true;
+      this.doTick();
+    }
+    this.forced = null;
+  }
+
+  private forced: string | null = null;
+
   private toAction(a: ScreenAction | null): Action {
+    if (this.forced !== null) return inputToAction(this.forced);
     if (!a || a === 'wait') return 'none';
     if (a === 'interact') return 'interact';
     // Экранное направление → сеточное по углу камеры, до записи в симуляцию.
@@ -133,7 +148,7 @@ export class GameController {
 
   private doTick(): void {
     const prev = this.state;
-    const action = this.toAction(this.input.take());
+    const action = this.toAction(this.forced !== null ? null : this.input.take());
     const r = advance(this.session, action);
     this.session = r.session;
     const next = this.state;

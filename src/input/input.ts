@@ -120,11 +120,8 @@ export class InputHub {
     this.lastDevice = 'keyboard';
     this.onAnyInput('keyboard');
     const act = actionForCode(this.keymap, e.code);
-    if (!this.gameplay) {
-      // В меню стрелки и Escape — навигация.
-      if (e.code === 'Escape') this.onMenuNav('back');
-      return;
-    }
+    // В меню клавиатурой управляет роутер экранов.
+    if (!this.gameplay) return;
     if (!act) return;
     const onButton = target?.tagName === 'BUTTON';
     const dir = DIR_OF[act];

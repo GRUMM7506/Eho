@@ -1,0 +1,26 @@
+{
+  "id": "w0-2",
+  "world": 0,
+  "index": 2,
+  "name": { "ru": "Взгляд", "en": "Point of View" },
+  "map": [
+    "#########",
+    "#S..#...#",
+    "#.#.#.#.#",
+    "#.#...#X#",
+    "#########"
+  ],
+  "tickLimit": 30,
+  "maxEchoes": 0,
+  "par": { "echoes": 0, "ticks": 12 },
+  "camera": { "yaw": 135 },
+  "hints": [
+    {
+      "text": { "ru": "Поверните камеру: Q и E, правая кнопка мыши — вращение, колесо — зум. «Вверх» всегда от экрана", "en": "Rotate the camera: Q and E, right mouse to orbit, wheel to zoom. “Up” is always away from you" },
+      "touch": { "ru": "Два пальца — вращать и приближать камеру. Свайп вверх — всегда «от себя»", "en": "Two fingers orbit and zoom. Swipe up always means “away”" },
+      "keys": ["camLeft", "camRight"],
+      "maxEchoes": 0,
+      "arrow": [7, 3]
+    }
+  ]
+}

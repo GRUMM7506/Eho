@@ -1,0 +1,30 @@
+{
+  "id": "w0-5",
+  "world": 0,
+  "index": 5,
+  "name": { "ru": "Перемотка", "en": "Rewind" },
+  "map": [
+    "##########",
+    "#S..d.a..#",
+    "######A###",
+    "#X...4...#",
+    "##########"
+  ],
+  "tickLimit": 30,
+  "maxEchoes": 2,
+  "par": { "echoes": 1, "ticks": 12 },
+  "hints": [
+    {
+      "text": { "ru": "Штрихованная оранжевая дверь закрывается, пока нажата оранжевая плита. Попробуйте записать эхо на ней и посмотрите, что будет", "en": "The hatched orange door closes while the orange plate is pressed. Try recording an echo on it and see what happens" },
+      "keys": ["record"],
+      "maxEchoes": 0,
+      "arrow": [4, 1]
+    },
+    {
+      "text": { "ru": "Ошиблись? Z убирает последнее эхо, Backspace — шаг назад во времени", "en": "Made a mistake? Z removes the last echo, Backspace steps back in time" },
+      "touch": { "ru": "Ошиблись? «Отменить» убирает последнее эхо, «Шаг назад» — перематывает время", "en": "Made a mistake? “Undo” removes the last echo, “Step back” rewinds time" },
+      "keys": ["undoEcho", "rewind"],
+      "minEchoes": 1
+    }
+  ]
+}

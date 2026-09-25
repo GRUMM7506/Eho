@@ -134,7 +134,7 @@ export class LevelView {
     // Пол: плитки с тонкими швами.
     const floorGeo = this.track(new THREE.BoxGeometry(1, 0.1, 1));
     floorGeo.translate(0, -0.05, 0);
-    const floorMat = this.track(new THREE.MeshStandardMaterial({ color: PALETTE.floor, map: floorTexture(), roughness: 0.85, metalness: 0.05 }));
+    const floorMat = this.track(new THREE.MeshStandardMaterial({ color: 0xffffff, map: floorTexture(), roughness: 0.85, metalness: 0.05 }));
     const floors = new THREE.InstancedMesh(floorGeo, floorMat, Math.max(1, floorCells.length));
     floors.count = floorCells.length;
     const tint = new THREE.Color();
@@ -878,6 +878,7 @@ export class LevelView {
     }
     const beamPulse = 0.75 + Math.sin(time * 20) * 0.15;
     this.beamMat.opacity = beamPulse;
+    this.updateExtras(time);
   }
 
   private beamY(cell: number): number {
@@ -926,7 +927,113 @@ export class LevelView {
     });
   }
 
+  // ————— подсказки и траектории —————
+
+  private arrow: THREE.Mesh | null = null;
+  private arrowCell = -1;
+  private trails: THREE.InstancedMesh | null = null;
+  private ghosts: ActorModel[] = [];
+
+  /** 3D-стрелка над клеткой (обучение). */
+  setHintArrow(cell: number | null): void {
+    if (cell === null || cell < 0) {
+      if (this.arrow) this.arrow.visible = false;
+      this.arrowCell = -1;
+      return;
+    }
+    if (!this.arrow) {
+      const geo = this.track(new THREE.ConeGeometry(0.16, 0.34, 4));
+      geo.rotateX(Math.PI);
+      this.arrow = new THREE.Mesh(geo, this.track(new THREE.MeshBasicMaterial({ color: PALETTE.player, toneMapped: false })));
+      this.root.add(this.arrow);
+    }
+    this.arrowCell = cell;
+    this.arrow.visible = true;
+  }
+
+  /**
+   * Пунктирные светящиеся траектории копий по прогнозу петли.
+   * `paths[e]` — клетки эхо по тикам; `broken[e]` — сбивалось ли эхо.
+   */
+  setTrails(paths: readonly (readonly number[])[] | null, broken: readonly boolean[] = []): void {
+    if (this.trails) {
+      this.root.remove(this.trails);
+      this.trails.geometry.dispose();
+      (this.trails.material as THREE.Material).dispose();
+      this.trails.dispose();
+      this.trails = null;
+    }
+    if (!paths?.length) return;
+    const dashes: { p: THREE.Vector3; yaw: number; e: number }[] = [];
+    paths.forEach((cells, e) => {
+      const uniq: number[] = [];
+      for (const c of cells) if (uniq[uniq.length - 1] !== c) uniq.push(c);
+      for (let i = 0; i < uniq.length - 1; i++) {
+        const a = this.cellPos(uniq[i]!, this.floorY(uniq[i]!) + 0.03 + e * 0.004);
+        const b = this.cellPos(uniq[i + 1]!, this.floorY(uniq[i + 1]!) + 0.03 + e * 0.004);
+        const len = a.distanceTo(b);
+        if (len > 1.5) continue; // телепорт — без линии
+        const yaw = Math.atan2(b.x - a.x, b.z - a.z);
+        for (let s = 0.12; s < len; s += 0.26) dashes.push({ p: a.clone().lerp(b, s / len), yaw, e });
+      }
+    });
+    if (!dashes.length) return;
+    const geo = new THREE.BoxGeometry(0.05, 0.02, 0.13);
+    const mat = new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false, transparent: true, opacity: 0.85 });
+    const mesh = new THREE.InstancedMesh(geo, mat, dashes.length);
+    const m = new THREE.Matrix4();
+    const q = new THREE.Quaternion();
+    const c = new THREE.Color();
+    dashes.forEach((d, i) => {
+      q.setFromAxisAngle(new THREE.Vector3(0, 1, 0), d.yaw);
+      m.compose(d.p, q, new THREE.Vector3(1, 1, 1));
+      mesh.setMatrixAt(i, m);
+      c.setHex(broken[d.e] ? PALETTE.paradox : PALETTE.echo).multiplyScalar(1.4);
+      mesh.setColorAt(i, c);
+    });
+    this.trails = mesh;
+    this.root.add(mesh);
+  }
+
+  /** «Призрак будущего»: где каждое эхо будет через несколько тиков. */
+  setGhosts(cells: readonly number[] | null): void {
+    const n = cells?.length ?? 0;
+    while (this.ghosts.length > n) {
+      const g = this.ghosts.pop()!;
+      this.root.remove(g.root);
+      disposeObject(g.root);
+    }
+    while (this.ghosts.length < n) {
+      const g = createEchoModel(this.ghosts.length);
+      g.root.traverse((o) => {
+        if (o instanceof THREE.Sprite) o.visible = false;
+      });
+      if (g.hologram) g.hologram.uniforms.uOpacity!.value = 0.28;
+      this.root.add(g.root);
+      this.ghosts.push(g);
+    }
+    cells?.forEach((cell, i) => {
+      const g = this.ghosts[i]!;
+      const actor = this.actors[i];
+      const same = actor && actor.path[actor.path.length - 1]?.cell === cell;
+      g.root.visible = cell >= 0 && !same;
+      g.root.position.copy(this.cellPos(cell, this.floorY(cell)));
+      g.root.scale.setScalar(0.92);
+    });
+  }
+
+  private updateExtras(time: number): void {
+    if (this.arrow?.visible && this.arrowCell >= 0) {
+      this.arrow.position.copy(this.cellPos(this.arrowCell, this.floorY(this.arrowCell) + 1.25 + Math.sin(time * 4) * 0.12));
+      this.arrow.rotation.y = time * 1.5;
+    }
+    for (const g of this.ghosts) if (g.hologram) g.hologram.uniforms.uTime!.value = time;
+    if (this.trails) (this.trails.material as THREE.MeshBasicMaterial).opacity = 0.6 + Math.sin(time * 3) * 0.2;
+  }
+
   dispose(): void {
+    this.setTrails(null);
+    this.setGhosts(null);
     for (const g of this.shared.geo) g.dispose();
     for (const m of this.shared.mat) m.dispose();
     for (const a of this.actors) disposeObject(a.model.root);
