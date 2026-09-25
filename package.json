@@ -32,6 +32,7 @@
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.12.0",
     "prettier": "^3.9.9",
+    "puppeteer-core": "^25.12.0",
     "tsx": "^4.23.15",
     "typescript": "~6.0",
     "typescript-eslint": "^8.70.1",

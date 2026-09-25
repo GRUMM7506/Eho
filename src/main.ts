@@ -1,50 +1,57 @@
-import { loadBuiltinLevels } from './data/levels';
-import { advance, current, newSession, recordEcho, resetRoom, rewind, undoEcho, type Session } from './core/session';
-import type { Action } from './core/types';
-import { drawDebug2D } from './render/debug2d';
+import { compileLevel } from './core/level';
+import { SANDBOX_LEVEL } from './data/sandbox';
+import { GameController } from './game/controller';
+import { InputHub } from './input/input';
+import { GameView } from './render/gameView';
 
-/** Этап 1: отладочный 2D-режим для проверки ядра. */
-function bootDebug2D(root: HTMLElement): void {
-  const levels = loadBuiltinLevels();
-  let session: Session = newSession(levels[0]!);
+/** Этап 2: 3D-сцена, камера и управление в песочнице. */
+function boot(root: HTMLElement): void {
+  document.body.style.margin = '0';
+  document.body.style.background = '#0D0B1E';
+  document.body.style.overflow = 'hidden';
   const canvas = document.createElement('canvas');
-  const info = document.createElement('pre');
-  root.append(canvas, info);
-  const ctx = canvas.getContext('2d')!;
-  const cs = 48;
-  const draw = () => {
-    const s = current(session);
-    canvas.width = s.level.width * cs;
-    canvas.height = s.level.height * cs;
-    drawDebug2D(ctx, s, cs);
-    info.textContent = `tick ${s.tick}/${s.level.tickLimit}  echoes ${session.records.length}/${s.level.maxEchoes}  ${s.outcome}  rec ${s.record}`;
-  };
-  const keys: Record<string, Action> = {
-    ArrowUp: 'up',
-    KeyW: 'up',
-    ArrowRight: 'right',
-    KeyD: 'right',
-    ArrowDown: 'down',
-    KeyS: 'down',
-    ArrowLeft: 'left',
-    KeyA: 'left',
-    Space: 'none',
-    KeyF: 'interact',
-  };
-  window.addEventListener('keydown', (e) => {
-    const a = keys[e.code];
-    if (a) {
-      e.preventDefault();
-      session = advance(session, a).session;
-      if (current(session).outcome === 'timeout') session = recordEcho(session);
-    } else if (e.code === 'KeyR') session = recordEcho(session);
-    else if (e.code === 'KeyZ') session = undoEcho(session);
-    else if (e.code === 'Backspace') session = rewind(session);
-    else if (e.code === 'KeyX') session = resetRoom(session);
-    draw();
+  canvas.style.cssText = 'display:block;width:100vw;height:100vh;touch-action:none';
+  root.append(canvas);
+  const view = new GameView(canvas, {
+    quality: 'high',
+    colorblind: new URLSearchParams(location.search).has('cb'),
+    reducedMotion: false,
+    perspective: new URLSearchParams(location.search).has('persp'),
+    freeCamera: false,
+    isMobile: false,
   });
-  draw();
+  const input = new InputHub();
+  input.attach(canvas, view.orbit);
+  input.gameplay = true;
+  const level = compileLevel(SANDBOX_LEVEL);
+  const ctl = new GameController(view, input, {
+    onTick: () => undefined,
+    onReset: () => undefined,
+    onWin: () => undefined,
+    onDeath: () => undefined,
+    onLoopEnd: () => undefined,
+    onLoopStart: () => undefined,
+  }, level);
+  input.onCommand = (cmd) => {
+    if (cmd === 'camLeft') view.orbit.turn(-1);
+    else if (cmd === 'camRight') view.orbit.turn(1);
+    else if (cmd === 'camReset') view.orbit.reset();
+    else if (cmd === 'record') ctl.record();
+    else if (cmd === 'undoEcho') ctl.undoEcho();
+    else if (cmd === 'rewind') ctl.rewind();
+  };
+  const resize = () => view.resize(window.innerWidth, window.innerHeight, { top: 0, right: 0, bottom: 0, left: 0 });
+  window.addEventListener('resize', resize);
+  resize();
+  ctl.load(level);
+  let last = performance.now();
+  const loop = (now: number) => {
+    const dt = Math.min(0.1, (now - last) / 1000);
+    last = now;
+    ctl.frame(dt);
+    requestAnimationFrame(loop);
+  };
+  requestAnimationFrame(loop);
 }
 
-const root = document.getElementById('app')!;
-bootDebug2D(root);
+boot(document.getElementById('app')!);
