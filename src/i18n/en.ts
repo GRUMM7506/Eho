@@ -54,7 +54,7 @@ export const en: Dict = {
   'hud.wait': 'Wait',
   'hud.use': 'Use',
   'hud.start': 'Make a move to start the clock',
-  'hud.startTouch': 'Swipe or tap the floor to start the clock',
+  'hud.startTouch': 'Drag a finger or tap the floor to start the clock',
   'hud.compass': 'Level north',
   'hud.camLeft': 'Rotate camera left',
   'hud.camTop': 'Top view',
@@ -127,7 +127,8 @@ export const en: Dict = {
   'settings.shake': 'Screen shake',
   'settings.vibration': 'Vibration',
   'settings.controls': 'Controls',
-  'settings.dpad': 'Buttons instead of swipes',
+  'settings.dpad': 'On-screen D-pad',
+  'settings.touchStick': 'Floating joystick',
   'settings.pressKey': 'Press a key…',
   'settings.resetKeys': 'Default keys',
   'settings.language': 'Language',
@@ -169,7 +170,8 @@ export const en: Dict = {
   'about.controls': 'Controls',
   'about.pc':
     'WASD/arrows — move, F/Space — interact, R — record echo, Z — undo echo, Backspace — step back, Q/E — rotate camera, RMB — orbit, wheel — zoom, Tab — trails, H — hint, Esc — pause.',
-  'about.touch': 'Swipe — step (hold to keep walking), tap — wait, two fingers — orbit and zoom.',
+  'about.touch':
+    'Touch and drag — joystick (hold to keep walking), tap — wait, two fingers or the buttons on the right — camera.',
   'about.pad':
     'Gamepad: stick/d-pad — move, A — interact, X — record, Y — undo, B — step back, right stick — camera, bumpers — rotate.',
   'about.credits':

@@ -25,6 +25,9 @@ export interface HudCallbacks {
   release(a: ScreenAction): void;
 }
 
+/** Насколько далеко «шарик» джойстика отходит от центра. */
+const STICK_RADIUS = 44;
+
 const hex = (n: number) => `#${n.toString(16).padStart(6, '0')}`;
 
 /** Игровой HUD: заголовок, таймлайн петли, слоты эхо, кнопки, компас, подсказки, тосты. */
@@ -49,6 +52,9 @@ export class Hud implements Screen {
   private readonly dpad: HTMLElement;
   private dpadRot = 0;
   private readonly touchCam: HTMLElement;
+  private readonly stickKnob = h('div.stick-knob');
+  private readonly stickArrow = h('div.stick-arrow');
+  private readonly stick = h('div.stick', { 'aria-hidden': 'true' }, this.stickArrow, this.stickKnob);
   private readonly buttons = new Map<string, HTMLButtonElement[]>();
   private keymap: KeyMap;
   private touch = false;
@@ -193,6 +199,7 @@ export class Hud implements Screen {
       this.bottom,
       this.touchPad,
       this.touchCam,
+      this.stick,
       this.startMsg,
       this.hintBubble,
       this.deathBox,
@@ -381,6 +388,25 @@ export class Hud implements Screen {
       void b.offsetWidth;
       b.classList.add('flash');
     }
+  }
+
+  /**
+   * Плавающий джойстик: основание в точке касания, «шарик» под пальцем (не дальше края),
+   * стрелка — выбранное направление в экранных градусах (0 — вверх, по часовой).
+   */
+  showStick(s: { x0: number; y0: number; x: number; y: number } | null, arrowDeg: number | null): void {
+    this.stick.classList.toggle('on', !!s);
+    if (!s) return;
+    const r = this.el.getBoundingClientRect();
+    this.stick.style.left = `${s.x0 - r.left}px`;
+    this.stick.style.top = `${s.y0 - r.top}px`;
+    const dx = s.x - s.x0;
+    const dy = s.y - s.y0;
+    const len = Math.hypot(dx, dy);
+    const k = len > STICK_RADIUS ? STICK_RADIUS / len : 1;
+    this.stickKnob.style.transform = `translate(${dx * k}px, ${dy * k}px)`;
+    this.stickArrow.hidden = arrowDeg === null;
+    if (arrowDeg !== null) this.stickArrow.style.transform = `rotate(${arrowDeg}deg)`;
   }
 
   setActive(action: string, on: boolean): void {

@@ -3,6 +3,7 @@ import type { AudioApi, SfxName } from './audio';
 import { WebAudioEngine } from './audio/engine';
 import { createLoop, step, inputToAction } from './core/sim';
 import { isPerfect, starsFor } from './core/session';
+import { gridScreenVec, screenToGrid } from './camera/relative';
 import type { Hint, Level, SimEvent, WorldState } from './core/types';
 import { loadBuiltinLevels, loadCustomLevels } from './data/levels';
 import { createMenuScene, type MenuScene } from './data/menuRoom';
@@ -166,6 +167,15 @@ export class App implements AppApi {
     };
 
     this.input.onCommand = (c) => this.command(c);
+    this.input.onStick = (s) => {
+      let deg: number | null = null;
+      if (s?.dir) {
+        const o = this.view.orbit;
+        const [x, y] = gridScreenVec(screenToGrid(s.dir, o.inputYaw), o.inputYaw, o.pitch);
+        deg = (Math.atan2(x, y) * 180) / Math.PI;
+      }
+      this.hud.showStick(s, deg);
+    };
     this.input.onMenuNav = (nav) => {
       document.body.classList.add('using-pad');
       this.router.nav(nav);
@@ -280,6 +290,7 @@ export class App implements AppApi {
     setLang(s.language);
     this.input.keymap = s.keymap;
     this.input.dpadMode = s.dpad;
+    this.input.stickMode = s.touchStick;
     this.hud.setKeymap(s.keymap);
     this.hud.setTouch(
       document.body.classList.contains('touch') || (this.isTouch && !matchMedia('(pointer: fine)').matches),

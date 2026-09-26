@@ -17,7 +17,7 @@
   "hints": [
     {
       "text": { "ru": "Поверните камеру: Q и E, правая кнопка мыши — вращение, колесо — зум. «Вверх» всегда от экрана", "en": "Rotate the camera: Q and E, right mouse to orbit, wheel to zoom. “Up” is always away from you" },
-      "touch": { "ru": "Два пальца — вращать и приближать камеру. Свайп вверх — всегда «от себя»", "en": "Two fingers orbit and zoom. Swipe up always means “away”" },
+      "touch": { "ru": "Кнопки справа или два пальца — вращать камеру. Глаз — вид сверху", "en": "Buttons on the right or two fingers orbit the camera. The eye shows a top view" },
       "keys": ["camLeft", "camRight"],
       "maxEchoes": 0,
       "arrow": [7, 3]

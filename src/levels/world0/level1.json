@@ -16,7 +16,7 @@
   "hints": [
     {
       "text": { "ru": "Иди к светящемуся выходу: WASD или стрелки", "en": "Walk to the glowing exit: WASD or arrows" },
-      "touch": { "ru": "Свайпни, чтобы сделать шаг к выходу", "en": "Swipe to step towards the exit" },
+      "touch": { "ru": "Коснись поля и потяни палец к выходу", "en": "Touch the floor and drag towards the exit" },
       "arrow": [7, 3],
       "keys": ["up", "left", "down", "right"]
     }

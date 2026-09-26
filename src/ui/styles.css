@@ -1761,3 +1761,55 @@ body.reduced-motion * {
     max-width: none;
   }
 }
+
+/* ————— плавающий джойстик ————— */
+
+.stick {
+  position: absolute;
+  width: 112px;
+  height: 112px;
+  margin: -56px 0 0 -56px;
+  border-radius: 50%;
+  border: 1px solid rgba(140, 158, 255, 0.35);
+  background: radial-gradient(circle, rgba(140, 158, 255, 0.1), rgba(21, 18, 43, 0.35));
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+
+.stick.on {
+  opacity: 1;
+}
+
+.stick-knob {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 44px;
+  height: 44px;
+  margin: -22px 0 0 -22px;
+  border-radius: 50%;
+  background: rgba(140, 158, 255, 0.55);
+  box-shadow: 0 0 18px rgba(140, 158, 255, 0.45);
+}
+
+/* Стрелка от центра к краю — куда пойдёт герой (вдоль плиток). */
+.stick-arrow {
+  position: absolute;
+  inset: 0;
+}
+
+.stick-arrow::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 4px;
+  margin-left: -9px;
+  border: 9px solid transparent;
+  border-bottom: 12px solid var(--player);
+  border-top: 0;
+}
+
+.stick-arrow[hidden] {
+  display: none;
+}

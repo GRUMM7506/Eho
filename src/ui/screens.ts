@@ -713,6 +713,7 @@ export class SettingsScreen extends BaseScreen {
           ],
           (v) => up({ language: v }),
         ),
+        toggle(t('settings.touchStick'), s.touchStick, 'touchStick'),
         toggle(t('settings.dpad'), s.dpad, 'dpad'),
         toggle(t('settings.vibration'), s.vibration, 'vibration'),
       ),

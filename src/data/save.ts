@@ -22,6 +22,8 @@ export interface Settings {
   /** Изометрическая камера под 45° (по умолчанию — прямой вид вдоль сетки). */
   diagonalCamera: boolean;
   dpad: boolean;
+  /** Плавающий джойстик вместо свайпов (тач). */
+  touchStick: boolean;
   trails: boolean;
 }
 
@@ -67,6 +69,7 @@ export function defaultSettings(env: {
     freeCamera: false,
     diagonalCamera: false,
     dpad: false,
+    touchStick: true,
     trails: false,
   };
 }

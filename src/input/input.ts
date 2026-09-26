@@ -9,6 +9,18 @@ export type ScreenAction = ScreenDir | 'interact' | 'wait';
 
 export type MenuNav = 'up' | 'down' | 'left' | 'right' | 'accept' | 'back';
 
+export interface StickState {
+  /** Центр (точка касания) и текущее положение пальца, в пикселях экрана. */
+  x0: number;
+  y0: number;
+  x: number;
+  y: number;
+  dir: ScreenDir | null;
+}
+
+/** Мёртвая зона джойстика в пикселях: ближе к центру — стоим. */
+export const STICK_DEAD = 18;
+
 const DIR_OF: Partial<Record<Bindable, ScreenDir>> = { up: 'up', down: 'down', left: 'left', right: 'right' };
 
 /**
@@ -26,6 +38,10 @@ export class InputHub {
   onAnyInput: (kind: 'keyboard' | 'touch' | 'mouse' | 'gamepad') => void = () => undefined;
   /** Кнопки вместо свайпов: одиночный палец не шагает. */
   dpadMode = false;
+  /** Плавающий джойстик для пальца: центр — точка касания, направление держится, пока палец отведён. */
+  stickMode = true;
+  /** Состояние джойстика для отрисовки (null — скрыт). */
+  onStick: (s: StickState | null) => void = () => undefined;
   lastDevice: 'keyboard' | 'touch' | 'mouse' | 'gamepad' = 'keyboard';
 
   private readonly queue: ScreenAction[] = [];
@@ -104,6 +120,7 @@ export class InputHub {
     this.heldPointer = null;
     this.heldPad = null;
     this.heldButtons = null;
+    this.onStick(null);
   }
 
   private enqueue(a: ScreenAction): void {
@@ -193,9 +210,16 @@ export class InputHub {
       this.lastPinch = Math.hypot(a.x - b.x, a.y - b.y);
       this.lastAngle = Math.atan2(b.y - a.y, b.x - a.x);
       this.lastCentroid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+      this.onStick(null);
     } else if (e.pointerType === 'mouse' && (e.button === 2 || e.button === 1)) {
       this.orbit?.beginDrag();
+    } else if (this.useStick(e.pointerType)) {
+      this.onStick({ x0: e.clientX, y0: e.clientY, x: e.clientX, y: e.clientY, dir: null });
     }
+  }
+
+  private useStick(type: string): boolean {
+    return type === 'touch' && this.stickMode && this.gameplay && !this.dpadMode;
   }
 
   private pointerMove(e: PointerEvent): void {
@@ -243,6 +267,10 @@ export class InputHub {
     }
     // Один палец / левая кнопка мыши — свайп-шаг.
     if (!this.gameplay || this.dpadMode) return;
+    if (this.useStick(p.type)) {
+      this.stickMove(p);
+      return;
+    }
     const tx = p.x - p.x0;
     const ty = p.y - p.y0;
     const threshold = p.type === 'touch' ? 22 : 30;
@@ -257,6 +285,21 @@ export class InputHub {
       p.x0 = p.x;
       p.y0 = p.y;
     }
+  }
+
+  /** Джойстик: центр не сдвигается, направление — куда отведён палец; в мёртвой зоне — стоим. */
+  private stickMove(p: { x: number; y: number; x0: number; y0: number; fired: boolean }): void {
+    const orbit = this.orbit!;
+    const tx = p.x - p.x0;
+    const ty = p.y - p.y0;
+    let dir: ScreenDir | null = null;
+    if (Math.hypot(tx, ty) >= STICK_DEAD) dir = swipeToScreenDir(tx, ty, orbit.inputYaw, orbit.pitch);
+    if (dir && dir !== this.heldPointer) {
+      this.enqueue(dir);
+      p.fired = true;
+    }
+    this.heldPointer = dir;
+    this.onStick({ x0: p.x0, y0: p.y0, x: p.x, y: p.y, dir });
   }
 
   private pointerUp(e: PointerEvent): void {
@@ -275,6 +318,7 @@ export class InputHub {
       return;
     }
     this.heldPointer = null;
+    this.onStick(null);
     const dur = performance.now() - p.t0;
     if (this.gameplay && !p.fired && dur < 350 && Math.hypot(p.x - p.x0, p.y - p.y0) < 14) {
       this.enqueue('wait');
