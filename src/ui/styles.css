@@ -105,6 +105,11 @@ body {
   pointer-events: auto;
 }
 
+/* сам экран-цель (сплэш) — прямой потомок #ui, где касания выключены правилом по id */
+#ui > .screen.shown.interactive {
+  pointer-events: auto;
+}
+
 .screen.scrim {
   background: radial-gradient(ellipse at 50% 40%, rgba(13, 11, 30, 0.55), rgba(13, 11, 30, 0.9));
   pointer-events: auto;

@@ -111,7 +111,8 @@ export class SplashScreen implements Screen {
       app.unlockAudio();
       app.goMenu();
     };
-    this.el.addEventListener('pointerdown', go);
+    // Слушаем окно, а не только сам экран: касание засчитывается, даже если попало в canvas.
+    this.onPointer = () => go();
     this.onKey = (e: KeyboardEvent) => {
       if (e.code === 'Tab') return;
       e.preventDefault();
@@ -119,6 +120,7 @@ export class SplashScreen implements Screen {
     };
   }
   private readonly onKey: (e: KeyboardEvent) => void;
+  private readonly onPointer: () => void;
   enter(): void {
     this.done = false;
     clear(this.el);
@@ -128,6 +130,7 @@ export class SplashScreen implements Screen {
       h('div.press', null, this.app.isTouch ? t('splash.tap') : t('splash.press')),
     );
     window.addEventListener('keydown', this.onKey);
+    window.addEventListener('pointerdown', this.onPointer);
     this.pad = window.setInterval(() => {
       const pads = navigator.getGamepads?.() ?? [];
       if ([...pads].some((p) => p?.buttons.some((b) => b.pressed))) this.onKey(new KeyboardEvent('keydown'));
@@ -136,6 +139,7 @@ export class SplashScreen implements Screen {
   private pad = 0;
   leave(): void {
     window.removeEventListener('keydown', this.onKey);
+    window.removeEventListener('pointerdown', this.onPointer);
     clearInterval(this.pad);
   }
   refresh(): void {
