@@ -12,11 +12,15 @@ export interface OrbitOptions {
   perspective: boolean;
   freeCamera: boolean;
   reducedMotion: boolean;
+  /** Изометрия под 45°. Выключено — камера смотрит прямо вдоль сетки (свайпы и стрелки однозначны). */
+  diagonal: boolean;
 }
 
 const PITCH_MIN = 20;
 const PITCH_MAX = 75;
 const DEFAULT_PITCH = 35;
+/** Вид сверху: почти отвесно, видно всё, что прячется за стенами. */
+const TOP_PITCH = 82;
 const FOV = 32;
 
 /**
@@ -47,7 +51,10 @@ export class OrbitCamera {
   private shakeTime = 0;
   /** Облёт: плавное вращение для экрана победы и меню. */
   orbitSpeed = 0;
-  opts: OrbitOptions = { perspective: false, freeCamera: false, reducedMotion: false };
+  opts: OrbitOptions = { perspective: false, freeCamera: false, reducedMotion: false, diagonal: false };
+  /** Включён вид сверху. */
+  topView = false;
+  private pitchTarget: number | null = null;
 
   constructor() {
     this.ortho = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 400);
@@ -62,8 +69,45 @@ export class OrbitCamera {
   setBounds(box: THREE.Box3, defaultYaw: number): void {
     this.bounds.copy(box);
     this.bounds.getCenter(this.target);
-    this.defaultYaw = defaultYaw;
+    this.levelYaw = defaultYaw;
+    this.defaultYaw = this.straighten(defaultYaw);
     this.reset(true);
+  }
+
+  private levelYaw = 45;
+
+  /** Шаг доводки: 45° в изометрии, 90° в прямом виде и сверху. */
+  private get snapStep(): number {
+    return this.opts.diagonal && !this.topView ? 45 : 90;
+  }
+
+  /** Угол уровня без диагонали, если изометрия выключена (45° → 0°). */
+  private straighten(yaw: number): number {
+    return this.opts.diagonal ? yaw : Math.floor(normDeg(yaw) / 90 + 1e-6) * 90;
+  }
+
+  /** Сменить режим (настройка): пересчитать угол по умолчанию и довернуть камеру. */
+  setDiagonal(on: boolean): void {
+    if (this.opts.diagonal === on) return;
+    this.opts = { ...this.opts, diagonal: on };
+    this.defaultYaw = this.straighten(this.levelYaw);
+    if (!this.topView) this.yawTarget = this.nearestEquivalent(this.defaultYaw);
+  }
+
+  /** Вид сверху ↔ обычный вид. */
+  toggleTopView(): void {
+    this.setTopView(!this.topView);
+  }
+
+  setTopView(on: boolean): void {
+    this.topView = on;
+    this.pitchVel = 0;
+    this.yawVel = 0;
+    this.pitchTarget = on ? TOP_PITCH : DEFAULT_PITCH;
+    const step = this.snapStep;
+    this.yawTarget = on
+      ? Math.round(this.inputYaw / 90) * 90
+      : this.nearestEquivalent(Math.round(this.defaultYaw / step) * step);
   }
 
   reset(instant = false): void {
@@ -72,6 +116,8 @@ export class OrbitCamera {
     this.pitch = DEFAULT_PITCH;
     this.pitchVel = 0;
     this.yawVel = 0;
+    this.topView = false;
+    this.pitchTarget = null;
     if (instant) {
       this.yaw = this.defaultYaw;
       this.yawTarget = null;
@@ -91,6 +137,7 @@ export class OrbitCamera {
   beginDrag(): void {
     this.dragging = true;
     this.yawTarget = null;
+    this.pitchTarget = null;
     this.yawVel = 0;
     this.pitchVel = 0;
   }
@@ -102,7 +149,9 @@ export class OrbitCamera {
   /** Вращение от жеста (в градусах за событие); dt нужен для оценки скорости инерции. */
   rotateBy(dYaw: number, dPitch: number, dt: number): void {
     this.yaw = normDeg(this.yaw + dYaw);
-    this.pitch = THREE.MathUtils.clamp(this.pitch + dPitch, PITCH_MIN, PITCH_MAX);
+    // Ручной наклон выводит из вида сверху.
+    if (this.topView && dPitch < 0) this.topView = false;
+    this.pitch = THREE.MathUtils.clamp(this.pitch + dPitch, PITCH_MIN, this.topView ? TOP_PITCH : PITCH_MAX);
     if (dt > 0) {
       this.yawVel = THREE.MathUtils.lerp(this.yawVel, dYaw / dt, 0.5);
       this.pitchVel = THREE.MathUtils.lerp(this.pitchVel, dPitch / dt, 0.5);
@@ -112,7 +161,8 @@ export class OrbitCamera {
 
   /** Поворот на 90° с анимацией (Q/E, бамперы). */
   turn(steps: number): void {
-    const base = this.yawTarget ?? Math.round(this.yaw / 45) * 45;
+    const step = this.snapStep;
+    const base = this.yawTarget ?? Math.round(this.yaw / step) * step;
     this.yawTarget = base + 90 * steps;
     this.yawVel = 0;
   }
@@ -192,7 +242,8 @@ export class OrbitCamera {
       } else {
         this.yawVel = 0;
         if (this.yawTarget === null && !this.opts.freeCamera) {
-          const snap = Math.round(this.yaw / 45) * 45;
+          const step = this.snapStep;
+          const snap = Math.round(this.yaw / step) * step;
           if (Math.abs(snap - this.yaw) > 0.01) this.yawTarget = snap;
         }
         if (this.yawTarget !== null) {
@@ -205,8 +256,20 @@ export class OrbitCamera {
           this.refit();
         }
       }
-      if (Math.abs(this.pitchVel) > 10) {
-        this.pitch = THREE.MathUtils.clamp(this.pitch + this.pitchVel * dt, PITCH_MIN, PITCH_MAX);
+      if (this.pitchTarget !== null) {
+        const k = this.opts.reducedMotion ? 1 : 1 - Math.exp(-dt * 9);
+        this.pitch += (this.pitchTarget - this.pitch) * k;
+        if (Math.abs(this.pitchTarget - this.pitch) < 0.02) {
+          this.pitch = this.pitchTarget;
+          this.pitchTarget = null;
+        }
+        this.refit();
+      } else if (Math.abs(this.pitchVel) > 10) {
+        this.pitch = THREE.MathUtils.clamp(
+          this.pitch + this.pitchVel * dt,
+          PITCH_MIN,
+          this.topView ? TOP_PITCH : PITCH_MAX,
+        );
         this.pitchVel *= Math.exp(-dt * 6);
         this.refit();
       }

@@ -13,6 +13,7 @@ export interface ViewSettings {
   reducedMotion: boolean;
   perspective: boolean;
   freeCamera: boolean;
+  diagonalCamera: boolean;
   isMobile: boolean;
 }
 
@@ -83,7 +84,9 @@ export class GameView {
       perspective: s.perspective,
       freeCamera: s.freeCamera,
       reducedMotion: s.reducedMotion,
+      diagonal: this.orbit.opts.diagonal,
     };
+    this.orbit.setDiagonal(s.diagonalCamera);
     this.post.configure(s.quality, s.reducedMotion, s.isMobile);
     this.post.setCamera(this.orbit.camera);
     if (qualityChanged && this.level) {

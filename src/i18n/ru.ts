@@ -54,6 +54,7 @@ export const ru = {
   'hud.startTouch': 'Свайпните или коснитесь поля, чтобы запустить время',
   'hud.compass': 'Север уровня',
   'hud.camLeft': 'Повернуть камеру влево',
+  'hud.camTop': 'Вид сверху',
   'hud.camRight': 'Повернуть камеру вправо',
   'hud.loop': 'Петля {n}',
   'hud.noHint': 'Подсказок нет — попробуйте сами!',
@@ -115,6 +116,7 @@ export const ru = {
   'settings.high': 'Высокое',
   'settings.perspective': 'Перспективная камера',
   'settings.freeCamera': 'Свободная камера (без доводки)',
+  'settings.diagonalCamera': 'Камера под углом 45°',
   'settings.fullscreen': 'Полный экран',
   'settings.accessibility': 'Доступность',
   'settings.reducedMotion': 'Уменьшенное движение',
@@ -155,6 +157,7 @@ export const ru = {
   'action.camLeft': 'Камера влево',
   'action.camRight': 'Камера вправо',
   'action.camReset': 'Сброс камеры',
+  'action.camTop': 'Вид сверху',
   'action.next': 'Дальше',
 
   'about.title': 'Об игре',

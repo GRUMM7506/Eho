@@ -19,6 +19,7 @@ export interface HudCallbacks {
   camLeft(): void;
   camRight(): void;
   camReset(): void;
+  camTop(): void;
   restartLoop(): void;
   press(a: ScreenAction): void;
   release(a: ScreenAction): void;
@@ -47,6 +48,7 @@ export class Hud implements Screen {
   private readonly touchPad: HTMLElement;
   private readonly dpad: HTMLElement;
   private dpadRot = 0;
+  private readonly touchCam: HTMLElement;
   private readonly buttons = new Map<string, HTMLButtonElement[]>();
   private keymap: KeyMap;
   private touch = false;
@@ -123,6 +125,7 @@ export class Hud implements Screen {
       btn('camLeft', 'camLeft', t('hud.camLeft'), 'camLeft', () => cb.camLeft()),
       compass,
       btn('camRight', 'camRight', t('hud.camRight'), 'camRight', () => cb.camRight()),
+      btn('camTop', 'eye', t('hud.camTop'), 'camTop', () => cb.camTop()),
     );
     this.bottom = h('div.hud-bottom', null, actions, cam);
 
@@ -173,6 +176,14 @@ export class Hud implements Screen {
       tbtn('interact', 'hand', t('hud.use'), () => cb.press('interact')),
     );
     this.touchPad = h('div.touch-pad', null, this.dpad, touchActions);
+    // Камера на телефоне: поворот двумя пальцами неочевиден, поэтому — явные кнопки.
+    this.touchCam = h(
+      'div.touch-cam',
+      null,
+      btn('camLeft', 'camLeft', t('hud.camLeft'), null, () => cb.camLeft(), '.icon-only'),
+      btn('camTop', 'eye', t('hud.camTop'), null, () => cb.camTop(), '.icon-only'),
+      btn('camRight', 'camRight', t('hud.camRight'), null, () => cb.camRight(), '.icon-only'),
+    );
 
     this.deathBox.hidden = true;
     this.el = h(
@@ -181,6 +192,7 @@ export class Hud implements Screen {
       this.topBar,
       this.bottom,
       this.touchPad,
+      this.touchCam,
       this.startMsg,
       this.hintBubble,
       this.deathBox,
@@ -391,7 +403,11 @@ export class Hud implements Screen {
         if (d) left = d.right + 6;
         const actions = this.touchPad.querySelector('.touch-actions')!.getBoundingClientRect();
         right = vw - actions.left + 6;
-      } else if (r.height) bottom = vh - r.top + 6;
+      } else {
+        if (r.height) bottom = vh - r.top + 6;
+        const c = this.touchCam.getBoundingClientRect();
+        if (c.width) right = vw - c.left + 4;
+      }
     } else {
       const r = this.bottom.getBoundingClientRect();
       if (r.height) bottom = vh - r.top + 6;

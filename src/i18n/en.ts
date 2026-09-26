@@ -57,6 +57,7 @@ export const en: Dict = {
   'hud.startTouch': 'Swipe or tap the floor to start the clock',
   'hud.compass': 'Level north',
   'hud.camLeft': 'Rotate camera left',
+  'hud.camTop': 'Top view',
   'hud.camRight': 'Rotate camera right',
   'hud.loop': 'Loop {n}',
   'hud.noHint': 'No hints here — you can do it!',
@@ -118,6 +119,7 @@ export const en: Dict = {
   'settings.high': 'High',
   'settings.perspective': 'Perspective camera',
   'settings.freeCamera': 'Free camera (no snapping)',
+  'settings.diagonalCamera': 'Diagonal camera (45°)',
   'settings.fullscreen': 'Fullscreen',
   'settings.accessibility': 'Accessibility',
   'settings.reducedMotion': 'Reduced motion',
@@ -158,6 +160,7 @@ export const en: Dict = {
   'action.camLeft': 'Camera left',
   'action.camRight': 'Camera right',
   'action.camReset': 'Reset camera',
+  'action.camTop': 'Top view',
   'action.next': 'Next',
 
   'about.title': 'About',

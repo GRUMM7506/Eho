@@ -19,6 +19,8 @@ export interface Settings {
   language: 'ru' | 'en';
   perspective: boolean;
   freeCamera: boolean;
+  /** Изометрическая камера под 45° (по умолчанию — прямой вид вдоль сетки). */
+  diagonalCamera: boolean;
   dpad: boolean;
   trails: boolean;
 }
@@ -63,6 +65,7 @@ export function defaultSettings(env: {
     language: env.language,
     perspective: false,
     freeCamera: false,
+    diagonalCamera: false,
     dpad: false,
     trails: false,
   };

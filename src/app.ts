@@ -125,6 +125,7 @@ export class App implements AppApi {
         camLeft: () => this.command('camLeft'),
         camRight: () => this.command('camRight'),
         camReset: () => this.command('camReset'),
+        camTop: () => this.command('camTop'),
         restartLoop: () => this.command('restart'),
         press: (a) => this.input.pressButton(a),
         release: (a) => this.input.releaseButton(a),
@@ -245,6 +246,7 @@ export class App implements AppApi {
       this.view.orbit.yaw,
       this.view.orbit.inputYaw,
     );
+    this.hud.setActive('camTop', this.view.orbit.topView);
     this.updateHint();
   }
 
@@ -268,6 +270,7 @@ export class App implements AppApi {
       reducedMotion: s.reducedMotion,
       perspective: s.perspective,
       freeCamera: s.freeCamera,
+      diagonalCamera: s.diagonalCamera,
       isMobile: this.isTouch,
     };
   }
@@ -617,6 +620,9 @@ export class App implements AppApi {
         break;
       case 'camReset':
         this.view.orbit.reset();
+        break;
+      case 'camTop':
+        this.view.orbit.toggleTopView();
         break;
       default:
         break;

@@ -15,6 +15,7 @@ export const BINDABLE = [
   'camLeft',
   'camRight',
   'camReset',
+  'camTop',
   'next',
 ] as const;
 
@@ -37,6 +38,7 @@ export const DEFAULT_KEYMAP: Readonly<KeyMap> = {
   camLeft: ['KeyQ'],
   camRight: ['KeyE'],
   camReset: ['KeyC'],
+  camTop: ['KeyT'],
   next: ['Enter'],
 };
 

@@ -733,6 +733,7 @@ export class SettingsScreen extends BaseScreen {
         ),
         toggle(t('settings.perspective'), s.perspective, 'perspective'),
         toggle(t('settings.freeCamera'), s.freeCamera, 'freeCamera'),
+        toggle(t('settings.diagonalCamera'), s.diagonalCamera, 'diagonalCamera'),
         h(
           'div.setting',
           null,

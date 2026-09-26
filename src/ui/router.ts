@@ -25,9 +25,26 @@ export class Router {
   /** Экраны, которые должны быть видны (защита от гонки анимаций при медленных кадрах). */
   private readonly showing = new Set<Screen>();
 
+  /** Когда последний раз появился экран: касание, начатое на прошлом экране, не должно нажать кнопку нового. */
+  private shownAt = -Infinity;
+  private downAt = -Infinity;
+
   constructor(root: HTMLElement) {
     this.root = root;
     window.addEventListener('keydown', (e) => this.keyNav(e));
+    // На телефоне «клик» от касания приходит уже после смены экрана и попадает в кнопку под пальцем.
+    // Гасим клик, если палец опустился ещё до появления текущего экрана. Клики с клавиатуры (detail = 0) не трогаем.
+    window.addEventListener('pointerdown', () => (this.downAt = performance.now()), true);
+    root.addEventListener(
+      'click',
+      (e) => {
+        if (e.detail > 0 && this.downAt < this.shownAt) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      },
+      true,
+    );
   }
 
   get top(): Screen | null {
@@ -78,6 +95,7 @@ export class Router {
   private show(s: Screen): void {
     if (!s.el.isConnected) this.root.append(s.el);
     this.showing.add(s);
+    this.shownAt = performance.now();
     s.el.hidden = false;
     s.el.classList.remove('shown');
     s.enter?.();
