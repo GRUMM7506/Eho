@@ -8,3 +8,6 @@ coverage
 
 # Сборки обёрток
 release
+
+# собранные APK/EXE
+out/
