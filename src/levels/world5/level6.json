@@ -1,0 +1,47 @@
+{
+  "par": {
+    "echoes": 1,
+    "ticks": 6
+  },
+  "id": "w5-6",
+  "world": 5,
+  "index": 6,
+  "name": {
+    "ru": "Ступень назад",
+    "en": "Step Back"
+  },
+  "legend": {
+    "T": {
+      "type": "timerDoor",
+      "from": 0,
+      "to": 4
+    }
+  },
+  "map": [
+    "##########",
+    "#S.:.T.X.#",
+    "#.=.######",
+    "##########"
+  ],
+  "heights": [
+    "0000000000",
+    "0110111110",
+    "0110000000",
+    "0000000000"
+  ],
+  "tickLimit": 16,
+  "maxEchoes": 2,
+  "reverseEchoes": true,
+  "hints": [
+    {
+      "text": {
+        "ru": "Белая дверь открыта только в первые тики. Обратная копия уже стоит там, где вы закончили — станьте ей на спину",
+        "en": "The white door is open only in the first ticks. A reverse copy already stands where you finished — step on its back"
+      },
+      "arrow": [
+        3,
+        1
+      ]
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "par": {
+    "echoes": 3,
+    "ticks": 21
+  },
+  "id": "w4-8",
+  "world": 4,
+  "index": 8,
+  "name": {
+    "ru": "Надзор",
+    "en": "Surveillance"
+  },
+  "legend": {
+    "T": {
+      "type": "timerDoor",
+      "from": 3,
+      "to": 5
+    },
+    "k": {
+      "type": "key",
+      "color": "orange"
+    },
+    "L": {
+      "type": "lock",
+      "color": "orange"
+    },
+    "e": {
+      "type": "emitter",
+      "dir": "N"
+    },
+    "g": {
+      "type": "guard",
+      "facing": "N",
+      "range": 2
+    }
+  },
+  "map": [
+    "################",
+    "#S>>>>T....L..A#",
+    "#.##########ae.X",
+    "#.##########.###",
+    "#.k#########g###",
+    "################"
+  ],
+  "tickLimit": 28,
+  "maxEchoes": 4,
+  "hints": [
+    {
+      "text": {
+        "ru": "Белая дверь открыта недолго, замок ждёт ключа, луч и страж стерегут выход. Каждой копии — своя работа",
+        "en": "The white door opens briefly, the lock wants a key, a beam and a guard watch the exit. Give every copy its own job"
+      }
+    }
+  ]
+}
