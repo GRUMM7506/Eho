@@ -20,7 +20,7 @@ import { Hud } from './ui/hud';
 import { Router, type Screen } from './ui/router';
 import { AboutScreen, LevelSelect, MainMenu, PauseScreen, SettingsScreen, SplashScreen, WinScreen, WorldMap, type AppApi } from './ui/screens';
 
-type Mode = 'menu' | 'game';
+type Mode = 'menu' | 'game' | 'editor';
 
 export interface AppHooks {
   /** Эффекты поверх рендера (частицы и пр.), подключаются на этапе полировки. */
@@ -63,7 +63,7 @@ export class App implements AppApi {
   private resolvedQuality: Quality = 'high';
   private fps = { frames: 0, time: 0, low: 0 };
   private lastWin: WinInfo | null = null;
-  private editorScreen: Screen | null = null;
+  private editorScreen: (Screen & { insetLeft(): number }) | null = null;
 
   constructor(root: HTMLElement) {
     this.isTouch = matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
@@ -186,6 +186,11 @@ export class App implements AppApi {
   }
 
   private frame(dt: number): void {
+    if (this.mode === 'editor') {
+      this.input.pollGamepad(dt);
+      this.view.render(dt, 1);
+      return;
+    }
     if (this.mode === 'menu') {
       this.input.pollGamepad(dt);
       const r = this.menuScene?.frame(dt);
@@ -294,7 +299,9 @@ export class App implements AppApi {
     const w = window.innerWidth;
     const hgt = window.innerHeight;
     const insets =
-      this.mode === 'game'
+      this.mode === 'editor'
+        ? { top: 70, right: 0, bottom: 40, left: this.editorScreen?.insetLeft() ?? 0 }
+        : this.mode === 'game'
         ? this.hud.insets()
         : w > 700
           ? { top: 0, right: 0, bottom: 0, left: Math.min(w * 0.42, 460) }
@@ -357,9 +364,39 @@ export class App implements AppApi {
   goEditor(): void {
     void import('./editor/editor').then(({ createEditorScreen }) => {
       this.editorScreen ??= createEditorScreen(this);
-      if (this.mode !== 'menu') this.enterMenuScene();
       this.router.go(this.editorScreen);
     });
+  }
+
+  /** Режим редактора: основной холст показывает предпросмотр уровня. */
+  enterEditorMode(): void {
+    this.mode = 'editor';
+    this.controller = null;
+    this.replay = null;
+    this.testPlay = false;
+    this.hud.el.hidden = true;
+    this.input.gameplay = false;
+    document.body.dataset.gameplay = '0';
+    this.view.orbit.orbitSpeed = 0;
+    this.audio.setWorld(-1);
+    this.onResize();
+  }
+
+  private previewKey: Level | null = null;
+
+  /** Показать уровень в предпросмотре редактора (без симуляции). */
+  previewLevel(level: Level, state: WorldState): void {
+    if (this.previewKey !== level) {
+      this.view.setLevel(level, state);
+      this.previewKey = level;
+      this.onResize();
+    } else this.view.setState(state);
+  }
+
+  exitEditor(): void {
+    this.previewKey = null;
+    this.enterMenuScene();
+    this.goMenu();
   }
 
   hasProgress(): boolean {

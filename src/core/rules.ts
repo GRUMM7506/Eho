@@ -1,5 +1,5 @@
 import type { Mechanic } from './mechanic';
-import { HOOKS, MECHANICS } from './mechanics';
+import { getHooks, getMechanics } from './mechanics';
 import type { Dir, FixtureType, Level, Mover, SimEvent } from './types';
 import {
   anyActorAt,
@@ -19,7 +19,7 @@ let ownerTable: Map<FixtureType, Mechanic> | null = null;
 export function ownerOf(type: FixtureType): Mechanic | undefined {
   if (!ownerTable) {
     ownerTable = new Map();
-    for (const m of MECHANICS) for (const t of m.fixtures) ownerTable.set(t, m);
+    for (const m of getMechanics()) for (const t of m.fixtures) ownerTable.set(t, m);
   }
   return ownerTable.get(type);
 }
@@ -269,7 +269,7 @@ export function interact(d: Draft, actor: number): boolean {
     const r = own(d, actor, front);
     if (r !== 'skip') return r === 'done';
   }
-  for (const fn of HOOKS.looseInteract) {
+  for (const fn of getHooks().looseInteract) {
     const r = fn(d, actor, front);
     if (r !== 'skip') return r === 'done';
   }

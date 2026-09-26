@@ -1474,3 +1474,240 @@ body.reduced-motion * {
     top: calc(60px + var(--safe-t));
   }
 }
+
+/* ————— редактор ————— */
+
+.ed {
+  background: linear-gradient(90deg, rgba(13, 11, 30, 0.92) 0, rgba(13, 11, 30, 0.85) 60%, rgba(13, 11, 30, 0) 75%);
+  padding-bottom: calc(8px + var(--safe-b));
+}
+
+.ed .topbar {
+  margin-bottom: 10px;
+}
+
+.ed-body {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 290px minmax(0, 1fr);
+  gap: 12px;
+  width: min(62vw, 980px);
+  pointer-events: auto;
+}
+
+.ed.view3d .ed-body {
+  display: none;
+}
+
+.ed.view3d {
+  background: none;
+}
+
+.ed-panel {
+  background: rgba(21, 18, 43, 0.95);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+}
+
+.ed-panel h3 {
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+.ed-palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.ed-tool {
+  font: 600 11px var(--mono);
+  color: var(--muted);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 6px 8px;
+  min-height: 32px;
+  cursor: pointer;
+}
+
+.ed-tool.on {
+  color: var(--ink);
+  border-color: var(--player);
+  box-shadow: inset 0 0 0 1px var(--player);
+}
+
+.ed-params {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ed-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  flex-wrap: wrap;
+}
+
+.ed-field > span {
+  color: var(--muted);
+}
+
+.ed-field input[type='number'],
+.ed-field input[type='text'] {
+  font: 600 13px var(--mono);
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 6px 8px;
+  width: 120px;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.ed-field input[type='number'] {
+  width: 72px;
+}
+
+.ed-field .seg button {
+  min-height: 32px;
+  padding: 5px 9px;
+  font-size: 12px;
+}
+
+.ed-swatches {
+  display: flex;
+  gap: 5px;
+}
+
+.ed-swatches .sw {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 2px solid var(--line);
+  background: var(--bg);
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.ed-swatches .sw.on {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--ink);
+}
+
+.ed-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ed-actions .btn {
+  justify-content: flex-start;
+  min-height: 38px;
+  font-size: 12px;
+  padding: 6px 10px;
+}
+
+.ed-mine {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ed-mine-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 6px;
+  align-items: center;
+  font-size: 12px;
+}
+
+.ed-mine-row .btn {
+  min-height: 32px;
+  padding: 4px 8px;
+  font-size: 11px;
+}
+
+.ed-gridwrap {
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(7, 6, 15, 0.8);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.ed-grid {
+  touch-action: none;
+  cursor: crosshair;
+  image-rendering: pixelated;
+  border-radius: 4px;
+}
+
+.ed-status {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--muted);
+  min-height: 1.4em;
+  max-width: min(62vw, 980px);
+}
+
+.ed-status.bad {
+  color: var(--paradox);
+}
+
+.ed-modal {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(13, 11, 30, 0.8);
+  pointer-events: auto;
+  z-index: 20;
+  padding: 16px;
+}
+
+.ed-text {
+  width: min(560px, 90vw);
+  height: 50vh;
+  font: 12px var(--mono);
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px;
+  resize: none;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+@media (max-width: 860px) {
+  .ed {
+    background: rgba(13, 11, 30, 0.94);
+  }
+  .ed-body {
+    width: 100%;
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(180px, 44vh) minmax(0, 1fr);
+  }
+  .ed-body .ed-panel {
+    order: 2;
+  }
+  .ed-body .ed-gridwrap {
+    order: 1;
+  }
+  .ed-status {
+    max-width: none;
+  }
+}

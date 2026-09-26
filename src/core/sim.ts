@@ -1,5 +1,5 @@
 import { DIRS, decodeRec, encodeRec, invertRec } from './grid';
-import { HOOKS } from './mechanics';
+import { getHooks } from './mechanics';
 import { interact, moveMover, ownerOf } from './rules';
 import type { Action, ActorState, EchoRecord, Level, RecChar, StepResult, WorldState } from './types';
 import { emit, freeze, markParadox, playerIndex, solidEchoAt, toDraft, type Draft } from './world';
@@ -77,6 +77,7 @@ function playerIntent(p: ActorState, action: Action): RecChar {
 
 /** Фаза 5: сигналы → двери и лифты, дважды (лучи зависят от дверей, приёмники — от лучей). */
 function resolveSignals(d: Draft): void {
+  const HOOKS = getHooks();
   for (let pass = 0; pass < 2; pass++) {
     const sig = [false, false, false, false];
     for (const f of HOOKS.emitSignals) f(d, sig);
@@ -168,6 +169,7 @@ export function step(state: WorldState, playerAction: Action): StepResult {
       markParadox(d, i, reason);
     }
   }
+  const HOOKS = getHooks();
   for (const f of HOOKS.afterMoves) f(d);
   settleRiders(d);
 
