@@ -109,11 +109,21 @@ export function resetRoom(s: Session): Session {
   return { ...newSession(s.level), paradoxes: s.paradoxes, loops: s.loops + 1 };
 }
 
-/** Звёзды: 1 за прохождение, +1 если копий не больше par, +1 если финальная петля уложилась в par по тикам. */
+/**
+ * Сколько тиков можно потратить на финальную петлю ради звезды за время.
+ * `par.ticks` — оптимум решателя без единой паузы; человек с тиком в 170 мс его не повторит
+ * (а в уровнях с эхо ещё и копии должны быть записаны без задержек), поэтому даём запас:
+ * 30 % от эталона, но не меньше 3 тиков и не больше лимита петли.
+ */
+export function timeStarTicks(level: Level): number {
+  return Math.min(level.tickLimit, level.par.ticks + Math.max(3, Math.ceil(level.par.ticks * 0.3)));
+}
+
+/** Звёзды: 1 за прохождение, +1 если копий не больше par, +1 если финальная петля уложилась в запас по тикам. */
 export function starsFor(level: Level, echoes: number, ticks: number): number {
-  return 1 + (echoes <= level.par.echoes ? 1 : 0) + (ticks <= level.par.ticks ? 1 : 0);
+  return 1 + (echoes <= level.par.echoes ? 1 : 0) + (ticks <= timeStarTicks(level) ? 1 : 0);
 }
 
 export function isPerfect(level: Level, echoes: number, ticks: number): boolean {
-  return echoes <= level.par.echoes && ticks <= level.par.ticks;
+  return echoes <= level.par.echoes && ticks <= timeStarTicks(level);
 }

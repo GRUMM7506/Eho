@@ -8,6 +8,8 @@ import {
   recordEcho,
   resetRoom,
   rewind,
+  starsFor,
+  timeStarTicks,
   undoEcho,
 } from '../src/core/session';
 import { at, mk, player, run, withEchoes } from './helpers';
@@ -132,5 +134,28 @@ describe('сессия', () => {
     s = recordEcho(advance(s, 'none').session);
     s = recordEcho(advance(s, 'none').session);
     expect(s.records).toHaveLength(1);
+  });
+});
+
+describe('звёзды', () => {
+  const lvl = (ticks: number, tickLimit: number, echoes = 1) =>
+    ({ par: { echoes, ticks }, tickLimit }) as Parameters<typeof starsFor>[0];
+
+  it('звезда за время — с запасом: +30 %, минимум +3 тика', () => {
+    expect(timeStarTicks(lvl(8, 30))).toBe(11);
+    expect(timeStarTicks(lvl(20, 40))).toBe(26);
+  });
+
+  it('запас не выходит за лимит петли', () => {
+    expect(timeStarTicks(lvl(24, 28))).toBe(28);
+    expect(timeStarTicks(lvl(45, 45))).toBe(45);
+  });
+
+  it('три звезды без идеальной точности', () => {
+    const l = lvl(13, 22);
+    expect(starsFor(l, 1, 13)).toBe(3);
+    expect(starsFor(l, 1, 17)).toBe(3);
+    expect(starsFor(l, 1, 18)).toBe(2);
+    expect(starsFor(l, 2, 13)).toBe(2);
   });
 });

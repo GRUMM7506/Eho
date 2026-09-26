@@ -93,7 +93,7 @@ export const ru = {
   'win.replay': 'Переиграть',
   'win.levels': 'К уровням',
   'win.perfect': 'Идеально!',
-  'win.par': 'Эталон: {echoes} эхо · {ticks} тиков',
+  'win.par': 'Для звёзд: ≤ {echoes} эхо · ≤ {ticks} тиков',
   'win.newBest': 'Новый рекорд',
   'win.worldUnlocked': 'Открыт мир «{world}»',
 

@@ -1,3 +1,4 @@
+import { timeStarTicks } from '../core/session';
 import type { Level } from '../core/types';
 import type { SaveData, Settings } from '../data/save';
 import { isLevelUnlocked, totalStars, worlds, type WorldInfo } from '../data/progress';
@@ -483,7 +484,7 @@ export class WinScreen implements Screen {
       h(
         'p.muted',
         { style: 'font-size:12px' },
-        t('win.par', { echoes: d.level.par.echoes, ticks: d.level.par.ticks }),
+        t('win.par', { echoes: d.level.par.echoes, ticks: timeStarTicks(d.level) }),
         d.newBest ? ` · ${t('win.newBest')}` : '',
       ),
       d.unlockedWorld !== null

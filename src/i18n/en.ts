@@ -96,7 +96,7 @@ export const en: Dict = {
   'win.replay': 'Replay',
   'win.levels': 'Levels',
   'win.perfect': 'Perfect!',
-  'win.par': 'Par: {echoes} echoes · {ticks} ticks',
+  'win.par': 'For stars: ≤ {echoes} echoes · ≤ {ticks} ticks',
   'win.newBest': 'New best',
   'win.worldUnlocked': 'World «{world}» unlocked',
 
