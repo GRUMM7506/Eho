@@ -30,9 +30,12 @@ describe('стражи', () => {
   });
 
   it('страж-приманка идёт к ближайшему эхо', () => {
-    const lvl = mk(['#########', '#S......#', '#.......#', '#......gX', '#########'].map((r) => r.padEnd(9, '#')), {
-      legend: { g: { type: 'guard', mode: 'lure', facing: 'W', range: 2 } },
-    });
+    const lvl = mk(
+      ['#########', '#S......#', '#.......#', '#......gX', '#########'].map((r) => r.padEnd(9, '#')),
+      {
+        legend: { g: { type: 'guard', mode: 'lure', facing: 'W', range: 2 } },
+      },
+    );
     const s = withEchoes(lvl, ['DD']);
     const r = run(s, '...');
     expect(r.state.guards[0]!.cell).toBeLessThan(at(lvl, 7, 3));

@@ -44,7 +44,11 @@ export interface SaveData {
 export const SAVE_VERSION = 3;
 const KEY = 'echo-save';
 
-export function defaultSettings(env: { reducedMotion: boolean; language: 'ru' | 'en'; touch: boolean }): Settings {
+export function defaultSettings(env: {
+  reducedMotion: boolean;
+  language: 'ru' | 'en';
+  touch: boolean;
+}): Settings {
   return {
     volumeMaster: 0.8,
     volumeMusic: 0.6,
@@ -92,7 +96,13 @@ export function migrate(raw: unknown, defaults: Settings): SaveData {
     for (const [k, v] of Object.entries(data)) {
       const n = Number(k);
       if (Number.isInteger(n) && typeof v === 'number' && v > 0) {
-        levels[`w1-${n + 1}`] = { completed: true, stars: Math.min(3, v), bestEchoes: 99, bestTicks: 999, perfect: false };
+        levels[`w1-${n + 1}`] = {
+          completed: true,
+          stars: Math.min(3, v),
+          bestEchoes: 99,
+          bestTicks: 999,
+          perfect: false,
+        };
       }
     }
     data = { version: 2, levels, lastLevel: null, customLevels: [], settings: {} };
@@ -140,7 +150,12 @@ export function migrate(raw: unknown, defaults: Settings): SaveData {
     lastLevel: typeof data.lastLevel === 'string' ? data.lastLevel : null,
     customLevels: Array.isArray(data.customLevels) ? (data.customLevels as RawLevel[]) : [],
     settings,
-    flags: isObj(data.flags) ? (Object.fromEntries(Object.entries(data.flags).filter(([, v]) => typeof v === 'boolean')) as Record<string, boolean>) : {},
+    flags: isObj(data.flags)
+      ? (Object.fromEntries(Object.entries(data.flags).filter(([, v]) => typeof v === 'boolean')) as Record<
+          string,
+          boolean
+        >)
+      : {},
   };
 }
 
@@ -174,7 +189,14 @@ export function writeSave(kv: KV, data: SaveData): void {
 }
 
 /** Записать результат уровня, сохранив лучшие значения. Возвращает, был ли это новый рекорд. */
-export function recordResult(data: SaveData, id: string, stars: number, echoes: number, ticks: number, perfect: boolean): boolean {
+export function recordResult(
+  data: SaveData,
+  id: string,
+  stars: number,
+  echoes: number,
+  ticks: number,
+  perfect: boolean,
+): boolean {
   const prev = data.levels[id];
   const better = !prev || !prev.completed || echoes < prev.bestEchoes || ticks < prev.bestTicks;
   data.levels[id] = {

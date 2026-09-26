@@ -188,7 +188,13 @@ export function drawDebug2D(ctx: CanvasRenderingContext2D, s: WorldState, cs: nu
     ctx.strokeStyle = col;
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.arc(cx(a.cell), cy(a.cell) - (a.riding ? cs * 0.15 : 0), cs * (a.kind === 'player' ? 0.26 : 0.3), 0, Math.PI * 2);
+    ctx.arc(
+      cx(a.cell),
+      cy(a.cell) - (a.riding ? cs * 0.15 : 0),
+      cs * (a.kind === 'player' ? 0.26 : 0.3),
+      0,
+      Math.PI * 2,
+    );
     if (a.kind === 'player') ctx.fill();
     else ctx.stroke();
     if (a.kind === 'echo') ctx.fillText(String(a.echo + 1), cx(a.cell), cy(a.cell));

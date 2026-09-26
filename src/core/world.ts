@@ -111,7 +111,11 @@ export function emit(d: Draft, e: SimEvent): void {
   d.events.push(e);
 }
 
-export function markParadox(d: Draft, actor: number, reason: 'blocked' | 'nothing-to-take' | 'cannot-place' | 'nothing-to-use'): void {
+export function markParadox(
+  d: Draft,
+  actor: number,
+  reason: 'blocked' | 'nothing-to-take' | 'cannot-place' | 'nothing-to-use',
+): void {
   const a = d.actors[actor]!;
   if (a.kind !== 'echo' || a.status !== 'ok') return;
   a.status = 'broken';

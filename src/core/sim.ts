@@ -33,7 +33,13 @@ export function createLoop(level: Level, records: readonly EchoRecord[]): WorldS
     tick: 0,
     actors,
     boxes: level.boxes.slice(),
-    items: level.items.map((it) => ({ kind: it.kind, color: it.color, cell: it.cell, carrier: -1, consumed: false })),
+    items: level.items.map((it) => ({
+      kind: it.kind,
+      color: it.color,
+      cell: it.cell,
+      carrier: -1,
+      consumed: false,
+    })),
     cells,
     guards: level.guards.map((g) => ({ cell: g.cell, facing: g.facing, routeIdx: 0 })),
     signals: [false, false, false, false],
@@ -241,7 +247,10 @@ export function runInputs(level: Level, records: readonly EchoRecord[], inputs: 
  * Проиграть решение целиком: каждая строка, кроме последней, — петля, записанная как эхо;
  * последняя — финальный проход игрока.
  */
-export function playSolution(level: Level, loops: readonly string[]): { state: WorldState; records: EchoRecord[] } {
+export function playSolution(
+  level: Level,
+  loops: readonly string[],
+): { state: WorldState; records: EchoRecord[] } {
   const records: EchoRecord[] = [];
   let state = createLoop(level, records);
   loops.forEach((inputs, i) => {

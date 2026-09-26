@@ -1,15 +1,5 @@
 import { z } from 'zod';
-import type {
-  ColorId,
-  Dir,
-  Fixture,
-  FixtureType,
-  GuardSpec,
-  Hint,
-  ItemSpec,
-  Level,
-  Terrain,
-} from './types';
+import type { ColorId, Dir, Fixture, FixtureType, GuardSpec, Hint, ItemSpec, Level, Terrain } from './types';
 import { COLORS } from './types';
 
 const color = z.enum(COLORS);
@@ -40,10 +30,18 @@ export const legendEntrySchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('mirror'), orient: z.enum(['/', '\\']), color: color.optional() }),
   z.object({ type: z.literal('receiver'), color }),
   z.object({ type: z.literal('stairs') }),
-  z.object({ type: z.literal('lift'), color, low: z.number().int().min(0).max(9).optional(), high: z.number().int().min(0).max(9) }),
+  z.object({
+    type: z.literal('lift'),
+    color,
+    low: z.number().int().min(0).max(9).optional(),
+    high: z.number().int().min(0).max(9),
+  }),
   z.object({
     type: z.literal('guard'),
-    route: z.string().regex(/^[URDL]*$/).optional(),
+    route: z
+      .string()
+      .regex(/^[URDL]*$/)
+      .optional(),
     mode: z.enum(['patrol', 'lure']).optional(),
     range: z.number().int().min(0).max(20).optional(),
     facing: dir.optional(),
@@ -304,13 +302,17 @@ export function compileLevel(json: unknown): Level {
       for (let x = 0; x < width; x++) {
         const ch = row[x] ?? '0';
         const h = ch === '.' || ch === ' ' ? 0 : Number(ch);
-        if (!Number.isInteger(h) || h < 0 || h > 9) throw new LevelError(`Неверная высота «${ch}» (${x},${y})`);
+        if (!Number.isInteger(h) || h < 0 || h > 9)
+          throw new LevelError(`Неверная высота «${ch}» (${x},${y})`);
         heights[y * width + x] = h;
       }
     }
   }
 
-  const byType = Object.fromEntries(FIXTURE_TYPES.map((t) => [t, [] as number[]])) as Record<FixtureType, number[]>;
+  const byType = Object.fromEntries(FIXTURE_TYPES.map((t) => [t, [] as number[]])) as Record<
+    FixtureType,
+    number[]
+  >;
   fixtures.forEach((f, cell) => {
     if (f) byType[f.type].push(cell);
   });

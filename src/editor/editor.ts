@@ -7,7 +7,17 @@ import { lt, t, type TKey } from '../i18n';
 import { COLOR_HEX } from '../render/debug2d';
 import { clear, h, icon } from '../ui/dom';
 import type { Screen } from '../ui/router';
-import { applyTool, fromRaw, newDoc, resize, toRaw, type Dir4, type EdCell, type EdDoc, type Tool } from './model';
+import {
+  applyTool,
+  fromRaw,
+  newDoc,
+  resize,
+  toRaw,
+  type Dir4,
+  type EdCell,
+  type EdDoc,
+  type Tool,
+} from './model';
 import type { SolveRequest, SolveResponse } from './solver.worker';
 
 interface Opts {
@@ -37,35 +47,202 @@ interface ToolDef {
 }
 
 const TOOLS: ToolDef[] = [
-  { id: 'floor', label: 'ed.floor', group: 'base', params: [], make: () => ({ kind: 'base', base: 'floor' }) },
+  {
+    id: 'floor',
+    label: 'ed.floor',
+    group: 'base',
+    params: [],
+    make: () => ({ kind: 'base', base: 'floor' }),
+  },
   { id: 'wall', label: 'ed.wall', group: 'base', params: [], make: () => ({ kind: 'base', base: 'wall' }) },
   { id: 'void', label: 'ed.void', group: 'base', params: [], make: () => ({ kind: 'base', base: 'void' }) },
   { id: 'erase', label: 'ed.erase', group: 'base', params: [], make: () => ({ kind: 'erase' }) },
-  { id: 'start', label: 'ed.start', group: 'entity', params: ['dir'], once: true, make: (o) => ({ kind: 'entity', entity: { type: 'start', facing: o.dir } }) },
-  { id: 'exit', label: 'ed.exit', group: 'fixture', params: [], once: true, make: () => ({ kind: 'fixture', fx: { type: 'exit' } }) },
-  { id: 'box', label: 'ed.box', group: 'entity', params: [], make: () => ({ kind: 'entity', entity: { type: 'box' } }) },
-  { id: 'key', label: 'ed.key', group: 'entity', params: ['color'], make: (o) => ({ kind: 'entity', entity: { type: 'key', color: o.color } }) },
-  { id: 'battery', label: 'ed.battery', group: 'entity', params: [], make: () => ({ kind: 'entity', entity: { type: 'battery' } }) },
-  { id: 'guard', label: 'ed.guard', group: 'entity', params: ['dir', 'route', 'mode', 'range'], make: (o) => ({ kind: 'entity', entity: { type: 'guard', facing: o.dir, route: o.route.replace(/[^URDL]/g, ''), mode: o.mode, range: o.range } }) },
-  { id: 'plate', label: 'ed.plate', group: 'fixture', params: ['color', 'filter'], make: (o) => ({ kind: 'fixture', fx: { type: 'plate', color: o.color, filter: o.filter } }) },
-  { id: 'door', label: 'ed.door', group: 'fixture', params: ['color'], make: (o) => ({ kind: 'fixture', fx: { type: 'door', color: o.color, inverse: false } }) },
-  { id: 'inverse', label: 'ed.inverse', group: 'fixture', params: ['color'], make: (o) => ({ kind: 'fixture', fx: { type: 'door', color: o.color, inverse: true } }) },
-  { id: 'timer', label: 'ed.timer', group: 'fixture', params: ['from', 'to'], make: (o) => ({ kind: 'fixture', fx: { type: 'timerDoor', from: Math.min(o.from, o.to), to: Math.max(o.from, o.to) } }) },
-  { id: 'lever', label: 'ed.lever', group: 'fixture', params: ['color'], make: (o) => ({ kind: 'fixture', fx: { type: 'lever', color: o.color } }) },
-  { id: 'lock', label: 'ed.lock', group: 'fixture', params: ['color'], make: (o) => ({ kind: 'fixture', fx: { type: 'lock', color: o.color } }) },
-  { id: 'socket', label: 'ed.socket', group: 'fixture', params: ['color'], make: (o) => ({ kind: 'fixture', fx: { type: 'socket', color: o.color } }) },
-  { id: 'portal', label: 'ed.portal', group: 'fixture', params: ['color'], make: (o) => ({ kind: 'fixture', fx: { type: 'portal', color: o.color } }) },
-  { id: 'conveyor', label: 'ed.conveyor', group: 'fixture', params: ['dir'], make: (o) => ({ kind: 'fixture', fx: { type: 'conveyor', dir: o.dir } }) },
-  { id: 'ice', label: 'ed.ice', group: 'fixture', params: [], make: () => ({ kind: 'fixture', fx: { type: 'ice' } }) },
-  { id: 'fragile', label: 'ed.fragile', group: 'fixture', params: ['durability'], make: (o) => ({ kind: 'fixture', fx: { type: 'fragile', durability: o.durability } }) },
-  { id: 'pit', label: 'ed.pit', group: 'fixture', params: [], make: () => ({ kind: 'fixture', fx: { type: 'pit' } }) },
-  { id: 'emitter', label: 'ed.emitter', group: 'fixture', params: ['dir', 'optColor'], make: (o) => ({ kind: 'fixture', fx: { type: 'emitter', dir: o.dir, color: o.optColor } }) },
-  { id: 'mirror', label: 'ed.mirror', group: 'fixture', params: ['orient', 'optColor'], make: (o) => ({ kind: 'fixture', fx: { type: 'mirror', orient: o.orient, color: o.optColor } }) },
-  { id: 'receiver', label: 'ed.receiver', group: 'fixture', params: ['color'], make: (o) => ({ kind: 'fixture', fx: { type: 'receiver', color: o.color } }) },
-  { id: 'stairs', label: 'ed.stairs', group: 'fixture', params: [], make: () => ({ kind: 'fixture', fx: { type: 'stairs' } }) },
-  { id: 'lift', label: 'ed.lift', group: 'fixture', params: ['color', 'low', 'high'], make: (o) => ({ kind: 'fixture', fx: { type: 'lift', color: o.color, low: o.low, high: Math.max(o.high, o.low) } }) },
+  {
+    id: 'start',
+    label: 'ed.start',
+    group: 'entity',
+    params: ['dir'],
+    once: true,
+    make: (o) => ({ kind: 'entity', entity: { type: 'start', facing: o.dir } }),
+  },
+  {
+    id: 'exit',
+    label: 'ed.exit',
+    group: 'fixture',
+    params: [],
+    once: true,
+    make: () => ({ kind: 'fixture', fx: { type: 'exit' } }),
+  },
+  {
+    id: 'box',
+    label: 'ed.box',
+    group: 'entity',
+    params: [],
+    make: () => ({ kind: 'entity', entity: { type: 'box' } }),
+  },
+  {
+    id: 'key',
+    label: 'ed.key',
+    group: 'entity',
+    params: ['color'],
+    make: (o) => ({ kind: 'entity', entity: { type: 'key', color: o.color } }),
+  },
+  {
+    id: 'battery',
+    label: 'ed.battery',
+    group: 'entity',
+    params: [],
+    make: () => ({ kind: 'entity', entity: { type: 'battery' } }),
+  },
+  {
+    id: 'guard',
+    label: 'ed.guard',
+    group: 'entity',
+    params: ['dir', 'route', 'mode', 'range'],
+    make: (o) => ({
+      kind: 'entity',
+      entity: {
+        type: 'guard',
+        facing: o.dir,
+        route: o.route.replace(/[^URDL]/g, ''),
+        mode: o.mode,
+        range: o.range,
+      },
+    }),
+  },
+  {
+    id: 'plate',
+    label: 'ed.plate',
+    group: 'fixture',
+    params: ['color', 'filter'],
+    make: (o) => ({ kind: 'fixture', fx: { type: 'plate', color: o.color, filter: o.filter } }),
+  },
+  {
+    id: 'door',
+    label: 'ed.door',
+    group: 'fixture',
+    params: ['color'],
+    make: (o) => ({ kind: 'fixture', fx: { type: 'door', color: o.color, inverse: false } }),
+  },
+  {
+    id: 'inverse',
+    label: 'ed.inverse',
+    group: 'fixture',
+    params: ['color'],
+    make: (o) => ({ kind: 'fixture', fx: { type: 'door', color: o.color, inverse: true } }),
+  },
+  {
+    id: 'timer',
+    label: 'ed.timer',
+    group: 'fixture',
+    params: ['from', 'to'],
+    make: (o) => ({
+      kind: 'fixture',
+      fx: { type: 'timerDoor', from: Math.min(o.from, o.to), to: Math.max(o.from, o.to) },
+    }),
+  },
+  {
+    id: 'lever',
+    label: 'ed.lever',
+    group: 'fixture',
+    params: ['color'],
+    make: (o) => ({ kind: 'fixture', fx: { type: 'lever', color: o.color } }),
+  },
+  {
+    id: 'lock',
+    label: 'ed.lock',
+    group: 'fixture',
+    params: ['color'],
+    make: (o) => ({ kind: 'fixture', fx: { type: 'lock', color: o.color } }),
+  },
+  {
+    id: 'socket',
+    label: 'ed.socket',
+    group: 'fixture',
+    params: ['color'],
+    make: (o) => ({ kind: 'fixture', fx: { type: 'socket', color: o.color } }),
+  },
+  {
+    id: 'portal',
+    label: 'ed.portal',
+    group: 'fixture',
+    params: ['color'],
+    make: (o) => ({ kind: 'fixture', fx: { type: 'portal', color: o.color } }),
+  },
+  {
+    id: 'conveyor',
+    label: 'ed.conveyor',
+    group: 'fixture',
+    params: ['dir'],
+    make: (o) => ({ kind: 'fixture', fx: { type: 'conveyor', dir: o.dir } }),
+  },
+  {
+    id: 'ice',
+    label: 'ed.ice',
+    group: 'fixture',
+    params: [],
+    make: () => ({ kind: 'fixture', fx: { type: 'ice' } }),
+  },
+  {
+    id: 'fragile',
+    label: 'ed.fragile',
+    group: 'fixture',
+    params: ['durability'],
+    make: (o) => ({ kind: 'fixture', fx: { type: 'fragile', durability: o.durability } }),
+  },
+  {
+    id: 'pit',
+    label: 'ed.pit',
+    group: 'fixture',
+    params: [],
+    make: () => ({ kind: 'fixture', fx: { type: 'pit' } }),
+  },
+  {
+    id: 'emitter',
+    label: 'ed.emitter',
+    group: 'fixture',
+    params: ['dir', 'optColor'],
+    make: (o) => ({ kind: 'fixture', fx: { type: 'emitter', dir: o.dir, color: o.optColor } }),
+  },
+  {
+    id: 'mirror',
+    label: 'ed.mirror',
+    group: 'fixture',
+    params: ['orient', 'optColor'],
+    make: (o) => ({ kind: 'fixture', fx: { type: 'mirror', orient: o.orient, color: o.optColor } }),
+  },
+  {
+    id: 'receiver',
+    label: 'ed.receiver',
+    group: 'fixture',
+    params: ['color'],
+    make: (o) => ({ kind: 'fixture', fx: { type: 'receiver', color: o.color } }),
+  },
+  {
+    id: 'stairs',
+    label: 'ed.stairs',
+    group: 'fixture',
+    params: [],
+    make: () => ({ kind: 'fixture', fx: { type: 'stairs' } }),
+  },
+  {
+    id: 'lift',
+    label: 'ed.lift',
+    group: 'fixture',
+    params: ['color', 'low', 'high'],
+    make: (o) => ({
+      kind: 'fixture',
+      fx: { type: 'lift', color: o.color, low: o.low, high: Math.max(o.high, o.low) },
+    }),
+  },
   { id: 'solid', label: 'ed.solid', group: 'zone', params: [], make: () => ({ kind: 'solid', on: true }) },
-  { id: 'unsolid', label: 'ed.unsolid', group: 'zone', params: [], make: () => ({ kind: 'solid', on: false }) },
+  {
+    id: 'unsolid',
+    label: 'ed.unsolid',
+    group: 'zone',
+    params: [],
+    make: () => ({ kind: 'solid', on: false }),
+  },
   { id: 'up', label: 'ed.up', group: 'zone', params: [], make: () => ({ kind: 'height', delta: 1 }) },
   { id: 'down', label: 'ed.down', group: 'zone', params: [], make: () => ({ kind: 'height', delta: -1 }) },
 ];
@@ -95,7 +272,9 @@ function drawCell(g: CanvasRenderingContext2D, c: EdCell, x: number, y: number, 
     g.fillRect(px, py, cs, cs);
     return;
   }
-  g.fillStyle = c.height ? `rgb(${40 + c.height * 12},${34 + c.height * 10},${80 + c.height * 14})` : '#1f1a45';
+  g.fillStyle = c.height
+    ? `rgb(${40 + c.height * 12},${34 + c.height * 10},${80 + c.height * 14})`
+    : '#1f1a45';
   g.fillRect(px + 1, py + 1, cs - 2, cs - 2);
   if (c.solid) {
     g.strokeStyle = 'rgba(179,136,255,0.5)';
@@ -222,7 +401,21 @@ class EditorScreen implements Screen {
   readonly el: HTMLElement;
   private doc: EdDoc = newDoc();
   private toolId = 'wall';
-  private opts: Opts = { color: 'pink', optColor: null, filter: 'any', dir: 'E', orient: '/', durability: 1, from: 3, to: 8, low: 0, high: 1, range: 4, route: '', mode: 'patrol' };
+  private opts: Opts = {
+    color: 'pink',
+    optColor: null,
+    filter: 'any',
+    dir: 'E',
+    orient: '/',
+    durability: 1,
+    from: 3,
+    to: 8,
+    low: 0,
+    high: 1,
+    range: 4,
+    route: '',
+    mode: 'patrol',
+  };
   private readonly canvas = h('canvas.ed-grid', { 'aria-label': t('ed.title') });
   private readonly panel = h('div.ed-panel.scroll');
   private readonly status = h('div.ed-status', { role: 'status', 'aria-live': 'polite' });
@@ -381,7 +574,8 @@ class EditorScreen implements Screen {
     g.setTransform(dpr, 0, 0, dpr, 0, 0);
     g.fillStyle = '#0D0B1E';
     g.fillRect(0, 0, d.width * cs, d.height * cs);
-    for (let y = 0; y < d.height; y++) for (let x = 0; x < d.width; x++) drawCell(g, d.cells[y * d.width + x]!, x, y, cs);
+    for (let y = 0; y < d.height; y++)
+      for (let x = 0; x < d.width; x++) drawCell(g, d.cells[y * d.width + x]!, x, y, cs);
   }
 
   private setStatus(text: string, bad = false): void {
@@ -414,16 +608,32 @@ class EditorScreen implements Screen {
     this.panel.append(h('h3', null, t('ed.tools')), palette);
     const params = this.paramsUI();
     if (params) this.panel.append(h('h3', null, t('ed.options')), params);
-    this.panel.append(h('h3', null, t('ed.level')), this.levelUI(), h('h3', null, t('ed.actions')), this.actionsUI(), h('h3', null, t('ed.mine')), this.mineUI());
+    this.panel.append(
+      h('h3', null, t('ed.level')),
+      this.levelUI(),
+      h('h3', null, t('ed.actions')),
+      this.actionsUI(),
+      h('h3', null, t('ed.mine')),
+      this.mineUI(),
+    );
 
     const gridWrap = h('div.ed-gridwrap', null, this.canvas);
     const top = h(
       'div.topbar',
       null,
-      h('button.btn.icon-only', { type: 'button', 'aria-label': t('ed.back'), onclick: () => this.back() }, icon('back')),
+      h(
+        'button.btn.icon-only',
+        { type: 'button', 'aria-label': t('ed.back'), onclick: () => this.back() },
+        icon('back'),
+      ),
       h('h2', null, t('ed.title')),
       h('span.spacer'),
-      h('button.btn', { type: 'button', onclick: () => this.undo(), title: 'Ctrl+Z' }, icon('undo'), t('ed.undo')),
+      h(
+        'button.btn',
+        { type: 'button', onclick: () => this.undo(), title: 'Ctrl+Z' },
+        icon('undo'),
+        t('ed.undo'),
+      ),
       h(
         'button.btn.ed-toggle3d',
         {
@@ -456,7 +666,12 @@ class EditorScreen implements Screen {
     return h('label.ed-field', null, h('span', null, t(label)), input);
   }
 
-  private seg<T extends string>(label: TKey, value: T, options: [T, string][], set: (v: T) => void): HTMLElement {
+  private seg<T extends string>(
+    label: TKey,
+    value: T,
+    options: [T, string][],
+    set: (v: T) => void,
+  ): HTMLElement {
     return h(
       'div.ed-field',
       null,
@@ -465,7 +680,18 @@ class EditorScreen implements Screen {
         'div.seg',
         null,
         ...options.map(([v, text]) =>
-          h('button', { type: 'button', 'aria-pressed': String(v === value), onclick: () => { set(v); this.render(); } }, text),
+          h(
+            'button',
+            {
+              type: 'button',
+              'aria-pressed': String(v === value),
+              onclick: () => {
+                set(v);
+                this.render();
+              },
+            },
+            text,
+          ),
         ),
       ),
     );
@@ -480,28 +706,110 @@ class EditorScreen implements Screen {
       h(
         'div.ed-swatches',
         null,
-        ...(allowNone ? [h(`button.sw${current === null ? '.on' : ''}` as 'button', { type: 'button', title: t('ed.noColor'), onclick: () => { set(null); this.render(); } }, '∅')] : []),
-        ...COLORS.map((c) => h(`button.sw${c === current ? '.on' : ''}` as 'button', { type: 'button', style: `background:${COLOR_HEX[c]}`, 'aria-label': c, onclick: () => { set(c); this.render(); } })),
+        ...(allowNone
+          ? [
+              h(
+                `button.sw${current === null ? '.on' : ''}` as 'button',
+                {
+                  type: 'button',
+                  title: t('ed.noColor'),
+                  onclick: () => {
+                    set(null);
+                    this.render();
+                  },
+                },
+                '∅',
+              ),
+            ]
+          : []),
+        ...COLORS.map((c) =>
+          h(`button.sw${c === current ? '.on' : ''}` as 'button', {
+            type: 'button',
+            style: `background:${COLOR_HEX[c]}`,
+            'aria-label': c,
+            onclick: () => {
+              set(c);
+              this.render();
+            },
+          }),
+        ),
       );
     for (const p of def.params) {
       switch (p) {
         case 'color':
-          box.append(h('div.ed-field', null, h('span', null, t('ed.color')), swatches(o.color, false, (c) => (o.color = c ?? 'pink'))));
+          box.append(
+            h(
+              'div.ed-field',
+              null,
+              h('span', null, t('ed.color')),
+              swatches(o.color, false, (c) => (o.color = c ?? 'pink')),
+            ),
+          );
           break;
         case 'optColor':
-          box.append(h('div.ed-field', null, h('span', null, t('ed.color')), swatches(o.optColor, true, (c) => (o.optColor = c))));
+          box.append(
+            h(
+              'div.ed-field',
+              null,
+              h('span', null, t('ed.color')),
+              swatches(o.optColor, true, (c) => (o.optColor = c)),
+            ),
+          );
           break;
         case 'filter':
-          box.append(this.seg('ed.filter', o.filter, [['any', t('ed.fAny')], ['echo', t('ed.fEcho')], ['player', t('ed.fPlayer')]], (v) => (o.filter = v)));
+          box.append(
+            this.seg(
+              'ed.filter',
+              o.filter,
+              [
+                ['any', t('ed.fAny')],
+                ['echo', t('ed.fEcho')],
+                ['player', t('ed.fPlayer')],
+              ],
+              (v) => (o.filter = v),
+            ),
+          );
           break;
         case 'dir':
-          box.append(this.seg('ed.dir', o.dir, [['N', '↑'], ['E', '→'], ['S', '↓'], ['W', '←']], (v) => (o.dir = v)));
+          box.append(
+            this.seg(
+              'ed.dir',
+              o.dir,
+              [
+                ['N', '↑'],
+                ['E', '→'],
+                ['S', '↓'],
+                ['W', '←'],
+              ],
+              (v) => (o.dir = v),
+            ),
+          );
           break;
         case 'orient':
-          box.append(this.seg('ed.orient', o.orient, [['/', '/'], ['\\', '\\']], (v) => (o.orient = v)));
+          box.append(
+            this.seg(
+              'ed.orient',
+              o.orient,
+              [
+                ['/', '/'],
+                ['\\', '\\'],
+              ],
+              (v) => (o.orient = v),
+            ),
+          );
           break;
         case 'mode':
-          box.append(this.seg('ed.mode', o.mode, [['patrol', t('ed.patrol')], ['lure', t('ed.lure')]], (v) => (o.mode = v)));
+          box.append(
+            this.seg(
+              'ed.mode',
+              o.mode,
+              [
+                ['patrol', t('ed.patrol')],
+                ['lure', t('ed.lure')],
+              ],
+              (v) => (o.mode = v),
+            ),
+          );
           break;
         case 'durability':
           box.append(this.num('ed.durability', o.durability, 1, 9, (v) => (o.durability = v)));
@@ -522,7 +830,13 @@ class EditorScreen implements Screen {
           box.append(this.num('ed.range', o.range, 0, 20, (v) => (o.range = v)));
           break;
         case 'route': {
-          const input = h('input', { type: 'text', value: o.route, maxlength: 40, spellcheck: 'false', autocapitalize: 'characters' });
+          const input = h('input', {
+            type: 'text',
+            value: o.route,
+            maxlength: 40,
+            spellcheck: 'false',
+            autocapitalize: 'characters',
+          });
           input.addEventListener('change', () => {
             o.route = input.value.toUpperCase().replace(/[^URDL]/g, '');
             input.value = o.route;
@@ -696,7 +1010,9 @@ class EditorScreen implements Screen {
       this.solution = r;
       this.doc.par = { echoes: r.echoes, ticks: r.ticks };
       this.render();
-      this.setStatus(t('ed.solved', { echoes: r.echoes, ticks: r.ticks, min: r.provenMinimal ? t('ed.minimal') : '' }));
+      this.setStatus(
+        t('ed.solved', { echoes: r.echoes, ticks: r.ticks, min: r.provenMinimal ? t('ed.minimal') : '' }),
+      );
     };
     worker.postMessage({ raw, timeLimitMs: 20000 } satisfies SolveRequest);
   }
@@ -808,7 +1124,19 @@ class EditorScreen implements Screen {
         h(
           'div.row',
           null,
-          forImport ? h('button.btn.primary', { type: 'button', onclick: () => { overlay.remove(); this.importText(area.value); } }, t('ed.load')) : null,
+          forImport
+            ? h(
+                'button.btn.primary',
+                {
+                  type: 'button',
+                  onclick: () => {
+                    overlay.remove();
+                    this.importText(area.value);
+                  },
+                },
+                t('ed.load'),
+              )
+            : null,
           h('button.btn', { type: 'button', onclick: () => overlay.remove() }, t('ed.close')),
         ),
       ),

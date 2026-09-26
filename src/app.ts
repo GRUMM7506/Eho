@@ -7,7 +7,15 @@ import type { Hint, Level, SimEvent, WorldState } from './core/types';
 import { loadBuiltinLevels, loadCustomLevels } from './data/levels';
 import { createMenuScene, type MenuScene } from './data/menuRoom';
 import { continueLevel, nextLevel, worlds } from './data/progress';
-import { defaultSave, defaultSettings, loadSave, recordResult, writeSave, type SaveData, type Settings } from './data/save';
+import {
+  defaultSave,
+  defaultSettings,
+  loadSave,
+  recordResult,
+  writeSave,
+  type SaveData,
+  type Settings,
+} from './data/save';
 import { storage } from './data/storage';
 import { GameController, TICK_MS, type WinInfo } from './game/controller';
 import { predict } from './game/predict';
@@ -18,7 +26,17 @@ import { GameView, type Quality, type ViewSettings } from './render/gameView';
 import { vibrate } from './ui/dom';
 import { Hud } from './ui/hud';
 import { Router, type Screen } from './ui/router';
-import { AboutScreen, LevelSelect, MainMenu, PauseScreen, SettingsScreen, SplashScreen, WinScreen, WorldMap, type AppApi } from './ui/screens';
+import {
+  AboutScreen,
+  LevelSelect,
+  MainMenu,
+  PauseScreen,
+  SettingsScreen,
+  SplashScreen,
+  WinScreen,
+  WorldMap,
+  type AppApi,
+} from './ui/screens';
 
 type Mode = 'menu' | 'game' | 'editor';
 
@@ -58,7 +76,13 @@ export class App implements AppApi {
     about: AboutScreen;
   };
   private hintOpen = false;
-  private replay: { state: WorldState; inputs: string; acc: number; hold: number; records: WorldState['records'] } | null = null;
+  private replay: {
+    state: WorldState;
+    inputs: string;
+    acc: number;
+    hold: number;
+    records: WorldState['records'];
+  } | null = null;
   private lastFrame = performance.now();
   private resolvedQuality: Quality = 'high';
   private fps = { frames: 0, time: 0, low: 0 };
@@ -148,7 +172,8 @@ export class App implements AppApi {
     this.input.onAnyInput = (kind) => {
       if (kind !== 'gamepad') this.audio.unlock();
       if (kind !== 'gamepad') document.body.classList.remove('using-pad');
-      const touch = kind === 'touch' || (this.isTouch && kind !== 'keyboard' && kind !== 'mouse' && kind !== 'gamepad');
+      const touch =
+        kind === 'touch' || (this.isTouch && kind !== 'keyboard' && kind !== 'mouse' && kind !== 'gamepad');
       if (touch !== document.body.classList.contains('touch')) {
         this.hud.setTouch(touch, this.save.settings.dpad);
         this.onResize();
@@ -198,7 +223,7 @@ export class App implements AppApi {
         if (r.next.tick === 0) this.view.setState(r.next);
         else this.view.setTick(r.prev, r.next, r.events);
       }
-      this.view.render(dt, Math.min(1, this.menuAlpha += dt / 0.32));
+      this.view.render(dt, Math.min(1, (this.menuAlpha += dt / 0.32)));
       if (r) this.menuAlpha = 0;
       return;
     }
@@ -210,7 +235,15 @@ export class App implements AppApi {
       return;
     }
     c.frame(dt);
-    this.hud.update(c.state, c.session.records.length, c.session.loops, c.isRunning, c.tickProgress, c.canRecord, this.view.orbit.yaw);
+    this.hud.update(
+      c.state,
+      c.session.records.length,
+      c.session.loops,
+      c.isRunning,
+      c.tickProgress,
+      c.canRecord,
+      this.view.orbit.yaw,
+    );
     this.updateHint();
   }
 
@@ -244,7 +277,10 @@ export class App implements AppApi {
     this.input.keymap = s.keymap;
     this.input.dpadMode = s.dpad;
     this.hud.setKeymap(s.keymap);
-    this.hud.setTouch(document.body.classList.contains('touch') || (this.isTouch && !matchMedia('(pointer: fine)').matches), s.dpad);
+    this.hud.setTouch(
+      document.body.classList.contains('touch') || (this.isTouch && !matchMedia('(pointer: fine)').matches),
+      s.dpad,
+    );
     document.body.classList.toggle('reduced-motion', s.reducedMotion);
     const prevColorblind = this.view.viewSettings.colorblind;
     this.view.applySettings(this.viewSettings());
@@ -302,10 +338,10 @@ export class App implements AppApi {
       this.mode === 'editor'
         ? { top: 70, right: 0, bottom: 40, left: this.editorScreen?.insetLeft() ?? 0 }
         : this.mode === 'game'
-        ? this.hud.insets()
-        : w > 700
-          ? { top: 0, right: 0, bottom: 0, left: Math.min(w * 0.42, 460) }
-          : { top: hgt * 0.45, right: 0, bottom: 0, left: 0 };
+          ? this.hud.insets()
+          : w > 700
+            ? { top: 0, right: 0, bottom: 0, left: Math.min(w * 0.42, 460) }
+            : { top: hgt * 0.45, right: 0, bottom: 0, left: 0 };
     this.view.resize(w, hgt, insets);
   }
 
@@ -501,7 +537,8 @@ export class App implements AppApi {
             this.hud.toast(t('toast.recorded', { n: c.session.records.length }), 'good');
             this.audio.play('record');
             this.hooks.onLoopRecorded?.(this);
-          } else if (kind === 'full') this.hud.toast(t('toast.full', { key: this.hud.keyText('undoEcho') }), 'hot', 3200);
+          } else if (kind === 'full')
+            this.hud.toast(t('toast.full', { key: this.hud.keyText('undoEcho') }), 'hot', 3200);
           this.audio.setLayers(c.session.records.length);
         },
         onLoopStart: () => this.audio.play('loopStart'),
@@ -586,7 +623,13 @@ export class App implements AppApi {
   }
 
   private pause(): void {
-    if (this.mode !== 'game' || !this.controller || this.router.has(this.screens.pause) || this.router.has(this.screens.win)) return;
+    if (
+      this.mode !== 'game' ||
+      !this.controller ||
+      this.router.has(this.screens.pause) ||
+      this.router.has(this.screens.win)
+    )
+      return;
     this.controller.paused = true;
     this.input.gameplay = false;
     this.input.releaseAll();
@@ -769,7 +812,13 @@ export class App implements AppApi {
     const c = this.controller;
     if (!c) return;
     const state = createLoop(c.level, c.state.records);
-    this.replay = { state, inputs: info.loops[info.loops.length - 1] ?? '', acc: 0, hold: 0.6, records: c.state.records };
+    this.replay = {
+      state,
+      inputs: info.loops[info.loops.length - 1] ?? '',
+      acc: 0,
+      hold: 0.6,
+      records: c.state.records,
+    };
     this.view.setState(state);
     this.view.level?.setTrails(null);
     this.view.level?.setGhosts(null);

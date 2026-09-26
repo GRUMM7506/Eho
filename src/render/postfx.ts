@@ -105,7 +105,10 @@ export class PostFX {
     this.enabled = quality !== 'low';
     this.disposeComposer();
     if (!this.enabled) return;
-    const composer = new EffectComposer(this.renderer, new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType }));
+    const composer = new EffectComposer(
+      this.renderer,
+      new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType }),
+    );
     this.renderPass = new RenderPass(this.scene, this.camera);
     composer.addPass(this.renderPass);
     const bloomRes = new THREE.Vector2(256, 256);

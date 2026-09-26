@@ -19,7 +19,11 @@ describe('сохранения', () => {
 
   it('миграция v2: недостающие поля и клавиши добавляются', () => {
     const s = migrate(
-      { version: 2, levels: { 'w0-1': { completed: true, stars: 2, bestEchoes: 0, bestTicks: 9 } }, settings: { volumeMusic: 0.3, keymap: { up: ['KeyI'] } } },
+      {
+        version: 2,
+        levels: { 'w0-1': { completed: true, stars: 2, bestEchoes: 0, bestTicks: 9 } },
+        settings: { volumeMusic: 0.3, keymap: { up: ['KeyI'] } },
+      },
       defaults,
     );
     expect(s.levels['w0-1']!.perfect).toBe(false);
@@ -29,7 +33,10 @@ describe('сохранения', () => {
   });
 
   it('неверные типы значений отбрасываются', () => {
-    const s = migrate({ version: 3, settings: { volumeMaster: 'loud', tickSpeed: 5, colorblind: true }, levels: { a: 5 } }, defaults);
+    const s = migrate(
+      { version: 3, settings: { volumeMaster: 'loud', tickSpeed: 5, colorblind: true }, levels: { a: 5 } },
+      defaults,
+    );
     expect(s.settings.volumeMaster).toBe(defaults.volumeMaster);
     expect(s.settings.colorblind).toBe(true);
     expect(s.levels).toEqual({});

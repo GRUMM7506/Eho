@@ -133,7 +133,13 @@ export class Particles {
       vel.setXYZ(k, vx, vy, vz);
       c.copy(base).lerp(white, Math.random() * (b.whiten ?? 0.3));
       col.setXYZ(k, c.r, c.g, c.b);
-      life.setXYZW(k, this.time, b.life * (0.6 + Math.random() * 0.4), b.size * (0.6 + Math.random() * 0.6), b.gravity ?? 4);
+      life.setXYZW(
+        k,
+        this.time,
+        b.life * (0.6 + Math.random() * 0.4),
+        b.size * (0.6 + Math.random() * 0.6),
+        b.gravity ?? 4,
+      );
     }
     pos.needsUpdate = vel.needsUpdate = col.needsUpdate = life.needsUpdate = true;
   }

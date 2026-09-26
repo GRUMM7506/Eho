@@ -18,7 +18,11 @@ export interface Session {
   readonly loops: number;
 }
 
-export function newSession(level: Level, records: readonly EchoRecord[] = [], echoInputs: readonly string[] = []): Session {
+export function newSession(
+  level: Level,
+  records: readonly EchoRecord[] = [],
+  echoInputs: readonly string[] = [],
+): Session {
   return {
     level,
     records,
@@ -71,7 +75,14 @@ export function recordEcho(s: Session): Session {
   if (!canRecord(s)) return s;
   const records = [...s.records, recordOf(current(s))];
   const echoInputs = [...s.echoInputs, s.inputs];
-  return { ...s, records, echoInputs, history: [createLoop(s.level, records)], inputs: '', loops: s.loops + 1 };
+  return {
+    ...s,
+    records,
+    echoInputs,
+    history: [createLoop(s.level, records)],
+    inputs: '',
+    loops: s.loops + 1,
+  };
 }
 
 /** Начать петлю заново с теми же эхо. */

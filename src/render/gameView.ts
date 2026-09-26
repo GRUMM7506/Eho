@@ -39,7 +39,12 @@ export class GameView {
 
   constructor(canvas: HTMLCanvasElement, settings: ViewSettings) {
     this.settings = settings;
-    this.renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance', alpha: false });
+    this.renderer = new THREE.WebGLRenderer({
+      canvas,
+      antialias: false,
+      powerPreference: 'high-performance',
+      alpha: false,
+    });
     this.renderer.setClearColor(PALETTE.bg);
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -63,7 +68,8 @@ export class GameView {
   }
 
   applySettings(s: ViewSettings): void {
-    const qualityChanged = !this.settings || this.settings.quality !== s.quality || this.settings.colorblind !== s.colorblind;
+    const qualityChanged =
+      !this.settings || this.settings.quality !== s.quality || this.settings.colorblind !== s.colorblind;
     this.settings = s;
     const maxDpr = s.quality === 'high' ? (s.isMobile ? 2 : 2) : s.quality === 'medium' ? 1.5 : 1;
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, maxDpr));
@@ -73,7 +79,11 @@ export class GameView {
     this.key.shadow.mapSize.set(s.quality === 'high' ? 2048 : 1024, s.quality === 'high' ? 2048 : 1024);
     this.key.shadow.map?.dispose();
     this.key.shadow.map = null;
-    this.orbit.opts = { perspective: s.perspective, freeCamera: s.freeCamera, reducedMotion: s.reducedMotion };
+    this.orbit.opts = {
+      perspective: s.perspective,
+      freeCamera: s.freeCamera,
+      reducedMotion: s.reducedMotion,
+    };
     this.post.configure(s.quality, s.reducedMotion, s.isMobile);
     this.post.setCamera(this.orbit.camera);
     if (qualityChanged && this.level) {
@@ -93,7 +103,10 @@ export class GameView {
 
   setLevel(level: Level, state: WorldState): void {
     this.clearLevel();
-    this.level = new LevelView(level, state, { shadows: this.settings.quality !== 'low', colorblind: this.settings.colorblind });
+    this.level = new LevelView(level, state, {
+      shadows: this.settings.quality !== 'low',
+      colorblind: this.settings.colorblind,
+    });
     this.scene.add(this.level.root);
     const box = this.level.bounds();
     this.orbit.setBounds(box, level.cameraYaw);
@@ -158,7 +171,8 @@ export class GameView {
       const dist = dir.length();
       this.raycaster.set(origin, dir.normalize());
       this.raycaster.far = dist - 0.05;
-      for (const h of this.raycaster.intersectObject(walls, false)) if (h.instanceId !== undefined) hit.add(h.instanceId);
+      for (const h of this.raycaster.intersectObject(walls, false))
+        if (h.instanceId !== undefined) hit.add(h.instanceId);
     }
     lv.setOccluders(hit);
   }

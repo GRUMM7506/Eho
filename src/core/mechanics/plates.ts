@@ -38,7 +38,8 @@ export const plates: Mechanic = {
     for (const cell of d.level.byType.plate) {
       const was = d.prev.cells[cell] ?? 0;
       const now = d.cells[cell] ?? 0;
-      if (!was && now) emit(d, { type: 'plateDown', cell, by: now === 1 ? 'player' : now === 2 ? 'echo' : 'box' });
+      if (!was && now)
+        emit(d, { type: 'plateDown', cell, by: now === 1 ? 'player' : now === 2 ? 'echo' : 'box' });
       else if (was && !now) emit(d, { type: 'plateUp', cell });
     }
   },

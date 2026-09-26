@@ -52,14 +52,17 @@ describe('перенос предметов: ключи и замки', () => {
 });
 
 describe('батарейки и гнёзда', () => {
-  const lvl = mk(['#######', '#Sq.PA#', '#....X#', '#######'].map((r) => r), {
-    legend: {
-      S: { type: 'start', facing: 'E' },
-      q: { type: 'battery' },
-      P: { type: 'socket', color: 'pink' },
-      A: { type: 'door', color: 'pink' },
+  const lvl = mk(
+    ['#######', '#Sq.PA#', '#....X#', '#######'].map((r) => r),
+    {
+      legend: {
+        S: { type: 'start', facing: 'E' },
+        q: { type: 'battery' },
+        P: { type: 'socket', color: 'pink' },
+        A: { type: 'door', color: 'pink' },
+      },
     },
-  });
+  );
 
   it('батарейка питает гнездо, пока лежит в нём', () => {
     const r = run(createLoop(lvl, []), 'ERRE');

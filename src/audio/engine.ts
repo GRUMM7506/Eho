@@ -27,7 +27,9 @@ export class WebAudioEngine implements AudioApi {
       void this.ctx.resume().catch(() => undefined);
       return;
     }
-    const Ctor = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    const Ctor =
+      window.AudioContext ??
+      (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
     if (!Ctor) return;
     let ctx: AudioContext;
     try {
@@ -125,7 +127,8 @@ export class WebAudioEngine implements AudioApi {
   private applyVolumes(instant = false): void {
     if (!this.ctx) return;
     const t = this.ctx.currentTime;
-    const set = (p: AudioParam, v: number) => (instant ? p.setValueAtTime(v, t) : p.setTargetAtTime(v, t, 0.08));
+    const set = (p: AudioParam, v: number) =>
+      instant ? p.setValueAtTime(v, t) : p.setTargetAtTime(v, t, 0.08);
     set(this.master.gain, this.volumes.master * 0.9);
     set(this.musicBus.gain, this.volumes.music * (this.ducked ? 0.35 : 1) * 0.8);
     set(this.sfxBus.gain, this.volumes.sfx);

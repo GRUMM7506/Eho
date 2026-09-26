@@ -4,7 +4,14 @@ import { defaultSave, defaultSettings, recordResult } from '../src/data/save';
 import { mk } from './helpers';
 
 function lvl(world: number, index: number, bonus = false, starsRequired = 0) {
-  return { ...mk(['#####', '#S.X#', '#####']), id: `w${world}-${bonus ? 'b' : ''}${index}`, world, index, bonus, starsRequired };
+  return {
+    ...mk(['#####', '#S.X#', '#####']),
+    id: `w${world}-${bonus ? 'b' : ''}${index}`,
+    world,
+    index,
+    bonus,
+    starsRequired,
+  };
 }
 
 const levels = [lvl(0, 1), lvl(0, 2), lvl(1, 1), lvl(1, 2), lvl(1, 1, true, 5)];

@@ -58,8 +58,28 @@ export class Hud implements Screen {
     keymap: KeyMap,
   ) {
     this.keymap = keymap;
-    const btn = (action: string, ico: Parameters<typeof icon>[0], label: string, key: Bindable | null, onClick: () => void, cls = '') => {
-      const b = h(`button.btn${cls}` as 'button', { type: 'button', 'aria-label': label, title: label, 'data-action': action, onclick: (e: Event) => { onClick(); (e.currentTarget as HTMLElement).blur(); } }, icon(ico));
+    const btn = (
+      action: string,
+      ico: Parameters<typeof icon>[0],
+      label: string,
+      key: Bindable | null,
+      onClick: () => void,
+      cls = '',
+    ) => {
+      const b = h(
+        `button.btn${cls}` as 'button',
+        {
+          type: 'button',
+          'aria-label': label,
+          title: label,
+          'data-action': action,
+          onclick: (e: Event) => {
+            onClick();
+            (e.currentTarget as HTMLElement).blur();
+          },
+        },
+        icon(ico),
+      );
       if (key) b.append(h('kbd.kbd', { 'data-key': key }, ''));
       const list = this.buttons.get(action) ?? [];
       list.push(b);
@@ -69,7 +89,13 @@ export class Hud implements Screen {
 
     // Верх: название, таймлайн, слоты и пауза.
     this.track.append(h('div.tl-ticks'), this.fill);
-    const timeline = h('div.timeline.panel', null, h('div.row', null, this.loopLabel, this.clock), this.track, this.lanes);
+    const timeline = h(
+      'div.timeline.panel',
+      null,
+      h('div.row', null, this.loopLabel, this.clock),
+      this.track,
+      this.lanes,
+    );
     const slots = h('div.slots.panel', null, h('span.label', null, ''), this.dots);
     const pauseBtn = btn('pause', 'pause', t('hud.pause'), null, () => cb.pause(), '.icon-only');
     this.topBar = h('div.hud-top', null, this.title, timeline, h('div.hud-right', null, slots, pauseBtn));
@@ -84,8 +110,18 @@ export class Hud implements Screen {
       btn('hint', 'hint', t('hud.hint'), 'hint', () => cb.hint()),
       btn('trails', 'trails', t('hud.trails'), 'trails', () => cb.trails()),
     );
-    const compass = h('div.compass.panel', { role: 'button', tabindex: 0, 'aria-label': t('hud.compass'), onclick: () => cb.camReset() }, this.needle);
-    const cam = h('div.hud-cam', null, btn('camLeft', 'camLeft', t('hud.camLeft'), 'camLeft', () => cb.camLeft()), compass, btn('camRight', 'camRight', t('hud.camRight'), 'camRight', () => cb.camRight()));
+    const compass = h(
+      'div.compass.panel',
+      { role: 'button', tabindex: 0, 'aria-label': t('hud.compass'), onclick: () => cb.camReset() },
+      this.needle,
+    );
+    const cam = h(
+      'div.hud-cam',
+      null,
+      btn('camLeft', 'camLeft', t('hud.camLeft'), 'camLeft', () => cb.camLeft()),
+      compass,
+      btn('camRight', 'camRight', t('hud.camRight'), 'camRight', () => cb.camRight()),
+    );
     this.bottom = h('div.hud-bottom', null, actions, cam);
 
     // Тач: D-pad и крупные кнопки.
@@ -106,7 +142,19 @@ export class Hud implements Screen {
       b.addEventListener('lostpointercapture', up);
       return b;
     };
-    this.dpad = h('div.dpad', null, h('span'), dirBtn('up'), h('span'), dirBtn('left'), h('span'), dirBtn('right'), h('span'), dirBtn('down'), h('span'));
+    this.dpad = h(
+      'div.dpad',
+      null,
+      h('span'),
+      dirBtn('up'),
+      h('span'),
+      dirBtn('left'),
+      h('span'),
+      dirBtn('right'),
+      h('span'),
+      dirBtn('down'),
+      h('span'),
+    );
     const tbtn = (action: string, ico: Parameters<typeof icon>[0], label: string, fn: () => void) => {
       const b = btn(action, ico, label, null, fn);
       b.append(h('span', null, label.split(' ')[0]!));
@@ -125,7 +173,17 @@ export class Hud implements Screen {
     this.touchPad = h('div.touch-pad', null, this.dpad, touchActions);
 
     this.deathBox.hidden = true;
-    this.el = h('div.screen.hud', null, this.topBar, this.bottom, this.touchPad, this.startMsg, this.hintBubble, this.deathBox, this.toasts);
+    this.el = h(
+      'div.screen.hud',
+      null,
+      this.topBar,
+      this.bottom,
+      this.touchPad,
+      this.startMsg,
+      this.hintBubble,
+      this.deathBox,
+      this.toasts,
+    );
     this.refreshKeys();
   }
 
@@ -158,8 +216,12 @@ export class Hud implements Screen {
   setLevel(level: Level): void {
     this.level = level;
     clear(this.title);
-    const world = level.world >= 0 && level.world <= 5 ? t(`world.${level.world}` as 'world.0') : t('world.custom');
-    this.title.append(h('span.w', null, `${world} · ${level.bonus ? t('levels.bonus') : level.index}`), h('span.n', null, lt(level.name)));
+    const world =
+      level.world >= 0 && level.world <= 5 ? t(`world.${level.world}` as 'world.0') : t('world.custom');
+    this.title.append(
+      h('span.w', null, `${world} · ${level.bonus ? t('levels.bonus') : level.index}`),
+      h('span.n', null, lt(level.name)),
+    );
     this.track.style.setProperty('--tick', `${100 / level.tickLimit}%`);
     (this.el.querySelector('.slots .label') as HTMLElement).textContent = t('hud.echoes');
     this.hideDeath();
@@ -167,7 +229,15 @@ export class Hud implements Screen {
   }
 
   /** Обновление каждый кадр/тик. */
-  update(s: WorldState, echoes: number, loop: number, running: boolean, progress: number, canRecord: boolean, yaw: number): void {
+  update(
+    s: WorldState,
+    echoes: number,
+    loop: number,
+    running: boolean,
+    progress: number,
+    canRecord: boolean,
+    yaw: number,
+  ): void {
     const L = s.level;
     const tick = Math.min(L.tickLimit, s.tick - 1 + (running || s.tick > 0 ? progress : 1));
     const p = Math.max(0, tick) / L.tickLimit;
@@ -203,8 +273,11 @@ export class Hud implements Screen {
       for (const m of pred.markers) {
         if (m.echo !== e) continue;
         const fx = m.kind === 'plate' ? L.fixtures[pred.cells[m.tick - pred.from]?.[e] ?? -1] : null;
-        const color = m.kind === 'paradox' ? '' : fx && fx.type === 'plate' ? hex(MECH_COLORS[fx.color]!) : '#8C9EFF';
-        const dot = h(`i${m.kind === 'paradox' ? '.paradox' : ''}` as 'i', { style: `left:${(m.tick / L.tickLimit) * 100}%;${color ? `--c:${color}` : ''}` });
+        const color =
+          m.kind === 'paradox' ? '' : fx && fx.type === 'plate' ? hex(MECH_COLORS[fx.color]!) : '#8C9EFF';
+        const dot = h(`i${m.kind === 'paradox' ? '.paradox' : ''}` as 'i', {
+          style: `left:${(m.tick / L.tickLimit) * 100}%;${color ? `--c:${color}` : ''}`,
+        });
         lane.append(dot);
       }
       this.lanes.append(lane);
@@ -259,9 +332,19 @@ export class Hud implements Screen {
       h(
         'div.row',
         null,
-        h('button.btn', { type: 'button', onclick: () => this.cb.rewind() }, icon('rewind'), t('death.rewind')),
+        h(
+          'button.btn',
+          { type: 'button', onclick: () => this.cb.rewind() },
+          icon('rewind'),
+          t('death.rewind'),
+        ),
         h('button.btn', { type: 'button', onclick: () => this.cb.record() }, icon('record'), t('hud.record')),
-        h('button.btn', { type: 'button', onclick: () => this.cb.restartLoop() }, icon('replay'), t('death.restart')),
+        h(
+          'button.btn',
+          { type: 'button', onclick: () => this.cb.restartLoop() },
+          icon('replay'),
+          t('death.restart'),
+        ),
       ),
     );
     this.deathBox.hidden = false;

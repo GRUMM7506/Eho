@@ -173,7 +173,11 @@ function cellEntries(c: EdCell): LegendEntry[] {
         out.push(f.color ? { type: 'emitter', dir: f.dir, color: f.color } : { type: 'emitter', dir: f.dir });
         break;
       case 'mirror':
-        out.push(f.color ? { type: 'mirror', orient: f.orient, color: f.color } : { type: 'mirror', orient: f.orient });
+        out.push(
+          f.color
+            ? { type: 'mirror', orient: f.orient, color: f.color }
+            : { type: 'mirror', orient: f.orient },
+        );
         break;
       default:
         out.push(f as LegendEntry);
@@ -185,8 +189,9 @@ function cellEntries(c: EdCell): LegendEntry[] {
   return out;
 }
 
-const POOL = [...'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWYZ0123456789!$&()*+,-/;<=>?@[]^_`{|}~"\'']
-  .filter((ch) => ch !== 'X' && ch !== 'S' && ch !== '#' && ch !== '.');
+const POOL = [
+  ...'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWYZ0123456789!$&()*+,-/;<=>?@[]^_`{|}~"\'',
+].filter((ch) => ch !== 'X' && ch !== 'S' && ch !== '#' && ch !== '.');
 
 /** Документ редактора → JSON уровня (карта + легенда). */
 export function toRaw(doc: EdDoc): RawLevel {
@@ -298,9 +303,17 @@ export function fromRaw(raw: unknown): EdDoc {
   }
   cells[L.start]!.entity = { type: 'start', facing: DIR_NAME[L.startFacing]! };
   for (const b of L.boxes) cells[b]!.entity = { type: 'box' };
-  for (const it of L.items) cells[it.cell]!.entity = it.kind === 'key' ? { type: 'key', color: color(it.color) } : { type: 'battery' };
+  for (const it of L.items)
+    cells[it.cell]!.entity =
+      it.kind === 'key' ? { type: 'key', color: color(it.color) } : { type: 'battery' };
   for (const g of L.guards) {
-    cells[g.cell]!.entity = { type: 'guard', facing: DIR_NAME[g.facing]!, route: g.route.map((d) => ROUTE[d]).join(''), mode: g.mode, range: g.range };
+    cells[g.cell]!.entity = {
+      type: 'guard',
+      facing: DIR_NAME[g.facing]!,
+      route: g.route.map((d) => ROUTE[d]).join(''),
+      mode: g.mode,
+      range: g.range,
+    };
   }
   return {
     id: L.id,

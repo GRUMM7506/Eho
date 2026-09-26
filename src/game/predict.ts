@@ -30,14 +30,17 @@ export function predict(state: WorldState): Prediction {
   while (s.outcome === 'playing' && s.tick < s.level.tickLimit) {
     const t = s.tick;
     for (let e = 0; e < echoes; e++) {
-      if (s.actors[e]!.status === 'ok' && decodeRec(echoAction(s, e, t)).kind === 'use') markers.push({ echo: e, tick: t + 1, kind: 'use' });
+      if (s.actors[e]!.status === 'ok' && decodeRec(echoAction(s, e, t)).kind === 'use')
+        markers.push({ echo: e, tick: t + 1, kind: 'use' });
     }
     const r = step(s, 'none');
-    for (const ev of r.events) if (ev.type === 'paradox') markers.push({ echo: ev.actor, tick: r.state.tick, kind: 'paradox' });
+    for (const ev of r.events)
+      if (ev.type === 'paradox') markers.push({ echo: ev.actor, tick: r.state.tick, kind: 'paradox' });
     for (let e = 0; e < echoes; e++) {
       const a = r.state.actors[e]!;
       const before = s.actors[e]!;
-      if (a.cell !== before.cell && s.level.fixtures[a.cell]?.type === 'plate') markers.push({ echo: e, tick: r.state.tick, kind: 'plate' });
+      if (a.cell !== before.cell && s.level.fixtures[a.cell]?.type === 'plate')
+        markers.push({ echo: e, tick: r.state.tick, kind: 'plate' });
     }
     cells.push(r.state.actors.slice(0, echoes).map((a) => a.cell));
     s = r.state;

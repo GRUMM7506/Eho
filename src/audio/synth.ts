@@ -93,7 +93,8 @@ export class Synth {
       b.buffer = this.noise();
       b.loop = true;
       b.playbackRate.value = Math.max(0.05, v.freq / 1000);
-      if (v.freqEnd !== undefined) b.playbackRate.linearRampToValueAtTime(Math.max(0.05, v.freqEnd / 1000), end);
+      if (v.freqEnd !== undefined)
+        b.playbackRate.linearRampToValueAtTime(Math.max(0.05, v.freqEnd / 1000), end);
       src = b;
     } else {
       const o = ctx.createOscillator();
@@ -121,7 +122,8 @@ export class Synth {
       const f = ctx.createBiquadFilter();
       f.type = v.filter.type;
       f.frequency.setValueAtTime(v.filter.freq, t);
-      if (v.filter.freqEnd !== undefined) f.frequency.exponentialRampToValueAtTime(Math.max(20, v.filter.freqEnd), end);
+      if (v.filter.freqEnd !== undefined)
+        f.frequency.exponentialRampToValueAtTime(Math.max(20, v.filter.freqEnd), end);
       f.Q.value = v.filter.q ?? 0.8;
       node.connect(f);
       node = f;

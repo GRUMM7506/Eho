@@ -18,7 +18,14 @@ import {
 } from './models';
 import { FLOOR_UNIT, PALETTE, WALL_HEIGHT, mechColor } from './palette';
 import { applyDitherFade, createPortalMaterial } from './shaders';
-import { conveyorTexture, crackTexture, floorTexture, gridTexture, hatchTexture, symbolTexture } from './textures';
+import {
+  conveyorTexture,
+  crackTexture,
+  floorTexture,
+  gridTexture,
+  hatchTexture,
+  symbolTexture,
+} from './textures';
 
 export interface ViewOptions {
   shadows: boolean;
@@ -47,7 +54,8 @@ interface ActorView {
 }
 
 const easeInOut = (t: number) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2);
-const approach = (cur: number, target: number, rate: number, dt: number) => cur + (target - cur) * (1 - Math.exp(-rate * dt));
+const approach = (cur: number, target: number, rate: number, dt: number) =>
+  cur + (target - cur) * (1 - Math.exp(-rate * dt));
 const FACING_YAW = [Math.PI, Math.PI / 2, 0, -Math.PI / 2];
 
 /**
@@ -70,8 +78,20 @@ export class LevelView {
   private guards: { model: ActorModel; path: Waypoint[]; yaw: number }[] = [];
   private readonly beamGroup = new THREE.Group();
   private readonly sightGroup = new THREE.Group();
-  private readonly beamMat = new THREE.MeshBasicMaterial({ color: 0xff3355, transparent: true, opacity: 0.9, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false });
-  private readonly sightMat = new THREE.MeshBasicMaterial({ color: PALETTE.paradox, transparent: true, opacity: 0.16, depthWrite: false });
+  private readonly beamMat = new THREE.MeshBasicMaterial({
+    color: 0xff3355,
+    transparent: true,
+    opacity: 0.9,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    toneMapped: false,
+  });
+  private readonly sightMat = new THREE.MeshBasicMaterial({
+    color: PALETTE.paradox,
+    transparent: true,
+    opacity: 0.16,
+    depthWrite: false,
+  });
   private readonly shared: { geo: THREE.BufferGeometry[]; mat: THREE.Material[] } = { geo: [], mat: [] };
   private conveyorTex: THREE.Texture | null = null;
 
@@ -90,7 +110,11 @@ export class LevelView {
 
   cellPos(cell: number, y = 0): THREE.Vector3 {
     const L = this.level;
-    return new THREE.Vector3((cell % L.width) - L.width / 2 + 0.5, y, Math.floor(cell / L.width) - L.height / 2 + 0.5);
+    return new THREE.Vector3(
+      (cell % L.width) - L.width / 2 + 0.5,
+      y,
+      Math.floor(cell / L.width) - L.height / 2 + 0.5,
+    );
   }
 
   floorY(cell: number, s: WorldState = this.state): number {
@@ -102,7 +126,10 @@ export class LevelView {
   bounds(): THREE.Box3 {
     const L = this.level;
     const maxH = Math.max(0, ...L.heights) * FLOOR_UNIT + WALL_HEIGHT;
-    return new THREE.Box3(new THREE.Vector3(-L.width / 2, 0, -L.height / 2), new THREE.Vector3(L.width / 2, maxH, L.height / 2));
+    return new THREE.Box3(
+      new THREE.Vector3(-L.width / 2, 0, -L.height / 2),
+      new THREE.Vector3(L.width / 2, maxH, L.height / 2),
+    );
   }
 
   private track<T extends THREE.BufferGeometry | THREE.Material>(x: T): T {
@@ -134,7 +161,14 @@ export class LevelView {
     // Пол: плитки с тонкими швами.
     const floorGeo = this.track(new THREE.BoxGeometry(1, 0.1, 1));
     floorGeo.translate(0, -0.05, 0);
-    const floorMat = this.track(new THREE.MeshStandardMaterial({ color: 0xffffff, map: floorTexture(), roughness: 0.85, metalness: 0.05 }));
+    const floorMat = this.track(
+      new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        map: floorTexture(),
+        roughness: 0.85,
+        metalness: 0.05,
+      }),
+    );
     const floors = new THREE.InstancedMesh(floorGeo, floorMat, Math.max(1, floorCells.length));
     floors.count = floorCells.length;
     const tint = new THREE.Color();
@@ -154,7 +188,15 @@ export class LevelView {
     if (zoneCells.length) {
       const zg = this.track(new THREE.PlaneGeometry(0.98, 0.98));
       zg.rotateX(-Math.PI / 2);
-      const zm = this.track(new THREE.MeshBasicMaterial({ color: PALETTE.violet, alphaMap: gridTexture(), transparent: true, opacity: 0.35, depthWrite: false }));
+      const zm = this.track(
+        new THREE.MeshBasicMaterial({
+          color: PALETTE.violet,
+          alphaMap: gridTexture(),
+          transparent: true,
+          opacity: 0.35,
+          depthWrite: false,
+        }),
+      );
       const zones = new THREE.InstancedMesh(zg, zm, zoneCells.length);
       zoneCells.forEach((c, i) => {
         m.compose(this.cellPos(c, this.floorY(c) + 0.005), q, one);
@@ -189,7 +231,13 @@ export class LevelView {
       shape.lineTo(-hs, hs);
       shape.closePath();
       const wg = this.track(
-        new THREE.ExtrudeGeometry(shape, { depth: 0.92, bevelEnabled: true, bevelThickness: 0.04, bevelSize: 0.04, bevelSegments: 1 }),
+        new THREE.ExtrudeGeometry(shape, {
+          depth: 0.92,
+          bevelEnabled: true,
+          bevelThickness: 0.04,
+          bevelSize: 0.04,
+          bevelSegments: 1,
+        }),
       );
       wg.rotateX(-Math.PI / 2);
       wg.translate(0, 0.04, 0);
@@ -197,7 +245,14 @@ export class LevelView {
       const bb = wg.boundingBox!;
       wg.translate(0, -bb.min.y, 0);
       wg.scale(1, 1 / (bb.max.y - bb.min.y), 1);
-      const top = this.track(new THREE.MeshStandardMaterial({ color: PALETTE.wallTop, roughness: 0.7, emissive: PALETTE.wallTop, emissiveIntensity: 0.12 }));
+      const top = this.track(
+        new THREE.MeshStandardMaterial({
+          color: PALETTE.wallTop,
+          roughness: 0.7,
+          emissive: PALETTE.wallTop,
+          emissiveIntensity: 0.12,
+        }),
+      );
       const side = this.track(new THREE.MeshStandardMaterial({ color: PALETTE.wall, roughness: 0.8 }));
       applyDitherFade(top);
       applyDitherFade(side);
@@ -233,7 +288,8 @@ export class LevelView {
 
   /** Отметить стены, заслоняющие игрока (по результату луча от камеры). */
   setOccluders(instanceIds: ReadonlySet<number>): void {
-    for (let i = 0; i < this.wallFadeTarget.length; i++) this.wallFadeTarget[i] = instanceIds.has(i) ? 0.22 : 1;
+    for (let i = 0; i < this.wallFadeTarget.length; i++)
+      this.wallFadeTarget[i] = instanceIds.has(i) ? 0.22 : 1;
   }
 
   // ————— приспособления —————
@@ -242,7 +298,14 @@ export class LevelView {
     if (!this.opts.colorblind || colorId < 0) return null;
     const g = this.track(new THREE.PlaneGeometry(size, size));
     g.rotateX(-Math.PI / 2);
-    const mat = this.track(new THREE.MeshBasicMaterial({ map: symbolTexture(colorId), transparent: true, depthWrite: false, color: 0x0d0b1e }));
+    const mat = this.track(
+      new THREE.MeshBasicMaterial({
+        map: symbolTexture(colorId),
+        transparent: true,
+        depthWrite: false,
+        color: 0x0d0b1e,
+      }),
+    );
     const mesh = new THREE.Mesh(g, mat);
     mesh.position.y = y;
     mesh.renderOrder = 2;
@@ -266,7 +329,14 @@ export class LevelView {
     switch (fx.type) {
       case 'plate': {
         const col = mechColor(fx.color);
-        const mat = this.track(new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: 0.25, roughness: 0.4 }));
+        const mat = this.track(
+          new THREE.MeshStandardMaterial({
+            color: col,
+            emissive: col,
+            emissiveIntensity: 0.25,
+            roughness: 0.4,
+          }),
+        );
         const shapeGeo =
           fx.filter === 'echo'
             ? new THREE.CylinderGeometry(0.34, 0.34, 0.08, 4)
@@ -278,8 +348,12 @@ export class LevelView {
         top.receiveShadow = true;
         g.add(top);
         const ring = new THREE.Mesh(
-          this.track(new THREE.RingGeometry(0.36, 0.42, fx.filter === 'echo' ? 4 : fx.filter === 'player' ? 6 : 32)),
-          this.track(new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.6, toneMapped: false })),
+          this.track(
+            new THREE.RingGeometry(0.36, 0.42, fx.filter === 'echo' ? 4 : fx.filter === 'player' ? 6 : 32),
+          ),
+          this.track(
+            new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.6, toneMapped: false }),
+          ),
         );
         ring.rotation.x = -Math.PI / 2;
         if (fx.filter === 'echo') ring.rotation.z = Math.PI / 4;
@@ -317,7 +391,10 @@ export class LevelView {
             emissiveMap: inverse ? hatchTexture() : null,
           }),
         );
-        const slab = new THREE.Mesh(this.track(new RoundedBoxGeometry(0.9, WALL_HEIGHT * 0.95, 0.9, 2, 0.04)), mat);
+        const slab = new THREE.Mesh(
+          this.track(new RoundedBoxGeometry(0.9, WALL_HEIGHT * 0.95, 0.9, 2, 0.04)),
+          mat,
+        );
         slab.castShadow = true;
         const holder = new THREE.Group();
         holder.add(slab);
@@ -325,14 +402,19 @@ export class LevelView {
         g.add(holder);
         const frame = new THREE.Mesh(
           this.track(new THREE.RingGeometry(0.44, 0.49, 4, 1)),
-          this.track(new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.55, toneMapped: false })),
+          this.track(
+            new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.55, toneMapped: false }),
+          ),
         );
         frame.rotation.x = -Math.PI / 2;
         frame.rotation.z = Math.PI / 4;
         frame.position.y = 0.01;
         g.add(frame);
         if (fx.type === 'lock') {
-          const shackle = new THREE.Mesh(this.track(new THREE.TorusGeometry(0.16, 0.04, 8, 16, Math.PI)), this.track(new THREE.MeshStandardMaterial({ color: 0xdddddd, metalness: 0.9, roughness: 0.2 })));
+          const shackle = new THREE.Mesh(
+            this.track(new THREE.TorusGeometry(0.16, 0.04, 8, 16, Math.PI)),
+            this.track(new THREE.MeshStandardMaterial({ color: 0xdddddd, metalness: 0.9, roughness: 0.2 })),
+          );
           shackle.position.set(0, WALL_HEIGHT * 0.95 + 0.02, 0);
           holder.add(shackle);
         }
@@ -355,9 +437,14 @@ export class LevelView {
         const col = mechColor(fx.color);
         const pivot = new THREE.Group();
         pivot.position.y = 0.3;
-        const stick = new THREE.Mesh(this.track(new THREE.CylinderGeometry(0.035, 0.035, 0.4, 8)), this.track(new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.8, roughness: 0.3 })));
+        const stick = new THREE.Mesh(
+          this.track(new THREE.CylinderGeometry(0.035, 0.035, 0.4, 8)),
+          this.track(new THREE.MeshStandardMaterial({ color: 0xcccccc, metalness: 0.8, roughness: 0.3 })),
+        );
         stick.position.y = 0.2;
-        const knobMat = this.track(new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: 0.8 }));
+        const knobMat = this.track(
+          new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: 0.8 }),
+        );
         const knob = new THREE.Mesh(this.track(new THREE.SphereGeometry(0.08, 12, 10)), knobMat);
         knob.position.y = 0.42;
         pivot.add(stick, knob);
@@ -379,7 +466,9 @@ export class LevelView {
       case 'socket': {
         g.add(createPedestal());
         const col = mechColor(fx.color);
-        const ringMat = this.track(new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: 0.4 }));
+        const ringMat = this.track(
+          new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: 0.4 }),
+        );
         const ring = new THREE.Mesh(this.track(new THREE.TorusGeometry(0.16, 0.04, 8, 24)), ringMat);
         ring.rotation.x = -Math.PI / 2;
         ring.position.y = 0.31;
@@ -396,10 +485,21 @@ export class LevelView {
       }
       case 'portal': {
         const col = mechColor(fx.color);
-        const disc = new THREE.Mesh(this.track(new THREE.CircleGeometry(0.42, 40)), this.track(createPortalMaterial(col)));
+        const disc = new THREE.Mesh(
+          this.track(new THREE.CircleGeometry(0.42, 40)),
+          this.track(createPortalMaterial(col)),
+        );
         disc.rotation.x = -Math.PI / 2;
         disc.position.y = 0.02;
-        const ringMat = this.track(new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: 1.2, metalness: 0.5, roughness: 0.3 }));
+        const ringMat = this.track(
+          new THREE.MeshStandardMaterial({
+            color: col,
+            emissive: col,
+            emissiveIntensity: 1.2,
+            metalness: 0.5,
+            roughness: 0.3,
+          }),
+        );
         const ring = new THREE.Mesh(this.track(new THREE.TorusGeometry(0.42, 0.04, 8, 40)), ringMat);
         ring.rotation.x = -Math.PI / 2;
         ring.position.y = 0.06;
@@ -420,7 +520,12 @@ export class LevelView {
       }
       case 'conveyor': {
         this.conveyorTex ??= conveyorTexture();
-        const tile = new THREE.Mesh(this.track(new THREE.BoxGeometry(0.98, 0.1, 0.98)), this.track(new THREE.MeshStandardMaterial({ color: 0xffffff, map: this.conveyorTex, roughness: 0.7 })));
+        const tile = new THREE.Mesh(
+          this.track(new THREE.BoxGeometry(0.98, 0.1, 0.98)),
+          this.track(
+            new THREE.MeshStandardMaterial({ color: 0xffffff, map: this.conveyorTex, roughness: 0.7 }),
+          ),
+        );
         tile.position.y = -0.05;
         tile.rotation.y = -fx.dir * (Math.PI / 2);
         tile.receiveShadow = true;
@@ -430,7 +535,17 @@ export class LevelView {
       case 'ice': {
         const tile = new THREE.Mesh(
           this.track(new THREE.BoxGeometry(0.98, 0.1, 0.98)),
-          this.track(new THREE.MeshStandardMaterial({ color: PALETTE.ice, roughness: 0.05, metalness: 0.3, transparent: true, opacity: 0.75, emissive: 0x2a6f8a, emissiveIntensity: 0.3 })),
+          this.track(
+            new THREE.MeshStandardMaterial({
+              color: PALETTE.ice,
+              roughness: 0.05,
+              metalness: 0.3,
+              transparent: true,
+              opacity: 0.75,
+              emissive: 0x2a6f8a,
+              emissiveIntensity: 0.3,
+            }),
+          ),
         );
         tile.position.y = -0.05;
         tile.receiveShadow = true;
@@ -439,10 +554,19 @@ export class LevelView {
       }
       case 'fragile':
       case 'pit': {
-        const hole = new THREE.Mesh(this.track(new THREE.BoxGeometry(0.98, 0.6, 0.98)), this.track(new THREE.MeshStandardMaterial({ color: 0x050410, roughness: 1 })));
+        const hole = new THREE.Mesh(
+          this.track(new THREE.BoxGeometry(0.98, 0.6, 0.98)),
+          this.track(new THREE.MeshStandardMaterial({ color: 0x050410, roughness: 1 })),
+        );
         hole.position.y = -0.62;
         g.add(hole);
-        const tileMat = this.track(new THREE.MeshStandardMaterial({ color: fx.type === 'pit' ? PALETTE.box : 0x3a3170, map: crackTexture(0), roughness: 0.9 }));
+        const tileMat = this.track(
+          new THREE.MeshStandardMaterial({
+            color: fx.type === 'pit' ? PALETTE.box : 0x3a3170,
+            map: crackTexture(0),
+            roughness: 0.9,
+          }),
+        );
         const tile = new THREE.Mesh(this.track(new THREE.BoxGeometry(0.98, 0.1, 0.98)), tileMat);
         tile.position.y = -0.05;
         tile.receiveShadow = true;
@@ -472,7 +596,15 @@ export class LevelView {
       }
       case 'emitter': {
         g.add(createPedestal());
-        const barrelMat = this.track(new THREE.MeshStandardMaterial({ color: 0x3b1020, emissive: PALETTE.paradox, emissiveIntensity: 0.6, metalness: 0.6, roughness: 0.3 }));
+        const barrelMat = this.track(
+          new THREE.MeshStandardMaterial({
+            color: 0x3b1020,
+            emissive: PALETTE.paradox,
+            emissiveIntensity: 0.6,
+            metalness: 0.6,
+            roughness: 0.3,
+          }),
+        );
         const barrel = new THREE.Mesh(this.track(new THREE.CylinderGeometry(0.1, 0.13, 0.4, 12)), barrelMat);
         barrel.rotation.x = Math.PI / 2;
         barrel.position.y = 0.45;
@@ -493,7 +625,15 @@ export class LevelView {
       }
       case 'mirror': {
         g.add(createPedestal());
-        const mat = this.track(new THREE.MeshStandardMaterial({ color: 0xdfe6ff, metalness: 1, roughness: 0.05, emissive: fx.color >= 0 ? mechColor(fx.color) : new THREE.Color(0x333333), emissiveIntensity: 0.4 }));
+        const mat = this.track(
+          new THREE.MeshStandardMaterial({
+            color: 0xdfe6ff,
+            metalness: 1,
+            roughness: 0.05,
+            emissive: fx.color >= 0 ? mechColor(fx.color) : new THREE.Color(0x333333),
+            emissiveIntensity: 0.4,
+          }),
+        );
         const plate = new THREE.Mesh(this.track(new THREE.BoxGeometry(0.72, 0.4, 0.05)), mat);
         plate.position.y = 0.5;
         const pivot = new THREE.Group();
@@ -516,7 +656,15 @@ export class LevelView {
       case 'receiver': {
         g.add(createPedestal());
         const col = mechColor(fx.color);
-        const mat = this.track(new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: 0.3, flatShading: true, roughness: 0.2 }));
+        const mat = this.track(
+          new THREE.MeshStandardMaterial({
+            color: col,
+            emissive: col,
+            emissiveIntensity: 0.3,
+            flatShading: true,
+            roughness: 0.2,
+          }),
+        );
         const gem = new THREE.Mesh(this.track(new THREE.IcosahedronGeometry(0.17, 0)), mat);
         gem.position.y = 0.5;
         g.add(gem);
@@ -571,8 +719,18 @@ export class LevelView {
       }
       case 'lift': {
         const col = mechColor(fx.color);
-        const shaft = new THREE.Mesh(this.track(new THREE.BoxGeometry(0.98, 1, 0.98)), this.track(new THREE.MeshStandardMaterial({ color: PALETTE.pillar, roughness: 0.9 })));
-        const platMat = this.track(new THREE.MeshStandardMaterial({ color: 0x2c2560, emissive: col, emissiveIntensity: 0.35, roughness: 0.5 }));
+        const shaft = new THREE.Mesh(
+          this.track(new THREE.BoxGeometry(0.98, 1, 0.98)),
+          this.track(new THREE.MeshStandardMaterial({ color: PALETTE.pillar, roughness: 0.9 })),
+        );
+        const platMat = this.track(
+          new THREE.MeshStandardMaterial({
+            color: 0x2c2560,
+            emissive: col,
+            emissiveIntensity: 0.35,
+            roughness: 0.5,
+          }),
+        );
         const plat = new THREE.Mesh(this.track(new RoundedBoxGeometry(0.96, 0.14, 0.96, 2, 0.03)), platMat);
         plat.receiveShadow = true;
         g.add(shaft, plat);
@@ -600,10 +758,30 @@ export class LevelView {
         frame.position.y = 0.03;
         const col = new THREE.Mesh(
           this.track(new THREE.CylinderGeometry(0.34, 0.4, 2.2, 24, 1, true)),
-          this.track(new THREE.MeshBasicMaterial({ color: PALETTE.exit, transparent: true, opacity: 0.12, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, toneMapped: false })),
+          this.track(
+            new THREE.MeshBasicMaterial({
+              color: PALETTE.exit,
+              transparent: true,
+              opacity: 0.12,
+              blending: THREE.AdditiveBlending,
+              depthWrite: false,
+              side: THREE.DoubleSide,
+              toneMapped: false,
+            }),
+          ),
         );
         col.position.y = 1.1;
-        const inner = new THREE.Mesh(this.track(new THREE.PlaneGeometry(0.5, 0.5)), this.track(new THREE.MeshBasicMaterial({ color: PALETTE.exit, transparent: true, opacity: 0.35, toneMapped: false })));
+        const inner = new THREE.Mesh(
+          this.track(new THREE.PlaneGeometry(0.5, 0.5)),
+          this.track(
+            new THREE.MeshBasicMaterial({
+              color: PALETTE.exit,
+              transparent: true,
+              opacity: 0.35,
+              toneMapped: false,
+            }),
+          ),
+        );
         inner.rotation.x = -Math.PI / 2;
         inner.rotation.z = Math.PI / 4;
         inner.position.y = 0.02;
@@ -662,7 +840,13 @@ export class LevelView {
 
   // ————— состояние и интерполяция —————
 
-  private rewind: { t: number; dur: number; actors: (THREE.Vector3 | null)[]; boxes: THREE.Vector3[]; guards: THREE.Vector3[] } | null = null;
+  private rewind: {
+    t: number;
+    dur: number;
+    actors: (THREE.Vector3 | null)[];
+    boxes: THREE.Vector3[];
+    guards: THREE.Vector3[];
+  } | null = null;
 
   /**
    * Перемотка к новому снимку с анимацией: всё откатывается к старту, а последняя попытка
@@ -710,7 +894,14 @@ export class LevelView {
     this.syncActors(s);
     s.actors.forEach((a, i) => {
       const v = this.actors[i]!;
-      v.path = [{ cell: a.cell, y: this.floorY(a.cell, s) + (a.riding ? FLOOR_UNIT * 2 : 0), jump: false, hop: false }];
+      v.path = [
+        {
+          cell: a.cell,
+          y: this.floorY(a.cell, s) + (a.riding ? FLOOR_UNIT * 2 : 0),
+          jump: false,
+          hop: false,
+        },
+      ];
       v.yaw = FACING_YAW[a.facing]!;
       v.broken = a.status === 'broken' ? 1 : 0;
       v.dead = a.status === 'dead' ? 1 : 0;
@@ -733,8 +924,17 @@ export class LevelView {
   setTick(prev: WorldState, next: WorldState, events: readonly SimEvent[]): void {
     this.state = next;
     this.syncActors(next);
-    const actorPaths: Waypoint[][] = prev.actors.map((a) => [{ cell: a.cell, y: this.floorY(a.cell, prev) + (a.riding ? FLOOR_UNIT * 2 : 0), jump: false, hop: false }]);
-    const boxPaths: Waypoint[][] = prev.boxes.map((b) => (b >= 0 ? [{ cell: b, y: this.floorY(b, prev), jump: false, hop: false }] : []));
+    const actorPaths: Waypoint[][] = prev.actors.map((a) => [
+      {
+        cell: a.cell,
+        y: this.floorY(a.cell, prev) + (a.riding ? FLOOR_UNIT * 2 : 0),
+        jump: false,
+        hop: false,
+      },
+    ]);
+    const boxPaths: Waypoint[][] = prev.boxes.map((b) =>
+      b >= 0 ? [{ cell: b, y: this.floorY(b, prev), jump: false, hop: false }] : [],
+    );
     const push = (m: Mover, cell: number, jump: boolean, hop: boolean) => {
       const list = m.kind === 'actor' ? actorPaths[m.index] : boxPaths[m.index];
       list?.push({ cell, y: this.floorY(cell, next), jump, hop });
@@ -800,7 +1000,11 @@ export class LevelView {
     }
   }
 
-  private samplePath(path: Waypoint[], alpha: number, out: THREE.Vector3): { hop: number; jumpScale: number } {
+  private samplePath(
+    path: Waypoint[],
+    alpha: number,
+    out: THREE.Vector3,
+  ): { hop: number; jumpScale: number } {
     if (!path.length) return { hop: 0, jumpScale: 1 };
     if (path.length === 1 || alpha >= 1) {
       const w = path[path.length - 1]!;
@@ -855,7 +1059,9 @@ export class LevelView {
         const u = v.model.hologram.uniforms;
         u.uTime!.value = time + i * 1.3;
         u.uGlitch!.value = v.broken;
-        (u.uColor!.value as THREE.Color).setHex(PALETTE.echo).lerp(new THREE.Color(PALETTE.paradox), v.broken);
+        (u.uColor!.value as THREE.Color)
+          .setHex(PALETTE.echo)
+          .lerp(new THREE.Color(PALETTE.paradox), v.broken);
       }
       if (v.dead > 0.01) {
         v.model.body.rotation.z = v.dead * (Math.PI / 2.4);
@@ -890,7 +1096,8 @@ export class LevelView {
         m.rotation.y = time * 2;
       } else if (it.cell >= 0) {
         const fx = this.level.fixtures[it.cell];
-        const y = this.floorY(it.cell, s) + (fx?.type === 'socket' ? 0.28 : 0.05 + Math.sin(time * 2 + i) * 0.04);
+        const y =
+          this.floorY(it.cell, s) + (fx?.type === 'socket' ? 0.28 : 0.05 + Math.sin(time * 2 + i) * 0.04);
         m.position.copy(this.cellPos(it.cell, y));
         m.rotation.y = time * 0.8 + i;
       }
@@ -916,7 +1123,8 @@ export class LevelView {
           dirty = true;
         }
       }
-      if (dirty) (this.walls.geometry.getAttribute('aFade') as THREE.InstancedBufferAttribute).needsUpdate = true;
+      if (dirty)
+        (this.walls.geometry.getAttribute('aFade') as THREE.InstancedBufferAttribute).needsUpdate = true;
     }
     this.applyRewind(dt);
     const beamPulse = 0.75 + Math.sin(time * 20) * 0.15;
@@ -987,7 +1195,10 @@ export class LevelView {
     if (!this.arrow) {
       const geo = this.track(new THREE.ConeGeometry(0.16, 0.34, 4));
       geo.rotateX(Math.PI);
-      this.arrow = new THREE.Mesh(geo, this.track(new THREE.MeshBasicMaterial({ color: PALETTE.player, toneMapped: false })));
+      this.arrow = new THREE.Mesh(
+        geo,
+        this.track(new THREE.MeshBasicMaterial({ color: PALETTE.player, toneMapped: false })),
+      );
       this.root.add(this.arrow);
     }
     this.arrowCell = cell;
@@ -1022,7 +1233,12 @@ export class LevelView {
     });
     if (!dashes.length) return;
     const geo = new THREE.BoxGeometry(0.05, 0.02, 0.13);
-    const mat = new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false, transparent: true, opacity: 0.85 });
+    const mat = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      toneMapped: false,
+      transparent: true,
+      opacity: 0.85,
+    });
     const mesh = new THREE.InstancedMesh(geo, mat, dashes.length);
     const m = new THREE.Matrix4();
     const q = new THREE.Quaternion();
@@ -1067,11 +1283,14 @@ export class LevelView {
 
   private updateExtras(time: number): void {
     if (this.arrow?.visible && this.arrowCell >= 0) {
-      this.arrow.position.copy(this.cellPos(this.arrowCell, this.floorY(this.arrowCell) + 1.25 + Math.sin(time * 4) * 0.12));
+      this.arrow.position.copy(
+        this.cellPos(this.arrowCell, this.floorY(this.arrowCell) + 1.25 + Math.sin(time * 4) * 0.12),
+      );
       this.arrow.rotation.y = time * 1.5;
     }
     for (const g of this.ghosts) if (g.hologram) g.hologram.uniforms.uTime!.value = time;
-    if (this.trails) (this.trails.material as THREE.MeshBasicMaterial).opacity = 0.6 + Math.sin(time * 3) * 0.2;
+    if (this.trails)
+      (this.trails.material as THREE.MeshBasicMaterial).opacity = 0.6 + Math.sin(time * 3) * 0.2;
   }
 
   dispose(): void {

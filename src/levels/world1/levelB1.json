@@ -1,0 +1,32 @@
+{
+  "par": {
+    "echoes": 1,
+    "ticks": 13
+  },
+  "bonus": true,
+  "id": "w1-b1",
+  "world": 1,
+  "index": 1,
+  "starsRequired": 15,
+  "name": {
+    "ru": "Метроном",
+    "en": "Metronome"
+  },
+  "map": [
+    "############",
+    "#S.A.1.B.2X#",
+    "#.##########",
+    "#...a...b..#",
+    "############"
+  ],
+  "tickLimit": 22,
+  "maxEchoes": 2,
+  "hints": [
+    {
+      "text": {
+        "ru": "Шлюзы: обычная дверь открыта, пока плита нажата, штрихованная — пока нет. Одна копия может отбивать ритм",
+        "en": "Airlocks: the plain door is open while the plate is pressed, the hatched one while it is not. One copy can keep the beat"
+      }
+    }
+  ]
+}

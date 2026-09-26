@@ -15,7 +15,10 @@ const BROWSERS = [
 ];
 
 async function runSteps(page: Page, steps: string, outDir: string): Promise<void> {
-  for (const raw of steps.split(',').map((s) => s.trim()).filter(Boolean)) {
+  for (const raw of steps
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean)) {
     if (process.env.SHOT_VERBOSE) console.log('step', raw.slice(0, 60));
     const [kind, ...rest] = raw.split(':');
     const arg = rest.join(':');
@@ -50,7 +53,8 @@ async function runSteps(page: Page, steps: string, outDir: string): Promise<void
         const [x1, y1] = a!.split('x').map(Number);
         const [x2, y2] = b!.split('x').map(Number);
         await page.touchscreen.touchStart(x1!, y1!);
-        for (let i = 1; i <= 6; i++) await page.touchscreen.touchMove(x1! + ((x2! - x1!) * i) / 6, y1! + ((y2! - y1!) * i) / 6);
+        for (let i = 1; i <= 6; i++)
+          await page.touchscreen.touchMove(x1! + ((x2! - x1!) * i) / 6, y1! + ((y2! - y1!) * i) / 6);
         await page.touchscreen.touchEnd();
         break;
       }
@@ -75,18 +79,29 @@ async function main(): Promise<void> {
   const mobile = flags.includes('--mobile') || landscape;
   const stepsIdx = flags.indexOf('--steps');
   const steps = stepsIdx >= 0 ? (flags[stepsIdx + 1] ?? '') : '';
-  const executablePath = BROWSERS.find((p) => existsSync(p));
+  const executablePath = process.env.SHOT_BROWSER ?? BROWSERS.find((p) => existsSync(p));
   if (!executablePath) throw new Error('Не найден Chrome/Edge');
   const browser = await puppeteer.launch({
     executablePath,
     headless: true,
     protocolTimeout: 60000,
-    args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--autoplay-policy=no-user-gesture-required'],
+    args: [
+      '--use-angle=swiftshader',
+      '--enable-unsafe-swiftshader',
+      '--ignore-gpu-blocklist',
+      '--autoplay-policy=no-user-gesture-required',
+    ],
   });
   const page = await browser.newPage();
   if (mobile) {
-    await page.setViewport(landscape ? { width: 844, height: 390, deviceScaleFactor: 2, isMobile: true, hasTouch: true, isLandscape: true } : { width: 390, height: 844, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
-    await page.setUserAgent('Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Mobile Safari/537.36');
+    await page.setViewport(
+      landscape
+        ? { width: 844, height: 390, deviceScaleFactor: 2, isMobile: true, hasTouch: true, isLandscape: true }
+        : { width: 390, height: 844, deviceScaleFactor: 2, isMobile: true, hasTouch: true },
+    );
+    await page.setUserAgent(
+      'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Mobile Safari/537.36',
+    );
   } else {
     const sizeIdx = flags.indexOf('--size');
     const [w, hgt] = sizeIdx >= 0 ? (flags[sizeIdx + 1] ?? '1280x800').split('x').map(Number) : [1280, 800];

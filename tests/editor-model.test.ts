@@ -26,9 +26,12 @@ describe('модель редактора', () => {
     expect(() => compileLevel(toRaw(newDoc()))).not.toThrow();
   });
 
-  it.each(builtinEntries().map((e) => [e.path, e.raw] as const))('круг сериализации без потерь: %s', (_p, raw) => {
-    same(raw, toRaw(fromRaw(raw)));
-  });
+  it.each(builtinEntries().map((e) => [e.path, e.raw] as const))(
+    'круг сериализации без потерь: %s',
+    (_p, raw) => {
+      same(raw, toRaw(fromRaw(raw)));
+    },
+  );
 
   it('инструменты: единственный старт и выход, пьедестал вытесняет предмет', () => {
     const d = newDoc(7, 5);

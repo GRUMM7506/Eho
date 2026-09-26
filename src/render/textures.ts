@@ -6,7 +6,11 @@ import * as THREE from 'three';
  */
 const cache = new Map<string, THREE.Texture>();
 
-function canvasTexture(key: string, size: number, draw: (g: CanvasRenderingContext2D, s: number) => void): THREE.Texture {
+function canvasTexture(
+  key: string,
+  size: number,
+  draw: (g: CanvasRenderingContext2D, s: number) => void,
+): THREE.Texture {
   const hit = cache.get(key);
   if (hit) return hit;
   const c = document.createElement('canvas');
@@ -86,7 +90,7 @@ export function crackTexture(level: number): THREE.Texture {
     g.lineWidth = 2.5;
     // Детерминированный узор трещин.
     let seed = 7 + level * 13;
-    const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+    const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
     const lines = 2 + level * 3;
     for (let i = 0; i < lines; i++) {
       g.beginPath();

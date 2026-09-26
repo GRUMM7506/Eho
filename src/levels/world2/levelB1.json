@@ -1,0 +1,33 @@
+{
+  "par": {
+    "echoes": 1,
+    "ticks": 25
+  },
+  "bonus": true,
+  "id": "w2-b1",
+  "world": 2,
+  "index": 1,
+  "starsRequired": 35,
+  "name": {
+    "ru": "Погрузка",
+    "en": "Loading Dock"
+  },
+  "map": [
+    "############",
+    "#S..########",
+    "#.o.A..__.X#",
+    "#.o.########",
+    "#a..########",
+    "############"
+  ],
+  "tickLimit": 48,
+  "maxEchoes": 2,
+  "hints": [
+    {
+      "text": {
+        "ru": "Два ящика — две ямы. Если поставить ящик на плиту, второй яме его не хватит",
+        "en": "Two crates, two pits. Put a crate on the plate and the second pit goes without"
+      }
+    }
+  ]
+}

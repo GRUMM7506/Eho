@@ -29,7 +29,10 @@ export interface ControllerEvents {
   /** События тика (звук, эффекты, HUD). */
   onTick(prev: WorldState, next: WorldState, events: readonly SimEvent[]): void;
   /** Снимок сменился без тика (новая петля, перемотка, сброс). */
-  onReset(state: WorldState, reason: 'load' | 'record' | 'undo' | 'rewind' | 'reset' | 'restart' | 'timeout'): void;
+  onReset(
+    state: WorldState,
+    reason: 'load' | 'record' | 'undo' | 'rewind' | 'reset' | 'restart' | 'timeout',
+  ): void;
   onWin(info: WinInfo): void;
   onDeath(state: WorldState): void;
   onLoopEnd(kind: LoopEndKind): void;
@@ -236,7 +239,10 @@ export class GameController {
     this.acc = 0;
     this.animAcc = this.tickMs;
     this.input.clear();
-    this.view.setState(this.state, reason === 'record' || reason === 'undo' || reason === 'reset' || reason === 'restart');
+    this.view.setState(
+      this.state,
+      reason === 'record' || reason === 'undo' || reason === 'reset' || reason === 'restart',
+    );
     this.events.onReset(this.state, reason);
   }
 

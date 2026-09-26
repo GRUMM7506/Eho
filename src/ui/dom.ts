@@ -2,7 +2,11 @@ type Child = Node | string | number | null | undefined | false;
 type Attrs = Record<string, string | number | boolean | EventListener | null | undefined>;
 
 /** Маленький hyperscript: h('button.btn.primary', { onclick }, 'Текст'). */
-export function h<K extends keyof HTMLElementTagNameMap>(tagSpec: K | `${K}.${string}` | `${K}#${string}`, attrs?: Attrs | null, ...children: (Child | Child[])[]): HTMLElementTagNameMap[K] {
+export function h<K extends keyof HTMLElementTagNameMap>(
+  tagSpec: K | `${K}.${string}` | `${K}#${string}`,
+  attrs?: Attrs | null,
+  ...children: (Child | Child[])[]
+): HTMLElementTagNameMap[K] {
   const [tagAndId, ...classes] = tagSpec.split('.');
   const [tag, id] = tagAndId!.split('#') as [K, string | undefined];
   const el = document.createElement(tag);
@@ -47,7 +51,8 @@ export const ICONS = {
   record: '<circle cx="9" cy="12" r="5"/><circle cx="15" cy="12" r="5" stroke-dasharray="2 2.5"/>',
   undo: '<path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 010 10h-3"/>',
   hint: '<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 114 2c-.9.6-1.5 1.1-1.5 2.2"/><circle cx="12" cy="17" r=".6" fill="currentColor"/>',
-  trails: '<path d="M4 18c3-6 5 2 8-4s5-6 8-8" stroke-dasharray="3 3"/><circle cx="4" cy="18" r="1.5"/><circle cx="20" cy="6" r="1.5"/>',
+  trails:
+    '<path d="M4 18c3-6 5 2 8-4s5-6 8-8" stroke-dasharray="3 3"/><circle cx="4" cy="18" r="1.5"/><circle cx="20" cy="6" r="1.5"/>',
   camLeft: '<path d="M4 12a8 8 0 1 0 3-6.2"/><path d="M4 4v4h4"/>',
   camRight: '<path d="M20 12a8 8 0 1 1-3-6.2"/><path d="M20 4v4h-4"/>',
   star: '<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z" fill="currentColor" stroke="none"/>',

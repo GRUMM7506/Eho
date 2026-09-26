@@ -81,7 +81,8 @@ body {
   inset: 0;
   display: flex;
   flex-direction: column;
-  padding: calc(16px + var(--safe-t)) calc(16px + var(--safe-r)) calc(16px + var(--safe-b)) calc(16px + var(--safe-l));
+  padding: calc(16px + var(--safe-t)) calc(16px + var(--safe-r)) calc(16px + var(--safe-b))
+    calc(16px + var(--safe-l));
   opacity: 0;
   transform: translateY(12px) scale(0.985);
   transition:
@@ -110,7 +111,12 @@ body {
 }
 
 .screen.dim {
-  background: linear-gradient(180deg, rgba(13, 11, 30, 0.72), rgba(13, 11, 30, 0.35) 40%, rgba(13, 11, 30, 0.75));
+  background: linear-gradient(
+    180deg,
+    rgba(13, 11, 30, 0.72),
+    rgba(13, 11, 30, 0.35) 40%,
+    rgba(13, 11, 30, 0.75)
+  );
 }
 
 .scroll {
@@ -620,7 +626,8 @@ body.using-pad :focus {
 /* ————— HUD ————— */
 
 .hud {
-  padding: calc(10px + var(--safe-t)) calc(12px + var(--safe-r)) calc(10px + var(--safe-b)) calc(12px + var(--safe-l));
+  padding: calc(10px + var(--safe-t)) calc(12px + var(--safe-r)) calc(10px + var(--safe-b))
+    calc(12px + var(--safe-l));
 }
 
 .hud-top {
@@ -703,7 +710,11 @@ body.using-pad :focus {
 .tl-ticks {
   position: absolute;
   inset: 0;
-  background-image: repeating-linear-gradient(90deg, transparent 0 calc(var(--tick) - 1px), rgba(236, 232, 255, 0.12) calc(var(--tick) - 1px) var(--tick));
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent 0 calc(var(--tick) - 1px),
+    rgba(236, 232, 255, 0.12) calc(var(--tick) - 1px) var(--tick)
+  );
 }
 
 .tl-lanes {
@@ -1478,7 +1489,12 @@ body.reduced-motion * {
 /* ————— редактор ————— */
 
 .ed {
-  background: linear-gradient(90deg, rgba(13, 11, 30, 0.92) 0, rgba(13, 11, 30, 0.85) 60%, rgba(13, 11, 30, 0) 75%);
+  background: linear-gradient(
+    90deg,
+    rgba(13, 11, 30, 0.92) 0,
+    rgba(13, 11, 30, 0.85) 60%,
+    rgba(13, 11, 30, 0) 75%
+  );
   padding-bottom: calc(8px + var(--safe-b));
 }
 
@@ -1602,7 +1618,9 @@ body.reduced-motion * {
 
 .ed-swatches .sw.on {
   border-color: var(--ink);
-  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--ink);
+  box-shadow:
+    0 0 0 2px var(--bg),
+    0 0 0 4px var(--ink);
 }
 
 .ed-actions {

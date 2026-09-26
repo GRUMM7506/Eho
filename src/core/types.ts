@@ -193,7 +193,8 @@ export interface WorldState {
   readonly paradoxes: number;
 }
 
-export type Mover = { readonly kind: 'actor'; readonly index: number } | { readonly kind: 'box'; readonly index: number };
+export type Mover =
+  { readonly kind: 'actor'; readonly index: number } | { readonly kind: 'box'; readonly index: number };
 
 export type SimEvent =
   | { type: 'step'; actor: number; from: number; to: number }

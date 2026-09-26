@@ -87,7 +87,14 @@ export function createEchoModel(index: number): ActorModel {
 export function createGuardModel(): ActorModel {
   const root = new THREE.Group();
   const body = new THREE.Group();
-  const mat = new THREE.MeshStandardMaterial({ color: 0x2b1030, emissive: PALETTE.paradox, emissiveIntensity: 0.25, roughness: 0.4, metalness: 0.5, flatShading: true });
+  const mat = new THREE.MeshStandardMaterial({
+    color: 0x2b1030,
+    emissive: PALETTE.paradox,
+    emissiveIntensity: 0.25,
+    roughness: 0.4,
+    metalness: 0.5,
+    flatShading: true,
+  });
   const core = new THREE.Mesh(new THREE.OctahedronGeometry(0.28, 0), mat);
   core.position.y = 0.42;
   core.scale.set(1, 1.2, 1);
@@ -118,7 +125,13 @@ export function createBoxModel(): { mesh: THREE.Mesh; material: THREE.MeshStanda
 export function createKeyModel(colorId: number): THREE.Group {
   const g = new THREE.Group();
   const col = mechColor(colorId);
-  const mat = new THREE.MeshStandardMaterial({ color: col, emissive: col, emissiveIntensity: 0.9, metalness: 0.6, roughness: 0.3 });
+  const mat = new THREE.MeshStandardMaterial({
+    color: col,
+    emissive: col,
+    emissiveIntensity: 0.9,
+    metalness: 0.6,
+    roughness: 0.3,
+  });
   const ring = new THREE.Mesh(new THREE.TorusGeometry(0.1, 0.035, 8, 20), mat);
   ring.position.y = 0.12;
   g.add(ring);
@@ -136,7 +149,13 @@ export function createBatteryModel(): THREE.Group {
   const g = new THREE.Group();
   const body = new THREE.Mesh(
     new THREE.CylinderGeometry(0.1, 0.1, 0.3, 16),
-    new THREE.MeshStandardMaterial({ color: 0x1d3b33, emissive: PALETTE.exit, emissiveIntensity: 0.35, metalness: 0.4, roughness: 0.4 }),
+    new THREE.MeshStandardMaterial({
+      color: 0x1d3b33,
+      emissive: PALETTE.exit,
+      emissiveIntensity: 0.35,
+      metalness: 0.4,
+      roughness: 0.4,
+    }),
   );
   body.position.y = 0.17;
   g.add(body);

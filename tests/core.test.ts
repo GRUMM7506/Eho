@@ -1,6 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import { createLoop, playSolution, step } from '../src/core/sim';
-import { advance, canRecord, current, newSession, recordEcho, resetRoom, rewind, undoEcho } from '../src/core/session';
+import {
+  advance,
+  canRecord,
+  current,
+  newSession,
+  recordEcho,
+  resetRoom,
+  rewind,
+  undoEcho,
+} from '../src/core/session';
 import { at, mk, player, run, withEchoes } from './helpers';
 
 const corridor = mk(['#######', '#Sa.AX#', '#######']);

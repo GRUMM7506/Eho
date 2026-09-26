@@ -156,7 +156,11 @@ export class OrbitCamera {
     const yawR = THREE.MathUtils.degToRad(this.yaw);
     const pitchR = THREE.MathUtils.degToRad(this.pitch);
     const right = new THREE.Vector3(Math.cos(yawR), 0, -Math.sin(yawR));
-    const back = new THREE.Vector3(Math.sin(yawR) * Math.cos(pitchR), Math.sin(pitchR), Math.cos(yawR) * Math.cos(pitchR));
+    const back = new THREE.Vector3(
+      Math.sin(yawR) * Math.cos(pitchR),
+      Math.sin(pitchR),
+      Math.cos(yawR) * Math.cos(pitchR),
+    );
     const up = new THREE.Vector3().crossVectors(back, right).normalize();
     const c = this.bounds.getCenter(new THREE.Vector3());
     let ex = 0;
@@ -218,7 +222,11 @@ export class OrbitCamera {
   private apply(dt: number): void {
     const yawR = THREE.MathUtils.degToRad(this.yaw);
     const pitchR = THREE.MathUtils.degToRad(this.pitch);
-    const dir = new THREE.Vector3(Math.sin(yawR) * Math.cos(pitchR), Math.sin(pitchR), Math.cos(yawR) * Math.cos(pitchR));
+    const dir = new THREE.Vector3(
+      Math.sin(yawR) * Math.cos(pitchR),
+      Math.sin(pitchR),
+      Math.cos(yawR) * Math.cos(pitchR),
+    );
     const target = this.target.clone().add(this.pan);
     if (this.shakeAmp > 0.001) {
       this.shakeTime += dt;

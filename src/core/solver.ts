@@ -86,7 +86,8 @@ export class Solver {
     this.now = now;
     this.special = new Set<number>();
     const b = level.byType;
-    for (const c of [...b.plate, ...b.door, ...b.lift, ...b.timerDoor, ...b.portal, ...b.conveyor]) this.special.add(c);
+    for (const c of [...b.plate, ...b.door, ...b.lift, ...b.timerDoor, ...b.portal, ...b.conveyor])
+      this.special.add(c);
     level.solidZone.forEach((z, c) => {
       if (z) this.special.add(c);
     });
@@ -103,7 +104,12 @@ export class Solver {
       const c = q[i]!;
       const x = c % L.width;
       const y = Math.floor(c / L.width);
-      for (const [dx, dy] of [[0, -1], [1, 0], [0, 1], [-1, 0]] as const) {
+      for (const [dx, dy] of [
+        [0, -1],
+        [1, 0],
+        [0, 1],
+        [-1, 0],
+      ] as const) {
         const nx = x + dx;
         const ny = y + dy;
         if (nx < 0 || ny < 0 || nx >= L.width || ny >= L.height) continue;
@@ -265,7 +271,8 @@ export class Solver {
     const startState = createLoop(this.level, records);
     // Опорная траектория: что было бы, если бы игрок просто ждал. С ней сравниваются изменения.
     const baseline: WorldState[] = [startState];
-    while (baseline[baseline.length - 1]!.outcome === 'playing') baseline.push(step(baseline[baseline.length - 1]!, 'none').state);
+    while (baseline[baseline.length - 1]!.outcome === 'playing')
+      baseline.push(step(baseline[baseline.length - 1]!, 'none').state);
     const baseAt = (t: number) => baseline[Math.min(t, baseline.length - 1)]!;
     // Клетки под взглядом стражей на опорной траектории — «особые»: там копия заслоняет обзор.
     const sightCells = new Set<number>();
@@ -338,7 +345,9 @@ export class Solver {
    */
   private chains(base: Node[]): Node[] {
     const out: Node[] = [];
-    const firsts = base.filter((n) => this.special.has(n.state.actors[n.state.actors.length - 1]!.cell)).slice(0, 8);
+    const firsts = base
+      .filter((n) => this.special.has(n.state.actors[n.state.actors.length - 1]!.cell))
+      .slice(0, 8);
     for (const first of firsts) {
       const from = first.state.actors[first.state.actors.length - 1]!.cell;
       for (const w of [0, 1, 2, 3, 5]) {
@@ -445,12 +454,14 @@ export class Solver {
         if (records.length === k) {
           const f = this.finalRun(records);
           if (!f) return false;
-          if (!best || best.echoes > k || f.state.tick < best.ticks) best = { loops: [...loops, f.inputs], echoes: k, ticks: f.state.tick };
+          if (!best || best.echoes > k || f.state.tick < best.ticks)
+            best = { loops: [...loops, f.inputs], echoes: k, ticks: f.state.tick };
           return this.now() > stopAt;
         }
         let cands = this.candidates(records, mode === 'wide');
         if (mode === 'chain') cands = this.chains(cands);
-        else if (mode !== 'narrow') cands = [...cands, ...this.delayed(records, cands, [1, 2, 3, 4, 6, 8, 10, 13])];
+        else if (mode !== 'narrow')
+          cands = [...cands, ...this.delayed(records, cands, [1, 2, 3, 4, 6, 8, 10, 13])];
         for (const c of cands) {
           const rec = recordOf(c.state);
           const sig = [...records, rec].map((r) => `${r.actions}@${r.endCell}`).join('/');

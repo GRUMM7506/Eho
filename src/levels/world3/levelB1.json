@@ -1,0 +1,52 @@
+{
+  "par": {
+    "echoes": 1,
+    "ticks": 9
+  },
+  "bonus": true,
+  "id": "w3-b1",
+  "world": 3,
+  "index": 1,
+  "starsRequired": 55,
+  "name": {
+    "ru": "Зеркальный каток",
+    "en": "Mirror Rink"
+  },
+  "legend": {
+    "P": {
+      "type": "portal",
+      "color": "violet"
+    },
+    "Q": {
+      "type": "portal",
+      "color": "violet"
+    },
+    "R": {
+      "type": "portal",
+      "color": "orange"
+    },
+    "T": {
+      "type": "portal",
+      "color": "orange"
+    }
+  },
+  "map": [
+    "#############",
+    "#S.~~~~~P#..#",
+    "#.#~~a~~~#.X#",
+    "#.#~~~~~~#B##",
+    "#Q.~~~~b~R..#",
+    "#.#~~~~~~#T.#",
+    "#############"
+  ],
+  "tickLimit": 30,
+  "maxEchoes": 3,
+  "hints": [
+    {
+      "text": {
+        "ru": "Порталы выпускают вас на лёд в том же направлении. Остановят только плиты",
+        "en": "Portals release you onto the ice going the same way. Only plates will stop you"
+      }
+    }
+  ]
+}

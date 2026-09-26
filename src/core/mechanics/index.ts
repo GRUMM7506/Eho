@@ -26,7 +26,23 @@ const exit: Mechanic = { id: 'exit', fixtures: ['exit'] };
  * ещё не инициализированной механике на уровне модуля ломало бы запуск.
  */
 function build(): readonly Mechanic[] {
-  return [plates, levers, sockets, items, locks, portals, ice, fragile, conveyors, guards, lasers, doors, timerDoors, height, exit];
+  return [
+    plates,
+    levers,
+    sockets,
+    items,
+    locks,
+    portals,
+    ice,
+    fragile,
+    conveyors,
+    guards,
+    lasers,
+    doors,
+    timerDoors,
+    height,
+    exit,
+  ];
 }
 
 type Fn<K extends keyof Mechanic> = NonNullable<Mechanic[K]>;

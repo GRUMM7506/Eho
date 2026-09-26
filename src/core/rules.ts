@@ -1,17 +1,7 @@
 import type { Mechanic } from './mechanic';
 import { getHooks, getMechanics } from './mechanics';
 import type { Dir, FixtureType, Level, Mover, SimEvent } from './types';
-import {
-  anyActorAt,
-  boxAt,
-  emit,
-  fixtureAt,
-  guardAt,
-  itemAt,
-  next,
-  solidEchoAt,
-  type Draft,
-} from './world';
+import { anyActorAt, boxAt, emit, fixtureAt, guardAt, itemAt, next, solidEchoAt, type Draft } from './world';
 
 let ownerTable: Map<FixtureType, Mechanic> | null = null;
 
@@ -40,7 +30,18 @@ interface CellHooks {
   onLeave: Bound<'onLeave'>[];
 }
 
-const CELL_KEYS = ['blocksEntry', 'isHole', 'fillHole', 'floorHeight', 'isRamp', 'blocksSight', 'interact', 'canArrive', 'onEnter', 'onLeave'] as const;
+const CELL_KEYS = [
+  'blocksEntry',
+  'isHole',
+  'fillHole',
+  'floorHeight',
+  'isRamp',
+  'blocksSight',
+  'interact',
+  'canArrive',
+  'onEnter',
+  'onLeave',
+] as const;
 
 let lastLevel: Level | null = null;
 let lastHooks: CellHooks | null = null;
@@ -51,13 +52,16 @@ function cellHooks(level: Level): CellHooks {
   let h = hookCache.get(level);
   if (!h) {
     const n = level.fixtures.length;
-    const table = Object.fromEntries(CELL_KEYS.map((k) => [k, new Array(n).fill(null)])) as unknown as CellHooks;
+    const table = Object.fromEntries(
+      CELL_KEYS.map((k) => [k, new Array(n).fill(null)]),
+    ) as unknown as CellHooks;
     level.fixtures.forEach((fx, c) => {
       const m = fx ? ownerOf(fx.type) : undefined;
       if (!m) return;
       for (const k of CELL_KEYS) {
         const fn = m[k];
-        if (typeof fn === 'function') (table[k] as unknown[])[c] = (fn as (...a: unknown[]) => unknown).bind(m);
+        if (typeof fn === 'function')
+          (table[k] as unknown[])[c] = (fn as (...a: unknown[]) => unknown).bind(m);
       }
     });
     hookCache.set(level, table);
@@ -143,7 +147,15 @@ function boxEntry(d: Draft, box: number, from: number, to: number, dir: Dir): En
 }
 
 /** Может ли актор войти в клетку `to` (с толканием ящика или без). */
-function actorEntry(d: Draft, actor: number, from: number, to: number, dir: Dir, allowPush: boolean, fromZ = actorZ(d, actor)): EntryPlan | null {
+function actorEntry(
+  d: Draft,
+  actor: number,
+  from: number,
+  to: number,
+  dir: Dir,
+  allowPush: boolean,
+  fromZ = actorZ(d, actor),
+): EntryPlan | null {
   const mover: Mover = { kind: 'actor', index: actor };
   if (blocksEntry(d, to, mover)) return BLOCKED;
   if (isHole(d, to)) return BLOCKED;
@@ -168,7 +180,10 @@ function actorEntry(d: Draft, actor: number, from: number, to: number, dir: Dir,
 
 function entry(d: Draft, m: Mover, from: number, to: number, dir: Dir, allowPush: boolean): EntryPlan | null {
   if (to < 0) return BLOCKED;
-  const plan = m.kind === 'actor' ? actorEntry(d, m.index, from, to, dir, allowPush) : boxEntry(d, m.index, from, to, dir);
+  const plan =
+    m.kind === 'actor'
+      ? actorEntry(d, m.index, from, to, dir, allowPush)
+      : boxEntry(d, m.index, from, to, dir);
   if (!plan || plan.fill) return plan;
   const fx = d.level.fixtures[to];
   if (fx?.type !== 'portal') return plan;
@@ -188,7 +203,15 @@ function entry(d: Draft, m: Mover, from: number, to: number, dir: Dir, allowPush
  * Применить вход: толкание, уход с клетки, перемещение (с проходом через портал), засыпание ямы.
  * Возвращает клетку, где сущность оказалась, или −1, если ящик ушёл в яму.
  */
-function applyEntry(d: Draft, m: Mover, from: number, to: number, plan: EntryPlan, dir: Dir, cause: MoveCause): number {
+function applyEntry(
+  d: Draft,
+  m: Mover,
+  from: number,
+  to: number,
+  plan: EntryPlan,
+  dir: Dir,
+  cause: MoveCause,
+): number {
   const hooks = cellHooks(d.level);
   if (plan.push >= 0) moveMover(d, { kind: 'box', index: plan.push }, dir, false, 'push');
   hooks.onLeave[from]?.(d, m, from);

@@ -35,7 +35,10 @@ export class InputHub {
   private heldButtons: ScreenDir | null = null;
   private orbit: OrbitCamera | null = null;
   private canvas: HTMLElement | null = null;
-  private readonly pointers = new Map<number, { x: number; y: number; x0: number; y0: number; t0: number; type: string; button: number; fired: boolean }>();
+  private readonly pointers = new Map<
+    number,
+    { x: number; y: number; x0: number; y0: number; t0: number; type: string; button: number; fired: boolean }
+  >();
   private camGesture = false;
   private lastPinch = 0;
   private lastAngle = 0;
@@ -48,7 +51,12 @@ export class InputHub {
   attach(canvas: HTMLElement, orbit: OrbitCamera): void {
     this.canvas = canvas;
     this.orbit = orbit;
-    const on = <K extends keyof WindowEventMap>(t: EventTarget, type: K, fn: (e: WindowEventMap[K]) => void, opts?: AddEventListenerOptions) => {
+    const on = <K extends keyof WindowEventMap>(
+      t: EventTarget,
+      type: K,
+      fn: (e: WindowEventMap[K]) => void,
+      opts?: AddEventListenerOptions,
+    ) => {
       t.addEventListener(type, fn as EventListener, opts);
       this.cleanups.push(() => t.removeEventListener(type, fn as EventListener, opts));
     };
@@ -82,7 +90,9 @@ export class InputHub {
   }
 
   private held(): ScreenDir | null {
-    return this.heldButtons ?? this.heldPad ?? this.heldPointer ?? this.heldKeys[this.heldKeys.length - 1] ?? null;
+    return (
+      this.heldButtons ?? this.heldPad ?? this.heldPointer ?? this.heldKeys[this.heldKeys.length - 1] ?? null
+    );
   }
 
   clear(): void {
@@ -115,7 +125,14 @@ export class InputHub {
 
   private keyDown(e: KeyboardEvent): void {
     const target = e.target as HTMLElement | null;
-    if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT' || target.isContentEditable)) return;
+    if (
+      target &&
+      (target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.tagName === 'SELECT' ||
+        target.isContentEditable)
+    )
+      return;
     if (document.body.dataset.capturing === '1') return;
     this.lastDevice = 'keyboard';
     this.onAnyInput('keyboard');
@@ -131,7 +148,8 @@ export class InputHub {
       if (!e.repeat) this.enqueue(dir);
       return;
     }
-    if ((act === 'interact' || act === 'next') && onButton && (e.code === 'Space' || e.code === 'Enter')) return;
+    if ((act === 'interact' || act === 'next') && onButton && (e.code === 'Space' || e.code === 'Enter'))
+      return;
     if (e.repeat && act !== 'rewind') return;
     e.preventDefault();
     if (act === 'interact') this.enqueue('interact');
@@ -154,7 +172,16 @@ export class InputHub {
     const kind = e.pointerType === 'touch' ? 'touch' : 'mouse';
     this.lastDevice = kind;
     this.onAnyInput(kind);
-    this.pointers.set(e.pointerId, { x: e.clientX, y: e.clientY, x0: e.clientX, y0: e.clientY, t0: performance.now(), type: e.pointerType, button: e.button, fired: false });
+    this.pointers.set(e.pointerId, {
+      x: e.clientX,
+      y: e.clientY,
+      x0: e.clientX,
+      y0: e.clientY,
+      t0: performance.now(),
+      type: e.pointerType,
+      button: e.button,
+      fired: false,
+    });
     this.lastMoveTime = performance.now();
     const touches = [...this.pointers.values()].filter((p) => p.type === 'touch');
     if (touches.length >= 2) {
@@ -204,7 +231,11 @@ export class InputHub {
       let dAng = ang - this.lastAngle;
       if (dAng > Math.PI) dAng -= Math.PI * 2;
       if (dAng < -Math.PI) dAng += Math.PI * 2;
-      orbit.rotateBy((-(cx - this.lastCentroid.x) * 0.3 - (dAng * 180) / Math.PI) , (cy - this.lastCentroid.y) * 0.25, dt);
+      orbit.rotateBy(
+        -(cx - this.lastCentroid.x) * 0.3 - (dAng * 180) / Math.PI,
+        (cy - this.lastCentroid.y) * 0.25,
+        dt,
+      );
       this.lastPinch = dist;
       this.lastAngle = ang;
       this.lastCentroid = { x: cx, y: cy };
@@ -274,7 +305,8 @@ export class InputHub {
     else if (b[13]) dir = 'down';
     else if (b[14]) dir = 'left';
     else if (b[15]) dir = 'right';
-    else if (Math.hypot(ax, ay) > 0.55) dir = Math.abs(ax) > Math.abs(ay) ? (ax > 0 ? 'right' : 'left') : ay > 0 ? 'down' : 'up';
+    else if (Math.hypot(ax, ay) > 0.55)
+      dir = Math.abs(ax) > Math.abs(ay) ? (ax > 0 ? 'right' : 'left') : ay > 0 ? 'down' : 'up';
     const anyPressed = b.some(Boolean) || dir !== null;
     if (anyPressed) {
       this.lastDevice = 'gamepad';

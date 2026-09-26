@@ -45,12 +45,17 @@ function main(): void {
   const timeLimitMs = timeIdx >= 0 ? Number(args[timeIdx + 1]) : 30000;
   const impIdx = args.indexOf('--improve');
   const improveMs = impIdx >= 0 ? Number(args[impIdx + 1]) : 3000;
-  const ids = args.filter((a, i) => !a.startsWith('--') && args[i - 1] !== '--time' && args[i - 1] !== '--improve');
+  const ids = args.filter(
+    (a, i) => !a.startsWith('--') && args[i - 1] !== '--time' && args[i - 1] !== '--improve',
+  );
   let failed = 0;
   const rows: string[] = [];
 
   for (const file of levelFiles()) {
-    const json = JSON.parse(readFileSync(file, 'utf8')) as { id: string; par: { echoes: number; ticks: number } } & Record<string, unknown>;
+    const json = JSON.parse(readFileSync(file, 'utf8')) as {
+      id: string;
+      par: { echoes: number; ticks: number };
+    } & Record<string, unknown>;
     if (ids.length && !ids.includes(json.id)) continue;
     const level = compileLevel(json);
     const solFile = file.replace(/\.json$/, '.solution.json');
@@ -78,7 +83,13 @@ function main(): void {
       rows.push(`${json.id.padEnd(8)} ОШИБКА: решение не проходит проверку`);
       continue;
     }
-    const sol: SolutionFile = { id: json.id, loops: res.loops, echoes: res.echoes, ticks: res.ticks, provenMinimal: res.provenMinimal };
+    const sol: SolutionFile = {
+      id: json.id,
+      loops: res.loops,
+      echoes: res.echoes,
+      ticks: res.ticks,
+      provenMinimal: res.provenMinimal,
+    };
     writeFileSync(solFile, JSON.stringify(sol, null, 2) + '\n');
     let note = '';
     if (json.par.echoes !== res.echoes || json.par.ticks !== res.ticks) {

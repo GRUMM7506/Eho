@@ -7,7 +7,8 @@ export interface SolveRequest {
   timeLimitMs: number;
 }
 
-export type SolveResponse = { ok: true; result: SolveResult } | { ok: false; error: string } | { progress: number };
+export type SolveResponse =
+  { ok: true; result: SolveResult } | { ok: false; error: string } | { progress: number };
 
 /** Решатель в отдельном потоке: интерфейс редактора не подвисает. */
 self.onmessage = (e: MessageEvent<SolveRequest>) => {
@@ -20,12 +21,17 @@ self.onmessage = (e: MessageEvent<SolveRequest>) => {
       onProgress: ({ elapsed }) => {
         if (elapsed - last > 250) {
           last = elapsed;
-          (self as unknown as Worker).postMessage({ progress: Math.min(1, elapsed / e.data.timeLimitMs) } satisfies SolveResponse);
+          (self as unknown as Worker).postMessage({
+            progress: Math.min(1, elapsed / e.data.timeLimitMs),
+          } satisfies SolveResponse);
         }
       },
     });
     (self as unknown as Worker).postMessage({ ok: true, result } satisfies SolveResponse);
   } catch (err) {
-    (self as unknown as Worker).postMessage({ ok: false, error: err instanceof Error ? err.message : String(err) } satisfies SolveResponse);
+    (self as unknown as Worker).postMessage({
+      ok: false,
+      error: err instanceof Error ? err.message : String(err),
+    } satisfies SolveResponse);
   }
 };

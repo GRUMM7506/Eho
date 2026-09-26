@@ -14,7 +14,8 @@ export interface Screen {
   readonly noAutoFocus?: boolean;
 }
 
-const FOCUSABLE = 'button:not([disabled]), [href], input:not([disabled]), select, [tabindex]:not([tabindex="-1"])';
+const FOCUSABLE =
+  'button:not([disabled]), [href], input:not([disabled]), select, [tabindex]:not([tabindex="-1"])';
 
 /** Роутер экранов: один базовый экран и стопка наложений, анимированные переходы. */
 export class Router {
@@ -128,7 +129,11 @@ export class Router {
       items[0]!.focus();
       return;
     }
-    if (active instanceof HTMLInputElement && active.type === 'range' && (dir === 'left' || dir === 'right')) {
+    if (
+      active instanceof HTMLInputElement &&
+      active.type === 'range' &&
+      (dir === 'left' || dir === 'right')
+    ) {
       const step = Number(active.step || 0.05);
       active.value = String(Number(active.value) + (dir === 'right' ? step : -step));
       active.dispatchEvent(new Event('input', { bubbles: true }));
@@ -165,9 +170,14 @@ export class Router {
     if (document.body.dataset.gameplay === '1' && !this.stack.length) return;
     if (document.body.dataset.capturing === '1') return;
     const t = e.target as HTMLElement | null;
-    if (t && (t.tagName === 'INPUT' && (t as HTMLInputElement).type !== 'range')) return;
+    if (t && t.tagName === 'INPUT' && (t as HTMLInputElement).type !== 'range') return;
     if (t?.tagName === 'TEXTAREA') return;
-    const map: Record<string, MenuNav> = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right' };
+    const map: Record<string, MenuNav> = {
+      ArrowUp: 'up',
+      ArrowDown: 'down',
+      ArrowLeft: 'left',
+      ArrowRight: 'right',
+    };
     const dir = map[e.code];
     if (dir) {
       if (t instanceof HTMLInputElement && t.type === 'range') return;
