@@ -185,7 +185,7 @@ export class GameController {
           this.events.onLoopEnd('full');
           this.events.onReset(this.state, 'timeout');
         }
-        this.view.setState(this.state);
+        this.view.setState(this.state, true);
         break;
       default:
         break;
@@ -236,7 +236,7 @@ export class GameController {
     this.acc = 0;
     this.animAcc = this.tickMs;
     this.input.clear();
-    this.view.setState(this.state);
+    this.view.setState(this.state, reason === 'record' || reason === 'undo' || reason === 'reset' || reason === 'restart');
     this.events.onReset(this.state, reason);
   }
 

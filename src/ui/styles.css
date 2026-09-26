@@ -1384,3 +1384,33 @@ body.reduced-motion * {
     height: 46px;
   }
 }
+
+/* Окно победы компактнее, чтобы за ним был виден повтор решения. */
+.win .dialog {
+  gap: 10px;
+  padding: 18px 20px;
+  background: rgba(21, 18, 43, 0.82);
+  backdrop-filter: blur(8px);
+}
+
+@media (max-height: 640px) {
+  .win .dialog > p.muted:first-of-type {
+    display: none;
+  }
+  .win .dialog h2 {
+    font-size: 22px;
+  }
+  .win-stars {
+    height: 44px;
+  }
+  .win-stars .star {
+    width: 40px;
+    height: 40px;
+  }
+  .stat {
+    padding: 6px;
+  }
+  .stat b {
+    font-size: 18px;
+  }
+}

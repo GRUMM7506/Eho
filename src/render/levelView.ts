@@ -662,6 +662,48 @@ export class LevelView {
 
   // ————— состояние и интерполяция —————
 
+  private rewind: { t: number; dur: number; actors: (THREE.Vector3 | null)[]; boxes: THREE.Vector3[]; guards: THREE.Vector3[] } | null = null;
+
+  /**
+   * Перемотка к новому снимку с анимацией: всё откатывается к старту, а последняя попытка
+   * игрока становится новой копией (её модель едет с того места, где игрок остановился).
+   */
+  rewindTo(s: WorldState, seconds: number): void {
+    const prevCount = this.actors.length;
+    const grew = s.actors.length > prevCount;
+    const actors: (THREE.Vector3 | null)[] = s.actors.map((_, i) => {
+      if (i < prevCount - 1) return this.actors[i]!.model.root.position.clone();
+      if (grew && i === prevCount - 1) return this.actors[prevCount - 1]!.model.root.position.clone();
+      if (!grew && i === prevCount - 1) return this.actors[i]!.model.root.position.clone();
+      return null;
+    });
+    const boxes = this.boxes.map((b) => b.mesh.position.clone());
+    const guards = this.guards.map((g) => g.model.root.position.clone());
+    this.setState(s);
+    this.rewind = { t: 0, dur: seconds, actors, boxes, guards };
+  }
+
+  private applyRewind(dt: number): void {
+    const r = this.rewind;
+    if (!r) return;
+    r.t += dt;
+    const k = Math.min(1, r.t / r.dur);
+    const e = 1 - Math.pow(1 - k, 3);
+    const lerp = (obj: THREE.Object3D, from: THREE.Vector3 | null | undefined) => {
+      if (!from) return;
+      const target = obj.position.clone();
+      obj.position.copy(from).lerp(target, e);
+      obj.position.y += Math.sin(Math.PI * k) * 0.25;
+    };
+    this.actors.forEach((a, i) => {
+      lerp(a.model.root, r.actors[i]);
+      a.model.body.rotation.y += (1 - k) * 0.6;
+    });
+    this.boxes.forEach((b, i) => lerp(b.mesh, r.boxes[i]));
+    this.guards.forEach((g, i) => lerp(g.model.root, r.guards[i]));
+    if (k >= 1) this.rewind = null;
+  }
+
   /** Мгновенно показать снимок (новая петля, перемотка). */
   setState(s: WorldState): void {
     this.state = s;
@@ -876,6 +918,7 @@ export class LevelView {
       }
       if (dirty) (this.walls.geometry.getAttribute('aFade') as THREE.InstancedBufferAttribute).needsUpdate = true;
     }
+    this.applyRewind(dt);
     const beamPulse = 0.75 + Math.sin(time * 20) * 0.15;
     this.beamMat.opacity = beamPulse;
     this.updateExtras(time);

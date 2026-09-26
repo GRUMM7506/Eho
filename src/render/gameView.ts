@@ -119,8 +119,10 @@ export class GameView {
     this.level = null;
   }
 
-  setState(s: WorldState): void {
-    this.level?.setState(s);
+  /** Показать снимок; `rewind` — с анимацией перемотки к старту. */
+  setState(s: WorldState, rewind = false): void {
+    if (rewind && !this.settings.reducedMotion) this.level?.rewindTo(s, 0.55);
+    else this.level?.setState(s);
   }
 
   setTick(prev: WorldState, next: WorldState, events: readonly SimEvent[]): void {

@@ -13,6 +13,7 @@ import { GameController, TICK_MS, type WinInfo } from './game/controller';
 import { predict } from './game/predict';
 import { detectLang, lt, setLang, t } from './i18n';
 import { InputHub, type Command } from './input/input';
+import { Effects } from './render/effects';
 import { GameView, type Quality, type ViewSettings } from './render/gameView';
 import { vibrate } from './ui/dom';
 import { Hud } from './ui/hud';
@@ -36,6 +37,7 @@ export class App implements AppApi {
   customLevels: Level[] = [];
   readonly isTouch: boolean;
   readonly view: GameView;
+  readonly effects: Effects;
   readonly input = new InputHub();
   readonly router: Router;
   readonly hud: Hud;
@@ -85,6 +87,7 @@ export class App implements AppApi {
 
     this.resolvedQuality = this.resolveQuality(this.save.settings.quality);
     this.view = new GameView(this.canvas, this.viewSettings());
+    this.effects = new Effects(this.view);
     this.input.attach(this.canvas, this.view.orbit);
     this.router = new Router(ui);
     this.hud = new Hud(
@@ -240,6 +243,7 @@ export class App implements AppApi {
     document.body.classList.toggle('reduced-motion', s.reducedMotion);
     const prevColorblind = this.view.viewSettings.colorblind;
     this.view.applySettings(this.viewSettings());
+    this.effects.configure(this.resolvedQuality, s.reducedMotion);
     const tick = TICK_MS[s.tickSpeed];
     this.hud.setTickMs(tick);
     if (this.controller) this.controller.tickMs = tick;
@@ -605,6 +609,7 @@ export class App implements AppApi {
     }
     this.hud.setActive('trails', this.save.settings.trails);
     if (reason === 'reset') this.hud.toast(t('toast.reset'));
+    if (reason === 'record' || reason === 'timeout') this.effects.vhs(0.5);
   }
 
   private updateGhosts(s: WorldState): void {
@@ -644,6 +649,7 @@ export class App implements AppApi {
     const remain = next.level.tickLimit - next.tick;
     const tickMs = this.controller?.tickMs ?? 170;
     if (next.outcome === 'playing' && remain * tickMs <= 3000 && remain > 0) this.audio.play('tick', 0, 0.5);
+    this.effects.onEvents(prev, next, events);
     this.hooks.onEvents?.(this, prev, next, events);
   }
 
@@ -752,6 +758,7 @@ export class App implements AppApi {
         const res = step(prev, inputToAction(r.inputs[prev.tick] ?? '.'));
         r.state = res.state;
         this.view.setTick(prev, res.state, res.events);
+        this.effects.onEvents(prev, res.state, res.events);
         if (res.state.outcome !== 'playing' || res.state.tick >= r.inputs.length) r.hold = 1.4;
       }
     }
