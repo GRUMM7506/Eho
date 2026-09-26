@@ -1,4 +1,5 @@
 import type { Insets } from '../camera/orbit';
+import { dpadRotation } from '../camera/relative';
 import type { Hint, Level, WorldState } from '../core/types';
 import type { Prediction } from '../game/predict';
 import { getLang, lt, t } from '../i18n';
@@ -45,6 +46,7 @@ export class Hud implements Screen {
   private readonly bottom: HTMLElement;
   private readonly touchPad: HTMLElement;
   private readonly dpad: HTMLElement;
+  private dpadRot = 0;
   private readonly buttons = new Map<string, HTMLButtonElement[]>();
   private keymap: KeyMap;
   private touch = false;
@@ -237,6 +239,7 @@ export class Hud implements Screen {
     progress: number,
     canRecord: boolean,
     yaw: number,
+    inputYaw = yaw,
   ): void {
     const L = s.level;
     const tick = Math.min(L.tickLimit, s.tick - 1 + (running || s.tick > 0 ? progress : 1));
@@ -257,6 +260,12 @@ export class Hud implements Screen {
       d.classList.toggle('broken', i < echoes && actor?.kind === 'echo' && actor.status === 'broken');
     });
     this.needle.style.transform = `rotate(${yaw}deg)`;
+    // При диагональной камере крестовина встаёт «ромбом» — стрелки вдоль плиток.
+    const rot = dpadRotation(inputYaw);
+    if (rot !== this.dpadRot) {
+      this.dpadRot = rot;
+      this.dpad.style.transform = rot ? `rotate(${rot}deg) scale(0.8)` : '';
+    }
     this.startMsg.textContent = this.touch ? t('hud.startTouch') : t('hud.start');
     this.startMsg.hidden = running || s.tick > 0 || s.outcome !== 'playing';
     for (const b of this.buttons.get('record') ?? []) b.classList.toggle('disabled', !canRecord);

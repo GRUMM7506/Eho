@@ -35,3 +35,54 @@ export function screenActionToGrid(a: Action, yawDeg: number): Action {
   if (a === 'none' || a === 'interact') return a;
   return GRID_ACTION[screenToGrid(a, yawDeg)]!;
 }
+
+const SCREEN_DIRS: readonly ScreenDir[] = ['up', 'right', 'down', 'left'];
+
+/** Сеточное направление → экранное при данном рыскании (обратно к `screenToGrid`). */
+export function gridToScreen(d: Dir, yawDeg: number): ScreenDir {
+  return SCREEN_DIRS[(d - screenUpDir(yawDeg) + 4) % 4]!;
+}
+
+/**
+ * Как сеточное направление выглядит на экране: [x вправо, y вверх], без нормировки.
+ * Ортографическая проекция: глубина сжата наклоном камеры (sin pitch).
+ */
+export function gridScreenVec(d: Dir, yawDeg: number, pitchDeg: number): [number, number] {
+  const r = (yawDeg * Math.PI) / 180;
+  const gx = [0, 1, 0, -1][d]!;
+  const gz = [-1, 0, 1, 0][d]!;
+  const x = gx * Math.cos(r) - gz * Math.sin(r);
+  const depth = -gx * Math.sin(r) - gz * Math.cos(r);
+  return [x, depth * Math.sin((pitchDeg * Math.PI) / 180)];
+}
+
+/**
+ * Свайп → сеточное направление, которое на экране ближе всего к движению пальца.
+ * `dy` — в координатах экрана (вниз положительно). Так при диагональной камере
+ * свайп вдоль линий плиток идёт туда, куда смотрит палец, а не «на 45° мимо».
+ */
+export function swipeToGrid(dx: number, dy: number, yawDeg: number, pitchDeg: number): Dir {
+  const len = Math.hypot(dx, dy) || 1;
+  let best: Dir = 0;
+  let bestCos = -Infinity;
+  for (const d of [0, 1, 2, 3] as Dir[]) {
+    const [vx, vy] = gridScreenVec(d, yawDeg, pitchDeg);
+    const c = (vx * dx - vy * dy) / (len * (Math.hypot(vx, vy) || 1));
+    if (c > bestCos) {
+      bestCos = c;
+      best = d;
+    }
+  }
+  return best;
+}
+
+/** Свайп → экранное направление для буфера ввода (игровой цикл переведёт его обратно в сеточное). */
+export function swipeToScreenDir(dx: number, dy: number, yawDeg: number, pitchDeg: number): ScreenDir {
+  return gridToScreen(swipeToGrid(dx, dy, yawDeg, pitchDeg), yawDeg);
+}
+
+/** Поворот экранного D-pad (в градусах), чтобы его стрелки шли вдоль плиток: 0 или 45. */
+export function dpadRotation(yawDeg: number): number {
+  const y = normDeg(yawDeg);
+  return y - Math.round(y / 90 - 1e-6) * 90;
+}

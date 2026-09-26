@@ -243,6 +243,7 @@ export class App implements AppApi {
       c.tickProgress,
       c.canRecord,
       this.view.orbit.yaw,
+      this.view.orbit.inputYaw,
     );
     this.updateHint();
   }

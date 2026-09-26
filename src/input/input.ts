@@ -1,5 +1,5 @@
 import type { OrbitCamera } from '../camera/orbit';
-import type { ScreenDir } from '../camera/relative';
+import { swipeToScreenDir, type ScreenDir } from '../camera/relative';
 import { actionForCode, DEFAULT_KEYMAP, cloneKeymap, type Bindable, type KeyMap } from './keymap';
 
 export type Command = Exclude<Bindable, 'up' | 'down' | 'left' | 'right'> | 'restart';
@@ -247,7 +247,8 @@ export class InputHub {
     const ty = p.y - p.y0;
     const threshold = p.type === 'touch' ? 22 : 30;
     if (Math.hypot(tx, ty) < threshold) return;
-    const dir: ScreenDir = Math.abs(tx) > Math.abs(ty) ? (tx > 0 ? 'right' : 'left') : ty > 0 ? 'down' : 'up';
+    // Направление — по тому, как плитки лежат на экране при текущем угле камеры.
+    const dir = swipeToScreenDir(tx, ty, orbit.inputYaw, orbit.pitch);
     if (!p.fired || dir !== this.heldPointer) {
       this.enqueue(dir);
       this.heldPointer = dir;

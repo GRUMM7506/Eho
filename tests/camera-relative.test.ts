@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { screenActionToGrid, screenToGrid, screenUpDir } from '../src/camera/relative';
+import {
+  dpadRotation,
+  gridScreenVec,
+  gridToScreen,
+  screenActionToGrid,
+  screenToGrid,
+  screenUpDir,
+  swipeToGrid,
+  swipeToScreenDir,
+} from '../src/camera/relative';
 
 /**
  * Проверка через геометрию: сеточное направление, выбранное для «вверх», должно иметь
@@ -58,5 +67,51 @@ describe('ввод относительно камеры', () => {
     expect(screenActionToGrid('interact', 135)).toBe('interact');
     expect(screenActionToGrid('none', 135)).toBe('none');
     expect(screenActionToGrid('up', 90)).toBe('left');
+  });
+});
+
+describe('свайпы вдоль плиток', () => {
+  const angles = [0, 45, 90, 135, 180, 225, 270, 315];
+  const pitches = [20, 35, 75];
+
+  it('при yaw 0° свайп вверх — на север, вправо — на восток', () => {
+    expect(swipeToGrid(0, -50, 0, 35)).toBe(0);
+    expect(swipeToGrid(50, 0, 0, 35)).toBe(1);
+    expect(swipeToGrid(0, 50, 0, 35)).toBe(2);
+    expect(swipeToGrid(-50, 0, 0, 35)).toBe(3);
+  });
+
+  it.each(angles)('yaw %i°: свайп точно по экранному образу направления даёт это направление', (yaw) => {
+    for (const pitch of pitches)
+      for (const d of [0, 1, 2, 3] as const) {
+        const [x, y] = gridScreenVec(d, yaw, pitch);
+        // Экранный y направлен вниз.
+        expect(swipeToGrid(x * 60, -y * 60, yaw, pitch)).toBe(d);
+      }
+  });
+
+  it('при yaw 45° свайп вверх-вправо идёт на север, а не «вверх экрана» мимо плиток', () => {
+    // Изометрия: север виден вверх-вправо, запад — вверх-влево.
+    expect(swipeToGrid(50, -30, 45, 35)).toBe(0);
+    expect(swipeToGrid(-50, -30, 45, 35)).toBe(3);
+    expect(swipeToGrid(50, 30, 45, 35)).toBe(1);
+    expect(swipeToGrid(-50, 30, 45, 35)).toBe(2);
+  });
+
+  it('экранное направление из свайпа переводится обратно в то же сеточное', () => {
+    for (const yaw of angles)
+      for (const d of [0, 1, 2, 3] as const) {
+        const [x, y] = gridScreenVec(d, yaw, 35);
+        expect(screenToGrid(swipeToScreenDir(x, -y, yaw, 35), yaw)).toBe(d);
+        expect(screenToGrid(gridToScreen(d, yaw), yaw)).toBe(d);
+      }
+  });
+
+  it('D-pad поворачивается на 45° только на диагоналях', () => {
+    expect(dpadRotation(0)).toBe(0);
+    expect(dpadRotation(90)).toBe(0);
+    expect(dpadRotation(45)).toBe(45);
+    expect(dpadRotation(135)).toBe(45);
+    expect(dpadRotation(315)).toBe(45);
   });
 });
