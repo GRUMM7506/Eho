@@ -1,0 +1,39 @@
+{
+  "world": 5,
+  "par": {
+    "echoes": 1,
+    "ticks": 8
+  },
+  "id": "w5-1",
+  "index": 1,
+  "name": {
+    "ru": "Этажи",
+    "en": "Floors"
+  },
+  "map": [
+    "##########",
+    "#S..=a#..#",
+    "#.....A.X#",
+    "##########"
+  ],
+  "heights": [
+    "0000000000",
+    "0000110000",
+    "0000000000",
+    "0000000000"
+  ],
+  "tickLimit": 20,
+  "maxEchoes": 2,
+  "hints": [
+    {
+      "text": {
+        "ru": "На этаж выше — только по лестнице. Спрыгнуть тоже нельзя",
+        "en": "Only stairs lead one floor up. You cannot jump down either"
+      },
+      "arrow": [
+        4,
+        1
+      ]
+    }
+  ]
+}

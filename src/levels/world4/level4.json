@@ -1,0 +1,42 @@
+{
+  "world": 4,
+  "par": {
+    "echoes": 1,
+    "ticks": 13
+  },
+  "id": "w4-4",
+  "index": 4,
+  "name": {
+    "ru": "Страж",
+    "en": "Guard"
+  },
+  "legend": {
+    "g": {
+      "type": "guard",
+      "facing": "N",
+      "range": 4
+    }
+  },
+  "map": [
+    "###########",
+    "#S..A....X#",
+    "#.#########",
+    "#.....a...#",
+    "######g####",
+    "###########"
+  ],
+  "tickLimit": 24,
+  "maxEchoes": 2,
+  "hints": [
+    {
+      "text": {
+        "ru": "Страж видит только настоящего вас. Попытка, где вас поймали, всё равно станет эхо — и будет стоять там",
+        "en": "The guard sees only the real you. An attempt where you got caught still becomes an echo — and it stays right there"
+      },
+      "arrow": [
+        6,
+        3
+      ]
+    }
+  ]
+}

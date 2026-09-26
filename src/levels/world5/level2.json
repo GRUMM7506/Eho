@@ -1,0 +1,49 @@
+{
+  "world": 5,
+  "par": {
+    "echoes": 1,
+    "ticks": 9
+  },
+  "id": "w5-2",
+  "index": 2,
+  "name": {
+    "ru": "Лифт",
+    "en": "Lift"
+  },
+  "legend": {
+    "L": {
+      "type": "lift",
+      "color": "pink",
+      "low": 0,
+      "high": 1
+    }
+  },
+  "map": [
+    "##########",
+    "#S....L.X#",
+    "#.########",
+    "#.....a###",
+    "##########"
+  ],
+  "heights": [
+    "0000000000",
+    "0000000110",
+    "0000000000",
+    "0000000000",
+    "0000000000"
+  ],
+  "tickLimit": 20,
+  "maxEchoes": 2,
+  "hints": [
+    {
+      "text": {
+        "ru": "Лифт поднимается, пока нажата плита, — вместе со всеми, кто на нём стоит. Успейте встать на него внизу",
+        "en": "The lift rises while the plate is pressed — with everyone standing on it. Get on while it is down"
+      },
+      "arrow": [
+        6,
+        1
+      ]
+    }
+  ]
+}

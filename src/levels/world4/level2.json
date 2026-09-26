@@ -1,0 +1,51 @@
+{
+  "world": 4,
+  "par": {
+    "echoes": 1,
+    "ticks": 24
+  },
+  "id": "w4-2",
+  "index": 2,
+  "name": {
+    "ru": "Зеркало",
+    "en": "Mirror"
+  },
+  "legend": {
+    "e": {
+      "type": "emitter",
+      "dir": "E"
+    },
+    "m": {
+      "type": "mirror",
+      "orient": "/",
+      "color": "pink"
+    },
+    "l": {
+      "type": "lever",
+      "color": "pink"
+    }
+  },
+  "map": [
+    "#############",
+    "#S..........#",
+    "#######.###.#",
+    "#e.....m#l..#",
+    "#######.###.#",
+    "#X..........#",
+    "#############"
+  ],
+  "tickLimit": 34,
+  "maxEchoes": 2,
+  "hints": [
+    {
+      "text": {
+        "ru": "Рычаг поворачивает зеркало, и луч перекрывает другой коридор. Переключать можно и копией, и самому",
+        "en": "The lever turns the mirror, and the beam blocks the other corridor. Both you and a copy can switch it"
+      },
+      "arrow": [
+        9,
+        3
+      ]
+    }
+  ]
+}

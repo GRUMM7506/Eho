@@ -1,0 +1,36 @@
+{
+  "world": 3,
+  "par": {
+    "echoes": 2,
+    "ticks": 15
+  },
+  "id": "w3-6",
+  "index": 6,
+  "name": {
+    "ru": "Эскалатор",
+    "en": "Escalator"
+  },
+  "map": [
+    "##############",
+    "#S....1....b.#",
+    "#.############",
+    "#.>>>>>>>a####",
+    "#.############",
+    "#....A.B...X.#",
+    "##############"
+  ],
+  "tickLimit": 26,
+  "maxEchoes": 3,
+  "hints": [
+    {
+      "text": {
+        "ru": "Лента доставит копию к розовой плите быстро — слишком быстро для той, что идёт за штрихованную дверь",
+        "en": "The belt delivers a copy to the pink plate quickly — too quickly for the one heading past the hatched door"
+      },
+      "arrow": [
+        6,
+        1
+      ]
+    }
+  ]
+}

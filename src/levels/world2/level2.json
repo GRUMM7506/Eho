@@ -1,0 +1,51 @@
+{
+  "world": 2,
+  "par": {
+    "echoes": 1,
+    "ticks": 26
+  },
+  "id": "w2-2",
+  "index": 2,
+  "name": {
+    "ru": "Ключ",
+    "en": "Key"
+  },
+  "legend": {
+    "k": {
+      "type": "key",
+      "color": "pink"
+    },
+    "L": {
+      "type": "lock",
+      "color": "pink"
+    }
+  },
+  "map": [
+    "###########",
+    "#S..b..B.k#",
+    "#.#########",
+    "#.......LX#",
+    "###########"
+  ],
+  "tickLimit": 32,
+  "maxEchoes": 2,
+  "hints": [
+    {
+      "text": {
+        "ru": "Ключ поднимают, встав к нему лицом (F / пробел). Замок открывается ключом того же цвета",
+        "en": "Pick up the key by facing it (F / Space). A lock opens with a key of the same colour"
+      },
+      "touch": {
+        "ru": "Встаньте лицом к ключу и нажмите «Взять». Замок открывается ключом того же цвета",
+        "en": "Face the key and tap “Use”. A lock opens with a key of the same colour"
+      },
+      "keys": [
+        "interact"
+      ],
+      "arrow": [
+        9,
+        1
+      ]
+    }
+  ]
+}

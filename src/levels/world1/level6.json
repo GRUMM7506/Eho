@@ -1,0 +1,45 @@
+{
+  "world": 1,
+  "par": {
+    "echoes": 2,
+    "ticks": 12
+  },
+  "id": "w1-6",
+  "index": 6,
+  "name": {
+    "ru": "Жертва",
+    "en": "Sacrifice"
+  },
+  "legend": {
+    "l": {
+      "type": "lever",
+      "color": "pink"
+    },
+    "c": {
+      "type": "plate",
+      "color": "violet",
+      "filter": "echo"
+    }
+  },
+  "map": [
+    "############",
+    "#S...C..1.l#",
+    "#.####A#####",
+    "#c####.X####",
+    "############"
+  ],
+  "tickLimit": 24,
+  "maxEchoes": 3,
+  "hints": [
+    {
+      "text": {
+        "ru": "Тот, кто дёрнет рычаг, останется взаперти. Пусть это будет не настоящий вы",
+        "en": "Whoever pulls the lever stays locked in. Let it not be the real you"
+      },
+      "arrow": [
+        10,
+        1
+      ]
+    }
+  ]
+}

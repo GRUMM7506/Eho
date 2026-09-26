@@ -1,0 +1,35 @@
+{
+  "world": 1,
+  "par": {
+    "echoes": 2,
+    "ticks": 11
+  },
+  "id": "w1-1",
+  "index": 1,
+  "name": {
+    "ru": "Эстафета",
+    "en": "Relay"
+  },
+  "map": [
+    "#############",
+    "#S..#...#...#",
+    "#...#.b.#...#",
+    "#.a.A...B.X.#",
+    "#...#...#...#",
+    "#############"
+  ],
+  "tickLimit": 26,
+  "maxEchoes": 3,
+  "hints": [
+    {
+      "text": {
+        "ru": "Голубая плита за розовой дверью. Кто-то должен держать вход, пока другой идёт дальше",
+        "en": "The cyan plate is behind the pink door. Someone must hold the entrance while another goes further"
+      },
+      "arrow": [
+        6,
+        2
+      ]
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "world": 2,
+  "par": {
+    "echoes": 1,
+    "ticks": 11
+  },
+  "id": "w2-4",
+  "index": 4,
+  "name": {
+    "ru": "Проём",
+    "en": "Doorway"
+  },
+  "map": [
+    "#############",
+    "#S.....a..b.#",
+    "#.###########",
+    "#....A.######",
+    "#####.#######",
+    "#####B#######",
+    "#####X#######",
+    "#############"
+  ],
+  "tickLimit": 28,
+  "maxEchoes": 1,
+  "hints": [
+    {
+      "text": {
+        "ru": "Дверь не закрывается, пока в проёме кто-то стоит — даже вы. Одной копии хватит на две плиты",
+        "en": "A door will not close while someone stands in the doorway — even you. One copy is enough for two plates"
+      },
+      "arrow": [
+        5,
+        3
+      ]
+    }
+  ]
+}

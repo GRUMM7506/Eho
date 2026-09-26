@@ -2,36 +2,69 @@
   "id": "w0-4",
   "world": 0,
   "index": 4,
-  "name": { "ru": "Запись", "en": "Record" },
+  "name": {
+    "ru": "Запись",
+    "en": "Record"
+  },
   "map": [
-    "###########",
-    "#S..a..b..#",
-    "#########A#",
-    "#X.....B..#",
-    "###########"
+    "#################",
+    "#a......S......b#",
+    "########.########",
+    "########A########",
+    "########B########",
+    "########.X#######",
+    "#################"
   ],
-  "tickLimit": 40,
+  "tickLimit": 23,
   "maxEchoes": 2,
-  "par": { "echoes": 2, "ticks": 17 },
+  "par": {
+    "echoes": 2,
+    "ticks": 11
+  },
   "hints": [
     {
-      "text": { "ru": "Ждать долго. Встаньте на плиту и нажмите «Записать эхо» — попытка станет копией сразу", "en": "Waiting takes long. Stand on a plate and press “Record echo” — the attempt becomes a copy at once" },
-      "touch": { "ru": "Встаньте на плиту и нажмите кнопку «Записать» — попытка станет копией сразу", "en": "Stand on a plate and tap “Record” — the attempt becomes a copy at once" },
-      "keys": ["record"],
+      "text": {
+        "ru": "Ждать долго. Встаньте на плиту и нажмите «Записать эхо» — попытка станет копией сразу",
+        "en": "Waiting takes long. Stand on a plate and press “Record echo” — the attempt becomes a copy at once"
+      },
+      "touch": {
+        "ru": "Встаньте на плиту и нажмите кнопку «Записать» — попытка станет копией сразу",
+        "en": "Stand on a plate and tap “Record” — the attempt becomes a copy at once"
+      },
+      "keys": [
+        "record"
+      ],
       "maxEchoes": 0,
-      "arrow": [4, 1]
+      "arrow": [
+        1,
+        1
+      ]
     },
     {
-      "text": { "ru": "Нужна вторая копия — на голубой плите", "en": "You need a second copy — on the cyan plate" },
-      "keys": ["record"],
+      "text": {
+        "ru": "Нужна вторая копия — на голубой плите",
+        "en": "You need a second copy — on the cyan plate"
+      },
+      "keys": [
+        "record"
+      ],
       "minEchoes": 1,
       "maxEchoes": 1,
-      "arrow": [7, 1]
+      "arrow": [
+        15,
+        1
+      ]
     },
     {
-      "text": { "ru": "Две копии держат обе двери. Вперёд!", "en": "Two copies hold both doors. Go!" },
+      "text": {
+        "ru": "Две копии держат обе двери. Вперёд!",
+        "en": "Two copies hold both doors. Go!"
+      },
       "minEchoes": 2,
-      "arrow": [9, 2]
+      "arrow": [
+        8,
+        3
+      ]
     }
   ]
 }

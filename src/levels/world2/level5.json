@@ -1,0 +1,55 @@
+{
+  "world": 2,
+  "par": {
+    "echoes": 1,
+    "ticks": 28
+  },
+  "id": "w2-5",
+  "index": 5,
+  "name": {
+    "ru": "Заряд",
+    "en": "Charge"
+  },
+  "legend": {
+    "q": {
+      "type": "battery"
+    },
+    "s": {
+      "type": "socket",
+      "color": "cyan"
+    },
+    "k": {
+      "type": "key",
+      "color": "orange"
+    },
+    "L": {
+      "type": "lock",
+      "color": "orange"
+    }
+  },
+  "map": [
+    "#############",
+    "#S...a..#q..#",
+    "#.......A...#",
+    "#Bs##.#######",
+    "#.###.#######",
+    "#.###k#######",
+    "#L###########",
+    "#X###########",
+    "#############"
+  ],
+  "tickLimit": 28,
+  "maxEchoes": 3,
+  "hints": [
+    {
+      "text": {
+        "ru": "Батарейка в гнезде питает дверь того же цвета, пока лежит в нём. Вставляют её, встав к гнезду лицом",
+        "en": "A battery in a socket powers the door of the same colour while it sits there. Insert it by facing the socket"
+      },
+      "arrow": [
+        2,
+        3
+      ]
+    }
+  ]
+}

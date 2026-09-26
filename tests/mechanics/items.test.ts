@@ -19,7 +19,7 @@ describe('перенос предметов: ключи и замки', () => {
   });
 
   it('замок без ключа не открыть', () => {
-    const r = run(createLoop(lvl, []), 'DRRUE');
+    const r = run(createLoop(lvl, []), 'DRRRUE');
     expect(r.state.cells[at(lvl, 4, 1)]).toBe(0);
     expect(r.state.record.endsWith('.')).toBe(true);
   });
@@ -68,5 +68,25 @@ describe('батарейки и гнёзда', () => {
     const r2 = run(r.state, 'E');
     expect(r2.state.signals[0]).toBe(false);
     expect(player(r2.state).carrying).toBe(0);
+  });
+});
+
+describe('взаимодействие игрока с соседними клетками', () => {
+  const lvl = mk(['######', '#S.l.#', '#...X#', '######'], {
+    legend: { l: { type: 'lever', color: 'pink' } },
+  });
+  it('если впереди пусто, срабатывает соседний рычаг, а в запись идёт его направление', () => {
+    // Игрок на (2,1) смотрит на восток после шага — рычаг прямо перед ним.
+    expect(run(createLoop(lvl, []), 'RE').state.record).toBe('Rr');
+    // Шаг вниз: игрок на (1,2) смотрит на юг; рычаг не рядом — ничего.
+    expect(run(createLoop(lvl, []), 'DE').state.record).toBe('D.');
+    // Игрок на (3,2) смотрит на восток, рычаг сверху — сработает он.
+    const r = run(createLoop(lvl, []), 'DRRE');
+    expect(r.state.record).toBe('DRRu');
+    expect(r.state.cells[at(lvl, 3, 1)]).toBe(1);
+  });
+  it('копия повторяет взаимодействие строго в записанном направлении', () => {
+    const s = run(withEchoes(lvl, ['DRRE']), '....').state;
+    expect(s.cells[at(lvl, 3, 1)]).toBe(1);
   });
 });

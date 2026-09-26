@@ -38,3 +38,28 @@ export const MECHANICS: readonly Mechanic[] = [
   height,
   exit,
 ];
+
+type Fn<K extends keyof Mechanic> = NonNullable<Mechanic[K]>;
+
+function collect<K extends keyof Mechanic>(key: K): Fn<K>[] {
+  const out: Fn<K>[] = [];
+  for (const m of MECHANICS) {
+    const f = m[key];
+    if (typeof f === 'function') out.push((f as (...a: unknown[]) => unknown).bind(m) as Fn<K>);
+  }
+  return out;
+}
+
+/**
+ * Глобальные хуки, собранные в плоские списки один раз: обход без полиморфных
+ * обращений к объектам механик — это горячий путь решателя.
+ */
+export const HOOKS = {
+  afterMoves: collect('afterMoves'),
+  emitSignals: collect('emitSignals'),
+  applySignals: collect('applySignals'),
+  finalize: collect('finalize'),
+  check: collect('check'),
+  /** Взаимодействие механик без приспособлений (перенос предметов). */
+  looseInteract: MECHANICS.filter((m) => !m.fixtures.length && m.interact).map((m) => m.interact!.bind(m)),
+};

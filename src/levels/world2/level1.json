@@ -1,0 +1,34 @@
+{
+  "world": 2,
+  "par": {
+    "echoes": 1,
+    "ticks": 9
+  },
+  "id": "w2-1",
+  "index": 1,
+  "name": {
+    "ru": "Груз",
+    "en": "Cargo"
+  },
+  "map": [
+    "###########",
+    "#S.o.a#####",
+    "#.....A.BX#",
+    "#.b..######",
+    "###########"
+  ],
+  "tickLimit": 24,
+  "maxEchoes": 2,
+  "hints": [
+    {
+      "text": {
+        "ru": "Ящик на плите держит её сам. Толкайте ящик, шагая в него",
+        "en": "A crate on a plate holds it by itself. Push a crate by walking into it"
+      },
+      "arrow": [
+        3,
+        1
+      ]
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "world": 3,
+  "par": {
+    "echoes": 1,
+    "ticks": 8
+  },
+  "id": "w3-1",
+  "index": 1,
+  "name": {
+    "ru": "Разрыв",
+    "en": "Rift"
+  },
+  "legend": {
+    "P": {
+      "type": "portal",
+      "color": "cyan"
+    },
+    "Q": {
+      "type": "portal",
+      "color": "cyan"
+    }
+  },
+  "map": [
+    "############",
+    "#S..P#Q..#.#",
+    "#.a..#...A.#",
+    "#....#...#X#",
+    "############"
+  ],
+  "tickLimit": 22,
+  "maxEchoes": 2,
+  "hints": [
+    {
+      "text": {
+        "ru": "Портал переносит к своему парному. Копия на плите откроет дверь на той стороне",
+        "en": "A portal takes you to its twin. A copy on the plate opens the door on the other side"
+      },
+      "arrow": [
+        4,
+        1
+      ]
+    }
+  ]
+}

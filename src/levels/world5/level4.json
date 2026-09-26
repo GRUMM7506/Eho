@@ -1,0 +1,39 @@
+{
+  "world": 5,
+  "par": {
+    "echoes": 2,
+    "ticks": 12
+  },
+  "id": "w5-4",
+  "index": 4,
+  "name": {
+    "ru": "Мост из себя",
+    "en": "Bridge of Selves"
+  },
+  "map": [
+    "############",
+    "#S..:..:.X.#",
+    "#..=.#=.####",
+    "############"
+  ],
+  "heights": [
+    "000000000000",
+    "011101101110",
+    "011100100000",
+    "000000000000"
+  ],
+  "tickLimit": 26,
+  "maxEchoes": 3,
+  "hints": [
+    {
+      "text": {
+        "ru": "До второго провала можно дойти только по спине первой копии",
+        "en": "The second gap can only be reached across the back of the first copy"
+      },
+      "arrow": [
+        7,
+        1
+      ]
+    }
+  ]
+}

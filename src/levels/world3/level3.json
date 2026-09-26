@@ -1,0 +1,37 @@
+{
+  "world": 3,
+  "par": {
+    "echoes": 1,
+    "ticks": 15
+  },
+  "id": "w3-3",
+  "index": 3,
+  "name": {
+    "ru": "Каток",
+    "en": "Rink"
+  },
+  "map": [
+    "############",
+    "#S.~~~~~.b.#",
+    "#.~~~~~~~~.#",
+    "#.~~~o~~~~.#",
+    "#a.~~~~~~~.#",
+    "#######B####",
+    "#######X####",
+    "############"
+  ],
+  "tickLimit": 30,
+  "maxEchoes": 2,
+  "hints": [
+    {
+      "text": {
+        "ru": "На льду скользят до препятствия — и люди, и ящики. Ящик может стать упором",
+        "en": "On ice everything slides until it hits something — people and crates alike. A crate can be a stopper"
+      },
+      "arrow": [
+        5,
+        3
+      ]
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "world": 2,
+  "par": {
+    "echoes": 1,
+    "ticks": 45
+  },
+  "id": "w2-8",
+  "index": 8,
+  "name": {
+    "ru": "Склад",
+    "en": "Warehouse"
+  },
+  "legend": {
+    "k": {
+      "type": "key",
+      "color": "orange"
+    },
+    "L": {
+      "type": "lock",
+      "color": "orange"
+    },
+    "c": {
+      "type": "plate",
+      "color": "violet",
+      "filter": "echo"
+    },
+    "l": {
+      "type": "lever",
+      "color": "cyan"
+    }
+  },
+  "map": [
+    "##############",
+    "#S....#..c#..#",
+    "#..o..A...C.k#",
+    "#.a...#...#..#",
+    "########_#####",
+    "#X.L.B....2.l#",
+    "##############"
+  ],
+  "tickLimit": 45,
+  "maxEchoes": 4,
+  "hints": [
+    {
+      "text": {
+        "ru": "Ящик один: он откроет розовую дверь или засыплет яму. Яме он нужнее",
+        "en": "There is one crate: it can open the pink door or fill the pit. The pit needs it more"
+      },
+      "arrow": [
+        8,
+        4
+      ]
+    },
+    {
+      "text": {
+        "ru": "Всё, что лежит в проёме, не даёт двери закрыться — даже ключ",
+        "en": "Anything lying in a doorway keeps the door open — even a key"
+      },
+      "minEchoes": 2,
+      "arrow": [
+        10,
+        5
+      ]
+    }
+  ]
+}

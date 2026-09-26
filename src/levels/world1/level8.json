@@ -1,0 +1,47 @@
+{
+  "world": 1,
+  "par": {
+    "echoes": 3,
+    "ticks": 22
+  },
+  "id": "w1-8",
+  "index": 8,
+  "name": {
+    "ru": "Механизм",
+    "en": "Mechanism"
+  },
+  "legend": {
+    "l": {
+      "type": "lever",
+      "color": "orange"
+    },
+    "c": {
+      "type": "plate",
+      "color": "violet",
+      "filter": "echo"
+    }
+  },
+  "map": [
+    "################",
+    "#S..#......#####",
+    "#.a.A......34.l#",
+    "#...#..c...#####",
+    "#####C##########",
+    "#####....D.X####",
+    "################"
+  ],
+  "tickLimit": 30,
+  "maxEchoes": 4,
+  "hints": [
+    {
+      "text": {
+        "ru": "Фиолетовая плита запирает штрихованную дверь к рычагу. Копия с рычагом должна успеть раньше",
+        "en": "The violet plate locks the hatched door to the lever. The lever copy must get there first"
+      },
+      "arrow": [
+        11,
+        2
+      ]
+    }
+  ]
+}

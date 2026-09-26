@@ -1,0 +1,44 @@
+{
+  "world": 3,
+  "par": {
+    "echoes": 1,
+    "ticks": 8
+  },
+  "id": "w3-5",
+  "index": 5,
+  "name": {
+    "ru": "Посылка",
+    "en": "Parcel"
+  },
+  "legend": {
+    "P": {
+      "type": "portal",
+      "color": "cyan"
+    },
+    "Q": {
+      "type": "portal",
+      "color": "cyan"
+    }
+  },
+  "map": [
+    "############",
+    "#S....#.a..#",
+    "##.o.P#Q_..#",
+    "#XA...#....#",
+    "############"
+  ],
+  "tickLimit": 24,
+  "maxEchoes": 2,
+  "hints": [
+    {
+      "text": {
+        "ru": "Портал выпускает на клетку за парным — туда, куда вы шли. Ящик тоже пройдёт и засыплет яму",
+        "en": "A portal lets you out one cell past its twin, in the direction you were going. A crate passes too — and fills the pit"
+      },
+      "arrow": [
+        5,
+        2
+      ]
+    }
+  ]
+}

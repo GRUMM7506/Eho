@@ -1,0 +1,46 @@
+{
+  "world": 3,
+  "par": {
+    "echoes": 2,
+    "ticks": 15
+  },
+  "id": "w3-8",
+  "index": 8,
+  "name": {
+    "ru": "Разлом",
+    "en": "The Rift"
+  },
+  "legend": {
+    "P": {
+      "type": "portal",
+      "color": "cyan"
+    },
+    "Q": {
+      "type": "portal",
+      "color": "cyan"
+    }
+  },
+  "map": [
+    "##############",
+    "#S....P##Q~~b#",
+    "#.....########",
+    "#.....B..%.a.#",
+    "############A#",
+    "############X#",
+    "##############"
+  ],
+  "tickLimit": 26,
+  "maxEchoes": 3,
+  "hints": [
+    {
+      "text": {
+        "ru": "Хрупкая плитка держит, пока на ней кто-то стоит. Идите след в след",
+        "en": "A fragile tile holds while someone stands on it. Walk in each other’s footsteps"
+      },
+      "arrow": [
+        9,
+        3
+      ]
+    }
+  ]
+}

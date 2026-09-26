@@ -1,0 +1,42 @@
+{
+  "world": 4,
+  "par": {
+    "echoes": 1,
+    "ticks": 11
+  },
+  "id": "w4-7",
+  "index": 7,
+  "name": {
+    "ru": "Прожектор",
+    "en": "Searchlight"
+  },
+  "legend": {
+    "g": {
+      "type": "guard",
+      "facing": "S",
+      "range": 5
+    }
+  },
+  "map": [
+    "############",
+    "######g#####",
+    "#S.....#####",
+    "#.####.#####",
+    "#.........X#",
+    "############"
+  ],
+  "tickLimit": 24,
+  "maxEchoes": 3,
+  "hints": [
+    {
+      "text": {
+        "ru": "Копия заслоняет взгляд стража. Встаньте у него на пути — туда, где он ещё не смотрит в коридор",
+        "en": "A copy blocks the guard’s line of sight. Step into his view before it reaches the corridor"
+      },
+      "arrow": [
+        6,
+        2
+      ]
+    }
+  ]
+}

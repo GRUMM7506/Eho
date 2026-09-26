@@ -1,0 +1,36 @@
+{
+  "world": 3,
+  "par": {
+    "echoes": 1,
+    "ticks": 6
+  },
+  "id": "w3-7",
+  "index": 7,
+  "name": {
+    "ru": "Скользко",
+    "en": "Slippery"
+  },
+  "map": [
+    "############",
+    "#a~~~~~~~~S#",
+    "#.########.#",
+    "#b~~~~~~~~.#",
+    "##########A#",
+    "#X~~~~~~~~B#",
+    "############"
+  ],
+  "tickLimit": 24,
+  "maxEchoes": 3,
+  "hints": [
+    {
+      "text": {
+        "ru": "Скользят до препятствия. Плита — тоже препятствие: на неё можно въехать и остановиться",
+        "en": "You slide until something stops you. A plate does: you can glide onto it and stop"
+      },
+      "arrow": [
+        1,
+        1
+      ]
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "world": 4,
+  "par": {
+    "echoes": 1,
+    "ticks": 8
+  },
+  "id": "w4-1",
+  "index": 1,
+  "name": {
+    "ru": "Луч",
+    "en": "Beam"
+  },
+  "legend": {
+    "e": {
+      "type": "emitter",
+      "dir": "N"
+    }
+  },
+  "map": [
+    "###########",
+    "#S.......X#",
+    "#.###.###.#",
+    "#....e....#",
+    "###########"
+  ],
+  "tickLimit": 20,
+  "maxEchoes": 2,
+  "hints": [
+    {
+      "text": {
+        "ru": "Лазер убивает только настоящего вас. Копия заслоняет луч — даже если та попытка закончилась в нём",
+        "en": "The laser kills only the real you. A copy blocks the beam — even if that attempt ended inside it"
+      },
+      "arrow": [
+        5,
+        1
+      ]
+    }
+  ]
+}

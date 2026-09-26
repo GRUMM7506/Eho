@@ -1,0 +1,55 @@
+{
+  "world": 4,
+  "par": {
+    "echoes": 1,
+    "ticks": 19
+  },
+  "id": "w4-3",
+  "index": 3,
+  "name": {
+    "ru": "Приёмник",
+    "en": "Receiver"
+  },
+  "legend": {
+    "e": {
+      "type": "emitter",
+      "dir": "E"
+    },
+    "m": {
+      "type": "mirror",
+      "orient": "/",
+      "color": "pink"
+    },
+    "l": {
+      "type": "lever",
+      "color": "pink"
+    },
+    "r": {
+      "type": "receiver",
+      "color": "cyan"
+    }
+  },
+  "map": [
+    "#############",
+    "#S..........#",
+    "######.####.#",
+    "#e....m#l...#",
+    "######.####B#",
+    "######r####X#",
+    "#############"
+  ],
+  "tickLimit": 32,
+  "maxEchoes": 2,
+  "hints": [
+    {
+      "text": {
+        "ru": "Приёмник под лучом открывает голубую дверь. Чтобы повернуть луч к нему, сначала придётся пересечь его",
+        "en": "A lit receiver opens the cyan door. To turn the beam towards it, you first have to cross it"
+      },
+      "arrow": [
+        8,
+        3
+      ]
+    }
+  ]
+}

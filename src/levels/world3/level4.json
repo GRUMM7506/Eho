@@ -1,0 +1,36 @@
+{
+  "world": 3,
+  "par": {
+    "echoes": 1,
+    "ticks": 15
+  },
+  "id": "w3-4",
+  "index": 4,
+  "name": {
+    "ru": "Хрупкий мост",
+    "en": "Fragile Bridge"
+  },
+  "map": [
+    "#############",
+    "#S....#..a..#",
+    "#.....%.....#",
+    "#.....#..b..#",
+    "#.###########",
+    "#.A.B.X######",
+    "#############"
+  ],
+  "tickLimit": 30,
+  "maxEchoes": 3,
+  "hints": [
+    {
+      "text": {
+        "ru": "Хрупкая плитка рушится, как только с неё уйдут. Но пока на ней кто-то стоит — держится",
+        "en": "A fragile tile collapses once it is left. But while someone stands on it, it holds"
+      },
+      "arrow": [
+        6,
+        2
+      ]
+    }
+  ]
+}

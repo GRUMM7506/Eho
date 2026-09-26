@@ -1,0 +1,36 @@
+{
+  "world": 1,
+  "par": {
+    "echoes": 2,
+    "ticks": 24
+  },
+  "id": "w1-5",
+  "index": 5,
+  "name": {
+    "ru": "Перекрёсток",
+    "en": "Crossing"
+  },
+  "map": [
+    "#############",
+    "#S.......1.b#",
+    "#.###########",
+    "#.a.........#",
+    "###########A#",
+    "#X....B.....#",
+    "#############"
+  ],
+  "tickLimit": 28,
+  "maxEchoes": 3,
+  "hints": [
+    {
+      "text": {
+        "ru": "Копия на розовой плите запирает штрихованную дверь для другой копии. Кто должен прийти позже?",
+        "en": "A copy on the pink plate locks the hatched door for another copy. Who should arrive later?"
+      },
+      "arrow": [
+        9,
+        1
+      ]
+    }
+  ]
+}

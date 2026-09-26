@@ -1,0 +1,37 @@
+{
+  "world": 2,
+  "par": {
+    "echoes": 1,
+    "ticks": 25
+  },
+  "id": "w2-6",
+  "index": 6,
+  "name": {
+    "ru": "Шлюз",
+    "en": "Airlock"
+  },
+  "map": [
+    "#############",
+    "#S..........#",
+    "#####o#####A#",
+    "#####a#####.#",
+    "#####.#####.#",
+    "###########.#",
+    "#X....1.....#",
+    "#############"
+  ],
+  "tickLimit": 30,
+  "maxEchoes": 2,
+  "hints": [
+    {
+      "text": {
+        "ru": "Розовая дверь открыта, пока ящик на плите, штрихованная — пока его там нет. Кто-то должен убрать ящик вовремя",
+        "en": "The pink door is open while the crate sits on the plate, the hatched one while it does not. Someone must remove the crate in time"
+      },
+      "arrow": [
+        5,
+        3
+      ]
+    }
+  ]
+}

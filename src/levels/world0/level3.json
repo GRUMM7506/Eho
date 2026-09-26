@@ -2,7 +2,10 @@
   "id": "w0-3",
   "world": 0,
   "index": 3,
-  "name": { "ru": "Первое эхо", "en": "First Echo" },
+  "name": {
+    "ru": "Первое эхо",
+    "en": "First Echo"
+  },
   "map": [
     "#########",
     "#S.a#...#",
@@ -11,18 +14,36 @@
   ],
   "tickLimit": 10,
   "maxEchoes": 1,
-  "par": { "echoes": 1, "ticks": 8 },
+  "par": {
+    "echoes": 1,
+    "ticks": 7
+  },
   "hints": [
     {
-      "text": { "ru": "Дверь открыта, пока на розовой плите кто-то стоит. Встаньте на плиту и ждите конца времени", "en": "The door stays open while someone stands on the pink plate. Step on it and wait for time to run out" },
-      "touch": { "ru": "Встаньте на розовую плиту и ждите: коснитесь поля, чтобы стоять на месте", "en": "Step on the pink plate and wait: tap the floor to stand still" },
+      "text": {
+        "ru": "Дверь открыта, пока на розовой плите кто-то стоит. Встаньте на плиту и ждите конца времени",
+        "en": "The door stays open while someone stands on the pink plate. Step on it and wait for time to run out"
+      },
+      "touch": {
+        "ru": "Встаньте на розовую плиту и ждите: коснитесь поля, чтобы стоять на месте",
+        "en": "Step on the pink plate and wait: tap the floor to stand still"
+      },
       "maxEchoes": 0,
-      "arrow": [3, 1]
+      "arrow": [
+        3,
+        1
+      ]
     },
     {
-      "text": { "ru": "Ваша прошлая попытка стала эхом и держит плиту. Идите к выходу!", "en": "Your past attempt became an echo and holds the plate. Head for the exit!" },
+      "text": {
+        "ru": "Ваша прошлая попытка стала эхом и держит плиту. Идите к выходу!",
+        "en": "Your past attempt became an echo and holds the plate. Head for the exit!"
+      },
       "minEchoes": 1,
-      "arrow": [4, 2]
+      "arrow": [
+        4,
+        2
+      ]
     }
   ]
 }

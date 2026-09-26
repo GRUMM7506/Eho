@@ -13,7 +13,7 @@ export const items: Mechanic = {
   interact(d, actor, front) {
     const a = d.actors[actor]!;
     if (a.carrying >= 0) {
-      if (!canPlaceItem(d, actor, front)) return 'fail';
+      if (d.noDrop || !canPlaceItem(d, actor, front)) return 'fail';
       const it = d.items[a.carrying]!;
       it.cell = front;
       it.carrier = -1;

@@ -1,0 +1,34 @@
+{
+  "world": 1,
+  "par": {
+    "echoes": 1,
+    "ticks": 9
+  },
+  "id": "w1-2",
+  "index": 2,
+  "name": {
+    "ru": "Наоборот",
+    "en": "Inverse"
+  },
+  "map": [
+    "############",
+    "#S...1..A.X#",
+    "#.##########",
+    "#a##########",
+    "############"
+  ],
+  "tickLimit": 20,
+  "maxEchoes": 2,
+  "hints": [
+    {
+      "text": {
+        "ru": "Штрихованная дверь закрыта, пока плита нажата. Копия повторяет и путь, и время: подождите, прежде чем идти к плите",
+        "en": "The hatched door is closed while the plate is pressed. A copy repeats both path and timing: wait before walking to the plate"
+      },
+      "arrow": [
+        5,
+        1
+      ]
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "world": 1,
+  "par": {
+    "echoes": 3,
+    "ticks": 13
+  },
+  "id": "w1-7",
+  "index": 7,
+  "name": {
+    "ru": "Хор",
+    "en": "Choir"
+  },
+  "legend": {
+    "c": {
+      "type": "plate",
+      "color": "violet",
+      "filter": "echo"
+    }
+  },
+  "map": [
+    "###############",
+    "#a..#...#.....#",
+    "#S..A.b.B..c..#",
+    "#...#...#.....#",
+    "##########C####",
+    "##########.####",
+    "##########X####",
+    "###############"
+  ],
+  "tickLimit": 30,
+  "maxEchoes": 4,
+  "hints": [
+    {
+      "text": {
+        "ru": "Три копии, три задачи. Каждая следующая проходит там, где её держат предыдущие",
+        "en": "Three copies, three jobs. Each next one passes where the previous ones hold the way"
+      }
+    }
+  ]
+}

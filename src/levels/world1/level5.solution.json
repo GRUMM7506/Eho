@@ -1,0 +1,11 @@
+{
+  "id": "w1-5",
+  "loops": [
+    "RRRRRRRRRR",
+    "......DDR",
+    "DDRRRRRRRRRRDDLLLLLLLLLL"
+  ],
+  "echoes": 2,
+  "ticks": 24,
+  "provenMinimal": true
+}

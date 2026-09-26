@@ -1,0 +1,47 @@
+{
+  "world": 1,
+  "par": {
+    "echoes": 1,
+    "ticks": 8
+  },
+  "id": "w1-4",
+  "index": 4,
+  "name": {
+    "ru": "Рычаг",
+    "en": "Lever"
+  },
+  "legend": {
+    "l": {
+      "type": "lever",
+      "color": "pink"
+    }
+  },
+  "map": [
+    "###########",
+    "#S.....A.X#",
+    "#.#########",
+    "#.1.l######",
+    "###########"
+  ],
+  "tickLimit": 20,
+  "maxEchoes": 2,
+  "hints": [
+    {
+      "text": {
+        "ru": "Рычаг переключают, стоя к нему лицом (F / пробел). Он держит состояние до конца петли — и запирает штрихованную дверь",
+        "en": "Face the lever and interact (F / Space). It stays switched until the loop ends — and locks the hatched door"
+      },
+      "touch": {
+        "ru": "Встаньте лицом к рычагу и нажмите «Взять». Он держит состояние до конца петли — и запирает штрихованную дверь",
+        "en": "Face the lever and tap “Use”. It stays switched until the loop ends — and locks the hatched door"
+      },
+      "keys": [
+        "interact"
+      ],
+      "arrow": [
+        4,
+        3
+      ]
+    }
+  ]
+}

@@ -31,6 +31,8 @@ export interface Draft {
   events: SimEvent[];
   paradoxes: number;
   deathCause: 'laser' | 'guard' | null;
+  /** Запрет «положить предмет» при поиске цели взаимодействия вокруг игрока. */
+  noDrop: boolean;
 }
 
 export function toDraft(s: WorldState): Draft {
@@ -48,6 +50,7 @@ export function toDraft(s: WorldState): Draft {
     events: [],
     paradoxes: s.paradoxes,
     deathCause: s.deathCause,
+    noDrop: false,
   };
 }
 

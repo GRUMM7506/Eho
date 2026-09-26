@@ -1,0 +1,35 @@
+{
+  "world": 5,
+  "par": {
+    "echoes": 1,
+    "ticks": 9
+  },
+  "id": "w5-5",
+  "index": 5,
+  "name": {
+    "ru": "Обратный ход",
+    "en": "Backwards"
+  },
+  "map": [
+    "############",
+    "#S.A..1...X#",
+    "#.##########",
+    "#.........a#",
+    "############"
+  ],
+  "tickLimit": 14,
+  "maxEchoes": 2,
+  "reverseEchoes": true,
+  "hints": [
+    {
+      "text": {
+        "ru": "Здесь копии идут задом наперёд: стартуют там, где вы закончили запись, и проигрывают её с конца",
+        "en": "Here copies run backwards: they start where you stopped recording and play it from the end"
+      },
+      "arrow": [
+        10,
+        3
+      ]
+    }
+  ]
+}

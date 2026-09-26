@@ -1,0 +1,46 @@
+{
+  "world": 1,
+  "par": {
+    "echoes": 1,
+    "ticks": 13
+  },
+  "id": "w1-3",
+  "index": 3,
+  "name": {
+    "ru": "Только эхо",
+    "en": "Echoes Only"
+  },
+  "legend": {
+    "e": {
+      "type": "plate",
+      "color": "violet",
+      "filter": "echo"
+    },
+    "p": {
+      "type": "plate",
+      "color": "cyan",
+      "filter": "player"
+    }
+  },
+  "map": [
+    "##########",
+    "#S.pBe####",
+    "#.########",
+    "#....C..X#",
+    "##########"
+  ],
+  "tickLimit": 22,
+  "maxEchoes": 2,
+  "hints": [
+    {
+      "text": {
+        "ru": "Фиолетовый ромб нажимают только копии, голубой шестиугольник — только вы. Придержите дверь для своего эхо",
+        "en": "Only copies press the violet diamond, only you press the cyan hexagon. Hold the door for your echo"
+      },
+      "arrow": [
+        3,
+        1
+      ]
+    }
+  ]
+}

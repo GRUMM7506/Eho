@@ -1,0 +1,39 @@
+{
+  "world": 5,
+  "par": {
+    "echoes": 1,
+    "ticks": 8
+  },
+  "id": "w5-3",
+  "index": 3,
+  "name": {
+    "ru": "Опора",
+    "en": "Foothold"
+  },
+  "map": [
+    "##########",
+    "#S..:..X.#",
+    "#..=.#####",
+    "##########"
+  ],
+  "heights": [
+    "0000000000",
+    "0111011110",
+    "0111000000",
+    "0000000000"
+  ],
+  "tickLimit": 20,
+  "maxEchoes": 2,
+  "hints": [
+    {
+      "text": {
+        "ru": "В сетчатой зоне копии твёрдые: сквозь них не пройти, зато на них можно встать",
+        "en": "In the grid zone copies are solid: you cannot pass through them, but you can stand on them"
+      },
+      "arrow": [
+        4,
+        1
+      ]
+    }
+  ]
+}

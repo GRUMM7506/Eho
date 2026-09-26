@@ -1,0 +1,48 @@
+{
+  "world": 2,
+  "par": {
+    "echoes": 2,
+    "ticks": 27
+  },
+  "id": "w2-7",
+  "index": 7,
+  "name": {
+    "ru": "Раздача",
+    "en": "Distribution"
+  },
+  "legend": {
+    "q": {
+      "type": "battery"
+    },
+    "s": {
+      "type": "socket",
+      "color": "cyan"
+    },
+    "t": {
+      "type": "socket",
+      "color": "orange"
+    }
+  },
+  "map": [
+    "###############",
+    "#S...a.....A.q#",
+    "#Bst########.q#",
+    "#D#############",
+    "#X#############",
+    "###############"
+  ],
+  "tickLimit": 30,
+  "maxEchoes": 3,
+  "hints": [
+    {
+      "text": {
+        "ru": "Две батарейки, два гнезда. В одиночку не успеть — разделите работу",
+        "en": "Two batteries, two sockets. You will not make it alone — split the work"
+      },
+      "arrow": [
+        13,
+        1
+      ]
+    }
+  ]
+}

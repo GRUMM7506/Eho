@@ -1,0 +1,42 @@
+{
+  "world": 4,
+  "par": {
+    "echoes": 1,
+    "ticks": 14
+  },
+  "id": "w4-5",
+  "index": 5,
+  "name": {
+    "ru": "Приманка",
+    "en": "Decoy"
+  },
+  "legend": {
+    "g": {
+      "type": "guard",
+      "facing": "W",
+      "range": 3,
+      "mode": "lure"
+    }
+  },
+  "map": [
+    "#############",
+    "#S....g....X#",
+    "#.####.######",
+    "#......######",
+    "#############"
+  ],
+  "tickLimit": 30,
+  "maxEchoes": 2,
+  "hints": [
+    {
+      "text": {
+        "ru": "Этот страж идёт к ближайшей копии. Уведите его с дороги",
+        "en": "This guard walks towards the nearest copy. Lead him out of the way"
+      },
+      "arrow": [
+        6,
+        1
+      ]
+    }
+  ]
+}

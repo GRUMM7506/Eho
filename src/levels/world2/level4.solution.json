@@ -1,0 +1,10 @@
+{
+  "id": "w2-4",
+  "loops": [
+    "RRRRRRRRR",
+    ".DDRRRR.DDD"
+  ],
+  "echoes": 1,
+  "ticks": 11,
+  "provenMinimal": true
+}

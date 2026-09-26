@@ -1,5 +1,5 @@
-import { decodeRec, encodeRec, invertRec } from './grid';
-import { MECHANICS } from './mechanics';
+import { DIRS, decodeRec, encodeRec, invertRec } from './grid';
+import { HOOKS } from './mechanics';
 import { interact, moveMover, ownerOf } from './rules';
 import type { Action, ActorState, EchoRecord, Level, RecChar, StepResult, WorldState } from './types';
 import { emit, freeze, markParadox, playerIndex, solidEchoAt, toDraft, type Draft } from './world';
@@ -79,11 +79,11 @@ function playerIntent(p: ActorState, action: Action): RecChar {
 function resolveSignals(d: Draft): void {
   for (let pass = 0; pass < 2; pass++) {
     const sig = [false, false, false, false];
-    for (const m of MECHANICS) m.emitSignals?.(d, sig);
+    for (const f of HOOKS.emitSignals) f(d, sig);
     d.signals = sig;
-    for (const m of MECHANICS) m.applySignals?.(d, sig);
+    for (const f of HOOKS.applySignals) f(d, sig);
   }
-  for (const m of MECHANICS) m.finalize?.(d);
+  for (const f of HOOKS.finalize) f(d);
 }
 
 /** Стоящие на крыше твёрдого эхо спрыгивают, если эхо под ними ушло. */
@@ -135,24 +135,47 @@ export function step(state: WorldState, playerAction: Action): StepResult {
     if (r.kind === 'none') continue;
     a.facing = r.dir;
     let ok: boolean;
+    let done: RecChar = intent;
     if (r.kind === 'move') ok = moveMover(d, { kind: 'actor', index: i }, r.dir, true, 'step');
-    else ok = interact(d, i);
+    else if (i === pi) {
+      // Игрок: цель взаимодействия ищется вокруг. Порядок: клетка перед собой, затем соседние.
+      // С предметом в руках сперва пробуем «использовать» (гнездо, замок) во всех направлениях,
+      // и только если некуда — кладём перед собой. В запись идёт фактическое направление.
+      const carrying = a.carrying >= 0;
+      ok = false;
+      d.noDrop = carrying;
+      for (const dir of [r.dir, ...DIRS.filter((x) => x !== r.dir)]) {
+        a.facing = dir;
+        if (interact(d, i)) {
+          ok = true;
+          done = encodeRec('use', dir);
+          break;
+        }
+      }
+      d.noDrop = false;
+      if (!ok && carrying) {
+        a.facing = r.dir;
+        ok = interact(d, i);
+        done = intent;
+      }
+      if (!ok) a.facing = r.dir;
+    } else ok = interact(d, i);
     if (i === pi) {
-      performed = ok ? intent : '.';
+      performed = ok ? done : '.';
       if (!ok && r.kind === 'move') emit(d, { type: 'bump', actor: i, cell: a.cell });
     } else if (!ok) {
       const reason = r.kind === 'move' ? 'blocked' : a.carrying >= 0 ? 'cannot-place' : 'nothing-to-take';
       markParadox(d, i, reason);
     }
   }
-  for (const m of MECHANICS) m.afterMoves?.(d);
+  for (const f of HOOKS.afterMoves) f(d);
   settleRiders(d);
 
   // Фаза 5.
   resolveSignals(d);
 
   // Фаза 6.
-  for (const m of MECHANICS) m.check?.(d);
+  for (const f of HOOKS.check) f(d);
   const p = d.actors[pi]!;
   let outcome: WorldState['outcome'] = 'playing';
   if (p.status === 'dead') outcome = 'dead';

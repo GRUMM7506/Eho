@@ -1,0 +1,49 @@
+{
+  "world": 4,
+  "par": {
+    "echoes": 1,
+    "ticks": 30
+  },
+  "id": "w4-6",
+  "index": 6,
+  "name": {
+    "ru": "Таймер",
+    "en": "Timer"
+  },
+  "legend": {
+    "T": {
+      "type": "timerDoor",
+      "from": 3,
+      "to": 6
+    },
+    "k": {
+      "type": "key",
+      "color": "orange"
+    },
+    "L": {
+      "type": "lock",
+      "color": "orange"
+    }
+  },
+  "map": [
+    "############",
+    "#S.T...L.X.#",
+    "#.##########",
+    "#.........k#",
+    "############"
+  ],
+  "tickLimit": 34,
+  "maxEchoes": 2,
+  "hints": [
+    {
+      "text": {
+        "ru": "Белая дверь открыта только с 3-го по 6-й тик. Но и она не закроется, пока в проёме кто-то стоит",
+        "en": "The white door is open only from tick 3 to 6. But it will not close while someone stands in the doorway either"
+      },
+      "arrow": [
+        3,
+        1
+      ]
+    }
+  ]
+}
