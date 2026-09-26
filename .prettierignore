@@ -3,3 +3,6 @@ node_modules
 src/levels/**/*.json
 package-lock.json
 echo-game.html
+android
+release
+build

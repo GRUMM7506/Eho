@@ -4,7 +4,9 @@ import globals from 'globals';
 import prettier from 'eslint-config-prettier';
 
 export default tseslint.config(
-  { ignores: ['dist', 'dev-dist', 'node_modules', 'echo-game.html', 'public'] },
+  {
+    ignores: ['dist', 'dev-dist', 'node_modules', 'echo-game.html', 'public', 'android', 'release', 'build'],
+  },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   prettier,
@@ -17,6 +19,11 @@ export default tseslint.config(
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
       'no-constant-condition': ['error', { checkLoops: false }],
     },
+  },
+  {
+    // Главный процесс Electron — CommonJS.
+    files: ['**/*.cjs'],
+    rules: { '@typescript-eslint/no-require-imports': 'off' },
   },
   {
     files: ['src/core/**/*.ts'],

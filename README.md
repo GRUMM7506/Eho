@@ -39,6 +39,30 @@ Node.js 20+ и npm.
 Сборку можно выкладывать как статический сайт (itch.io, GitHub Pages, свой хостинг): все пути
 относительные (`base: './'`).
 
+## Приложения для Android и Windows
+
+- **Android (APK)** — обёртка Capacitor, проект в `android/`. Нужны JDK 21 и Android SDK.
+  `npm run build:android` → `android/app/build/outputs/apk/release/app-release.apk`.
+  Подпись релиза берётся из `android/keystore.properties` и `android/echo-release.jks`
+  (в git не попадают — храните их отдельно: без того же ключа нельзя выпускать обновления).
+  Игра на весь экран, экран не гаснет, системная «Назад» — пауза и выход из меню.
+- **Windows (EXE)** — обёртка Electron, `electron/main.cjs`. `npm run build:win` → в `release/`
+  установщик `ECHO-Setup-<версия>.exe` и портативный `ECHO-Portable-<версия>.exe`.
+  `npm run electron` — запустить обёртку без упаковки. F11 или Alt+Enter — полный экран.
+- Иконки и заставки для обеих обёрток генерирует `npm run icons`.
+
+Exe не подписан сертификатом, поэтому при первом запуске Windows SmartScreen покажет
+предупреждение («Подробнее» → «Выполнить в любом случае»).
+
+## GitHub: Pages и сборки
+
+- `.github/workflows/pages.yml` — при пуше в `main` гоняет линт и тесты, собирает игру и выкладывает
+  на GitHub Pages. В настройках репозитория: Settings → Pages → Source: **GitHub Actions**.
+- `.github/workflows/release.yml` — собирает APK и Windows-версию. Тег `v1.0.1` создаёт релиз с
+  файлами; ручной запуск (Actions → Release → Run workflow) кладёт файлы в артефакты. Для
+  подписи APK добавьте секреты `ANDROID_KEYSTORE_BASE64` (содержимое `echo-release.jks` в base64)
+  и `ANDROID_KEYSTORE_PASSWORD`; без них APK подписывается отладочным ключом.
+
 ## Управление
 
 **ПК:** WASD/стрелки — ход (направления всегда относительно экрана: «вверх» — от вас);

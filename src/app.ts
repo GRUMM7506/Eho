@@ -646,6 +646,25 @@ export class App implements AppApi {
     this.audio.setDucked(false);
   }
 
+  onBackgroundPublic(): void {
+    this.onBackground();
+  }
+
+  /**
+   * Системная кнопка «Назад» (Android). В игре — пауза, в меню — шаг назад.
+   * Возвращает false на главном экране: тогда приложение закрывается.
+   */
+  handleBack(): boolean {
+    const top = this.router.top;
+    if (this.mode === 'game' && top === this.hud) {
+      this.pause();
+      return true;
+    }
+    if (top === this.screens.menu || top === this.screens.splash) return false;
+    this.router.nav('back');
+    return true;
+  }
+
   private onBackground(): void {
     this.input.releaseAll();
     if (this.mode === 'game' && this.controller && !this.controller.isWon && !this.replay) this.pause();
