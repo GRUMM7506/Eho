@@ -45,6 +45,15 @@ async function runSteps(page: Page, steps: string, outDir: string): Promise<void
         await page.mouse.click(x!, y!);
         break;
       }
+      case 'swipe': {
+        const [a, b] = arg.split(':');
+        const [x1, y1] = a!.split('x').map(Number);
+        const [x2, y2] = b!.split('x').map(Number);
+        await page.touchscreen.touchStart(x1!, y1!);
+        for (let i = 1; i <= 6; i++) await page.touchscreen.touchMove(x1! + ((x2! - x1!) * i) / 6, y1! + ((y2! - y1!) * i) / 6);
+        await page.touchscreen.touchEnd();
+        break;
+      }
       case 'eval':
         console.log('eval →', await page.evaluate(arg));
         break;
@@ -62,7 +71,8 @@ async function main(): Promise<void> {
     process.exit(2);
   }, 100000).unref();
   const [url = 'http://localhost:5173/', out = 'shot.png', ...flags] = process.argv.slice(2);
-  const mobile = flags.includes('--mobile');
+  const landscape = flags.includes('--landscape');
+  const mobile = flags.includes('--mobile') || landscape;
   const stepsIdx = flags.indexOf('--steps');
   const steps = stepsIdx >= 0 ? (flags[stepsIdx + 1] ?? '') : '';
   const executablePath = BROWSERS.find((p) => existsSync(p));
@@ -75,7 +85,7 @@ async function main(): Promise<void> {
   });
   const page = await browser.newPage();
   if (mobile) {
-    await page.setViewport({ width: 390, height: 844, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+    await page.setViewport(landscape ? { width: 844, height: 390, deviceScaleFactor: 2, isMobile: true, hasTouch: true, isLandscape: true } : { width: 390, height: 844, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
     await page.setUserAgent('Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Mobile Safari/537.36');
   } else {
     const sizeIdx = flags.indexOf('--size');

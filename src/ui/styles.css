@@ -1414,3 +1414,63 @@ body.reduced-motion * {
     font-size: 18px;
   }
 }
+
+/* Телефон в альбомной ориентации: одна строка сверху, кнопки по бокам, подсказка между ними. */
+@media (orientation: landscape) and (max-height: 520px) {
+  .hud-top {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.6fr) auto;
+    grid-template-areas: 'title tl right';
+    gap: 8px;
+  }
+  .hud-title .n {
+    font-size: 14px;
+  }
+  .hud-title .w {
+    font-size: 9px;
+  }
+  .timeline {
+    padding: 5px 10px 6px;
+    gap: 3px;
+  }
+  .tl-track {
+    height: 8px;
+  }
+  .slots {
+    padding: 5px 8px;
+  }
+  .btn.icon-only {
+    width: 40px;
+    min-height: 40px;
+  }
+  body.touch .touch-pad {
+    top: auto;
+  }
+  body.touch .touch-actions .btn {
+    min-width: 52px;
+    min-height: 48px;
+    font-size: 9px;
+  }
+  body.touch .touch-actions .btn .ico {
+    width: 18px;
+    height: 18px;
+  }
+  .dpad {
+    grid-template-columns: repeat(3, 48px);
+    grid-template-rows: repeat(3, 48px);
+  }
+  body.touch .hint-bubble {
+    left: calc(12px + var(--safe-l));
+    bottom: calc(12px + var(--safe-b));
+    transform: none;
+    max-width: calc(100vw - 260px);
+    font-size: 12px;
+    padding: 8px 12px;
+    text-align: left;
+  }
+  body.touch .hint-bubble.hide {
+    transform: translateY(8px);
+  }
+  .toasts {
+    top: calc(60px + var(--safe-t));
+  }
+}
