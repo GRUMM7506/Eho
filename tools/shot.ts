@@ -16,6 +16,7 @@ const BROWSERS = [
 
 async function runSteps(page: Page, steps: string, outDir: string): Promise<void> {
   for (const raw of steps.split(',').map((s) => s.trim()).filter(Boolean)) {
+    if (process.env.SHOT_VERBOSE) console.log('step', raw.slice(0, 60));
     const [kind, ...rest] = raw.split(':');
     const arg = rest.join(':');
     switch (kind) {
@@ -56,6 +57,10 @@ async function runSteps(page: Page, steps: string, outDir: string): Promise<void
 }
 
 async function main(): Promise<void> {
+  setTimeout(() => {
+    console.error('ТАЙМАУТ проверки');
+    process.exit(2);
+  }, 100000).unref();
   const [url = 'http://localhost:5173/', out = 'shot.png', ...flags] = process.argv.slice(2);
   const mobile = flags.includes('--mobile');
   const stepsIdx = flags.indexOf('--steps');
@@ -65,6 +70,7 @@ async function main(): Promise<void> {
   const browser = await puppeteer.launch({
     executablePath,
     headless: true,
+    protocolTimeout: 60000,
     args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist', '--autoplay-policy=no-user-gesture-required'],
   });
   const page = await browser.newPage();

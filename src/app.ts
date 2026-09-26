@@ -1,5 +1,6 @@
 import pkg from '../package.json';
 import type { AudioApi, SfxName } from './audio';
+import { WebAudioEngine } from './audio/engine';
 import { createLoop, step, inputToAction } from './core/sim';
 import { isPerfect, starsFor } from './core/session';
 import type { Hint, Level, SimEvent, WorldState } from './core/types';
@@ -20,18 +21,6 @@ import { AboutScreen, LevelSelect, MainMenu, PauseScreen, SettingsScreen, Splash
 
 type Mode = 'menu' | 'game';
 
-/** Звук-заглушка до разблокировки аудио (и на случай, если Web Audio недоступен). */
-class NullAudio implements AudioApi {
-  unlock(): void {}
-  play(): void {}
-  setVolumes(): void {}
-  setWorld(): void {}
-  setLayers(): void {}
-  setDucked(): void {}
-  suspend(): void {}
-  resume(): void {}
-}
-
 export interface AppHooks {
   /** Эффекты поверх рендера (частицы и пр.), подключаются на этапе полировки. */
   onEvents?(app: App, prev: WorldState, next: WorldState, events: readonly SimEvent[]): void;
@@ -50,7 +39,7 @@ export class App implements AppApi {
   readonly input = new InputHub();
   readonly router: Router;
   readonly hud: Hud;
-  audio: AudioApi = new NullAudio();
+  audio: AudioApi = new WebAudioEngine();
   hooks: AppHooks = {};
   private mode: Mode = 'menu';
   private controller: GameController | null = null;
@@ -154,6 +143,7 @@ export class App implements AppApi {
       this.router.nav(nav);
     };
     this.input.onAnyInput = (kind) => {
+      if (kind !== 'gamepad') this.audio.unlock();
       if (kind !== 'gamepad') document.body.classList.remove('using-pad');
       const touch = kind === 'touch' || (this.isTouch && kind !== 'keyboard' && kind !== 'mouse' && kind !== 'gamepad');
       if (touch !== document.body.classList.contains('touch')) {
