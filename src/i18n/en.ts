@@ -50,6 +50,8 @@ export const en: Dict = {
   'hud.record': 'Record echo',
   'hud.undo': 'Undo echo',
   'hud.hint': 'Hint',
+  'hud.coins': 'Hint coins',
+  'hud.hintCost': '{n} coins',
   'hud.trails': 'Trails',
   'hud.wait': 'Wait',
   'hud.use': 'Use',
@@ -61,6 +63,7 @@ export const en: Dict = {
   'hud.camRight': 'Rotate camera right',
   'hud.loop': 'Loop {n}',
   'hud.noHint': 'No hints here — you can do it!',
+  'hud.needCoins': 'Need {n} coins',
   'hud.echoN': 'Echo {n}',
   'hud.you': 'You',
 
@@ -74,6 +77,8 @@ export const en: Dict = {
   'toast.cantRecord': 'Make at least one move first',
   'toast.noSlots': 'All echo slots are used',
   'toast.saved': 'Saved',
+  'toast.coins': '+{n} coins',
+  'toast.hintBought': 'Hint: −{n} coins',
 
   'death.laser': 'Laser!',
   'death.guard': 'You were spotted!',

@@ -2,7 +2,7 @@ import { DIRS, decodeRec, encodeRec, invertRec } from './grid';
 import { getHooks } from './mechanics';
 import { interact, moveMover, ownerOf } from './rules';
 import type { Action, ActorState, EchoRecord, Level, RecChar, StepResult, WorldState } from './types';
-import { emit, freeze, markParadox, playerIndex, solidEchoAt, toDraft, type Draft } from './world';
+import { emit, freeze, itemAt, markParadox, playerIndex, solidEchoAt, toDraft, type Draft } from './world';
 
 /** Начальный снимок петли: все эхо и игрок на старте (обратные эхо — там, где закончили запись). */
 export function createLoop(level: Level, records: readonly EchoRecord[]): WorldState {
@@ -150,16 +150,25 @@ export function step(state: WorldState, playerAction: Action): StepResult {
       // и только если некуда — кладём перед собой. В запись идёт фактическое направление.
       const carrying = a.carrying >= 0;
       ok = false;
-      d.noDrop = carrying;
-      for (const dir of [r.dir, ...DIRS.filter((x) => x !== r.dir)]) {
-        a.facing = dir;
-        if (interact(d, i)) {
-          ok = true;
-          done = encodeRec('use', dir);
-          break;
+      // На предмет можно наступить; «использовать» в таком положении поднимает именно его.
+      // Это не включаем для эхо и не смешиваем с поиском соседних целей, чтобы записи были стабильны.
+      const underfoot = itemAt(d, a.cell);
+      if (!carrying && underfoot >= 0 && d.items[underfoot]?.kind === 'key') {
+        d.pickUnderfoot = true;
+        ok = interact(d, i);
+        d.pickUnderfoot = false;
+      } else {
+        d.noDrop = carrying;
+        for (const dir of [r.dir, ...DIRS.filter((x) => x !== r.dir)]) {
+          a.facing = dir;
+          if (interact(d, i)) {
+            ok = true;
+            done = encodeRec('use', dir);
+            break;
+          }
         }
+        d.noDrop = false;
       }
-      d.noDrop = false;
       if (!ok && carrying) {
         a.facing = r.dir;
         ok = interact(d, i);

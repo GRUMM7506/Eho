@@ -116,6 +116,7 @@ export function resetRoom(s: Session): Session {
  * 30 % от эталона, но не меньше 3 тиков и не больше лимита петли.
  */
 export function timeStarTicks(level: Level): number {
+  if (level.starTicks !== undefined) return Math.min(level.tickLimit, level.starTicks);
   return Math.min(level.tickLimit, level.par.ticks + Math.max(3, Math.ceil(level.par.ticks * 0.3)));
 }
 

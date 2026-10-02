@@ -755,21 +755,22 @@ export class SettingsScreen extends BaseScreen {
         toggle(t('settings.colorblind'), s.colorblind, 'colorblind'),
         toggle(t('settings.shake'), s.screenShake, 'screenShake'),
       ),
-      h(
-        'div.settings-group',
-        null,
-        h('h3', null, t('settings.controls')),
-        keys,
+      !this.app.isTouch &&
         h(
-          'div',
+          'div.settings-group',
           null,
+          h('h3', null, t('settings.controls')),
+          keys,
           h(
-            'button.btn',
-            { type: 'button', onclick: () => up({ keymap: cloneKeymap(DEFAULT_KEYMAP) }) },
-            t('settings.resetKeys'),
+            'div',
+            null,
+            h(
+              'button.btn',
+              { type: 'button', onclick: () => up({ keymap: cloneKeymap(DEFAULT_KEYMAP) }) },
+              t('settings.resetKeys'),
+            ),
           ),
         ),
-      ),
       h(
         'div.settings-group',
         null,

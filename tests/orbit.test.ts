@@ -33,19 +33,21 @@ describe('орбитальная камера', () => {
     expect(o.inputYaw).toBe(90);
   });
 
-  it('вид сверху поднимает камеру и выравнивает её по сетке, повторное нажатие возвращает', () => {
+  it('вид сверху включён по умолчанию, а кнопка переключает обычный ракурс', () => {
     const o = new OrbitCamera();
     o.opts = { ...o.opts, diagonal: true };
     o.setBounds(box, 45);
-    o.toggleTopView();
-    settle(o);
     expect(o.topView).toBe(true);
     expect(o.pitch).toBeGreaterThan(75);
-    expect(o.inputYaw % 90).toBe(0);
+    expect(o.inputYaw).toBe(45);
     o.toggleTopView();
     settle(o);
     expect(o.topView).toBe(false);
     expect(o.pitch).toBeCloseTo(35, 1);
     expect(o.inputYaw).toBe(45);
+    o.toggleTopView();
+    settle(o);
+    expect(o.topView).toBe(true);
+    expect(o.pitch).toBeGreaterThan(75);
   });
 });

@@ -114,6 +114,8 @@ export interface Level {
   readonly tickLimit: number;
   readonly maxEchoes: number;
   readonly par: Par;
+  /** Точный порог третьей звезды за время, если для уровня нужен баланс отдельно от par. */
+  readonly starTicks?: number;
   readonly hints: readonly Hint[];
   readonly cameraYaw: number;
   readonly reverseEchoes: boolean;

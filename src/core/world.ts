@@ -33,6 +33,8 @@ export interface Draft {
   deathCause: 'laser' | 'guard' | null;
   /** Запрет «положить предмет» при поиске цели взаимодействия вокруг игрока. */
   noDrop: boolean;
+  /** Игрок явно выбрал поднять предмет, на который уже наступил. */
+  pickUnderfoot: boolean;
 }
 
 export function toDraft(s: WorldState): Draft {
@@ -51,6 +53,7 @@ export function toDraft(s: WorldState): Draft {
     paradoxes: s.paradoxes,
     deathCause: s.deathCause,
     noDrop: false,
+    pickUnderfoot: false,
   };
 }
 

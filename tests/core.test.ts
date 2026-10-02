@@ -151,6 +151,10 @@ describe('звёзды', () => {
     expect(timeStarTicks(lvl(45, 45))).toBe(45);
   });
 
+  it('уровень может задать отдельный порог третьей звезды', () => {
+    expect(timeStarTicks({ ...lvl(24, 28), starTicks: 25 })).toBe(25);
+  });
+
   it('три звезды без идеальной точности', () => {
     const l = lvl(13, 22);
     expect(starsFor(l, 1, 13)).toBe(3);

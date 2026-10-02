@@ -37,6 +37,8 @@ export interface LevelResult {
 
 export interface SaveData {
   version: number;
+  /** Валюта, заработанная в одиночной игре и расходуемая на подсказки. */
+  coins: number;
   levels: Record<string, LevelResult>;
   lastLevel: string | null;
   customLevels: RawLevel[];
@@ -45,7 +47,8 @@ export interface SaveData {
   flags: Record<string, boolean>;
 }
 
-export const SAVE_VERSION = 3;
+export const SAVE_VERSION = 4;
+export const HINT_COST = 2;
 const KEY = 'echo-save';
 
 export function defaultSettings(env: {
@@ -75,7 +78,15 @@ export function defaultSettings(env: {
 }
 
 export function defaultSave(settings: Settings): SaveData {
-  return { version: SAVE_VERSION, levels: {}, lastLevel: null, customLevels: [], settings, flags: {} };
+  return {
+    version: SAVE_VERSION,
+    coins: 0,
+    levels: {},
+    lastLevel: null,
+    customLevels: [],
+    settings,
+    flags: {},
+  };
 }
 
 type Loose = Record<string, unknown>;
@@ -88,7 +99,8 @@ function isObj(x: unknown): x is Loose {
  * Миграция сохранения со старых версий схемы.
  *  v1 (прототип `echo-progress`): { [индекс уровня]: звёзды } — переносится как пройденные уровни мира 1.
  *  v2: настройки без `keymap` и `trails`, результаты без `perfect`.
- *  v3: текущая.
+ *  v3: текущая до добавления монет.
+ *  v4: монеты для подсказок.
  */
 export function migrate(raw: unknown, defaults: Settings): SaveData {
   const base = defaultSave(defaults);
@@ -152,6 +164,8 @@ export function migrate(raw: unknown, defaults: Settings): SaveData {
   }
   return {
     version: SAVE_VERSION,
+    coins:
+      typeof data.coins === 'number' && Number.isFinite(data.coins) ? Math.max(0, Math.floor(data.coins)) : 0,
     levels,
     lastLevel: typeof data.lastLevel === 'string' ? data.lastLevel : null,
     customLevels: Array.isArray(data.customLevels) ? (data.customLevels as RawLevel[]) : [],
@@ -163,6 +177,11 @@ export function migrate(raw: unknown, defaults: Settings): SaveData {
         >)
       : {},
   };
+}
+
+/** Награда: две монеты за первое прохождение и по одной за каждую новую звезду. */
+export function coinsForResult(previous: LevelResult | undefined, stars: number): number {
+  return (previous?.completed ? 0 : 2) + Math.max(0, stars - (previous?.stars ?? 0));
 }
 
 function clamp01(x: number): number {

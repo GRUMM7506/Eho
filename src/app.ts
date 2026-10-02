@@ -11,7 +11,9 @@ import { continueLevel, nextLevel, worlds } from './data/progress';
 import {
   defaultSave,
   defaultSettings,
+  HINT_COST,
   loadSave,
+  coinsForResult,
   recordResult,
   writeSave,
   type SaveData,
@@ -77,6 +79,8 @@ export class App implements AppApi {
     about: AboutScreen;
   };
   private hintOpen = false;
+  /** Подсказка оплачивается один раз на запуск уровня, повторное открытие бесплатно. */
+  private hintPurchased = false;
   private replay: {
     state: WorldState;
     inputs: string;
@@ -257,6 +261,11 @@ export class App implements AppApi {
       this.view.orbit.inputYaw,
     );
     this.hud.setActive('camTop', this.view.orbit.topView);
+    this.hud.setHintAccess(
+      c.level.world >= 2 && c.level.hints.length > 0,
+      this.save.coins,
+      this.hintPurchased,
+    );
     this.updateHint();
   }
 
@@ -537,6 +546,7 @@ export class App implements AppApi {
     this.menuScene = this.menuScene ?? null;
     this.replay = null;
     this.hintOpen = false;
+    this.hintPurchased = false;
     this.testPlay = testPlay;
     this.view.orbit.orbitSpeed = 0;
     const c = new GameController(
@@ -565,6 +575,7 @@ export class App implements AppApi {
     this.router.go(this.hud);
     this.hud.el.hidden = false;
     this.hud.setLevel(level);
+    this.hud.setHintAccess(level.world >= 2 && level.hints.length > 0, this.save.coins, false);
     this.input.gameplay = true;
     document.body.dataset.gameplay = '1';
     c.load(level);
@@ -614,9 +625,22 @@ export class App implements AppApi {
         this.hud.toast(t('toast.restart'));
         break;
       case 'hint':
+        if (ctl.level.world < 2 || !this.pickHint()) {
+          this.hud.toast(t('hud.noHint'));
+          break;
+        }
+        if (!this.hintPurchased) {
+          if (this.save.coins < HINT_COST) {
+            this.hud.toast(t('hud.needCoins', { n: HINT_COST }), 'hot');
+            break;
+          }
+          this.save.coins -= HINT_COST;
+          this.hintPurchased = true;
+          this.persist();
+          this.hud.toast(t('toast.hintBought', { n: HINT_COST }), 'good');
+        }
         this.hintOpen = !this.hintOpen;
         this.hud.setActive('hint', this.hintOpen);
-        if (this.hintOpen && !this.pickHint()) this.hud.toast(t('hud.noHint'));
         break;
       case 'trails':
         this.updateSettings({ trails: !this.save.settings.trails });
@@ -794,8 +818,8 @@ export class App implements AppApi {
   private updateHint(): void {
     const c = this.controller;
     if (!c) return;
-    const auto = c.level.world === 0;
-    const hint = (auto || this.hintOpen) && !c.isWon ? this.pickHint() : null;
+    // Первые два мира проходятся без подсказок; дальше подсказка появляется только после оплаты.
+    const hint = c.level.world >= 2 && this.hintOpen && !c.isWon ? this.pickHint() : null;
     this.hud.setHint(hint);
     this.view.level?.setHintArrow(hint?.arrow ?? null);
   }
@@ -814,8 +838,11 @@ export class App implements AppApi {
     const before = worlds(this.levels, this.save).map((w) => w.unlocked);
     let newBest = false;
     if (!this.testPlay) {
+      const reward = coinsForResult(this.save.levels[level.id], stars);
       newBest = recordResult(this.save, level.id, stars, info.echoes, info.ticks, perfect);
+      this.save.coins += reward;
       this.persist();
+      if (reward) this.hud.toast(t('toast.coins', { n: reward }), 'good');
     }
     const after = worlds(this.levels, this.save).map((w) => w.unlocked);
     const unlockedWorld = after.findIndex((u, i) => u && !before[i]);

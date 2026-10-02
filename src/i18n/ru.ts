@@ -47,6 +47,8 @@ export const ru = {
   'hud.record': 'Записать эхо',
   'hud.undo': 'Отменить эхо',
   'hud.hint': 'Подсказка',
+  'hud.coins': 'Монеты для подсказок',
+  'hud.hintCost': '{n} монеты',
   'hud.trails': 'Траектории',
   'hud.wait': 'Ждать',
   'hud.use': 'Взять',
@@ -58,6 +60,7 @@ export const ru = {
   'hud.camRight': 'Повернуть камеру вправо',
   'hud.loop': 'Петля {n}',
   'hud.noHint': 'Подсказок нет — попробуйте сами!',
+  'hud.needCoins': 'Нужно монет: {n}',
   'hud.echoN': 'Эхо {n}',
   'hud.you': 'Вы',
 
@@ -71,6 +74,8 @@ export const ru = {
   'toast.cantRecord': 'Сначала сделайте хотя бы один ход',
   'toast.noSlots': 'Слоты эхо заполнены',
   'toast.saved': 'Сохранено',
+  'toast.coins': '+{n} монет',
+  'toast.hintBought': 'Подсказка: −{n} монет',
 
   'death.laser': 'Лазер!',
   'death.guard': 'Вас заметили!',

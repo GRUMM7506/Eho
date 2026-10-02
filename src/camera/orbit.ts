@@ -25,14 +25,14 @@ const FOV = 32;
 
 /**
  * Орбитальная камера вокруг центра уровня: ортографическая изометрия по умолчанию
- * (yaw 45°, pitch ≈35°), вращение с инерцией, доводка к углу, кратному 45°, зум, сдвиг.
+ * (север сверху, yaw 0°, почти отвесный pitch), вращение с инерцией, доводка к углу, кратному 90°, зум, сдвиг.
  * Ничего не знает о симуляции.
  */
 export class OrbitCamera {
   readonly ortho: THREE.OrthographicCamera;
   readonly persp: THREE.PerspectiveCamera;
-  yaw = 45;
-  pitch = DEFAULT_PITCH;
+  yaw = 0;
+  pitch = TOP_PITCH;
   /** Множитель зума пользователя (1 — уровень целиком). */
   userZoom = 1;
   private fitZoom = 6;
@@ -43,7 +43,7 @@ export class OrbitCamera {
   private readonly target = new THREE.Vector3();
   private readonly pan = new THREE.Vector3();
   private readonly bounds = new THREE.Box3(new THREE.Vector3(-4, 0, -4), new THREE.Vector3(4, 2, 4));
-  private defaultYaw = 45;
+  private defaultYaw = 0;
   private width = 1;
   private height = 1;
   private insets: Insets = { top: 0, right: 0, bottom: 0, left: 0 };
@@ -74,7 +74,7 @@ export class OrbitCamera {
     this.reset(true);
   }
 
-  private levelYaw = 45;
+  private levelYaw = 0;
 
   /** Шаг доводки: 45° в изометрии, 90° в прямом виде и сверху. */
   private get snapStep(): number {
@@ -113,10 +113,10 @@ export class OrbitCamera {
   reset(instant = false): void {
     this.pan.set(0, 0, 0);
     this.userZoom = 1;
-    this.pitch = DEFAULT_PITCH;
+    this.pitch = TOP_PITCH;
     this.pitchVel = 0;
     this.yawVel = 0;
-    this.topView = false;
+    this.topView = true;
     this.pitchTarget = null;
     if (instant) {
       this.yaw = this.defaultYaw;

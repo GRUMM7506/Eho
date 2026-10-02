@@ -1,7 +1,7 @@
 {
   "name": "echo-game",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "ЭХО — 3D-головоломка о команде из собственных прошлых попыток",
   "type": "module",
   "engines": {

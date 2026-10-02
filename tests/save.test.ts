@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { defaultSave, defaultSettings, loadSave, migrate, recordResult, writeSave } from '../src/data/save';
+import {
+  coinsForResult,
+  defaultSave,
+  defaultSettings,
+  loadSave,
+  migrate,
+  recordResult,
+  writeSave,
+} from '../src/data/save';
 import { MemoryKV } from '../src/data/storage';
 
 const defaults = defaultSettings({ reducedMotion: false, language: 'ru', touch: false });
@@ -7,7 +15,7 @@ const defaults = defaultSettings({ reducedMotion: false, language: 'ru', touch: 
 describe('сохранения', () => {
   it('мусор и пустота дают сохранение по умолчанию', () => {
     expect(migrate(null, defaults)).toEqual(defaultSave(defaults));
-    expect(migrate('x', defaults).version).toBe(3);
+    expect(migrate('x', defaults).version).toBe(4);
   });
 
   it('миграция прогресса прототипа (v1)', () => {
@@ -50,6 +58,13 @@ describe('сохранения', () => {
     expect(recordResult(d, 'x', 1, 5, 40, false)).toBe(false);
     expect(recordResult(d, 'x', 3, 2, 30, true)).toBe(true);
     expect(d.levels.x).toMatchObject({ stars: 3, bestEchoes: 2, bestTicks: 10, perfect: true });
+  });
+
+  it('монеты выдаются за первое прохождение и новые звёзды', () => {
+    const prev = { completed: true, stars: 1, bestEchoes: 1, bestTicks: 10, perfect: false };
+    expect(coinsForResult(undefined, 3)).toBe(5);
+    expect(coinsForResult(prev, 3)).toBe(2);
+    expect(coinsForResult(prev, 1)).toBe(0);
   });
 
   it('запись и чтение через хранилище, повреждённые данные не ломают загрузку', () => {

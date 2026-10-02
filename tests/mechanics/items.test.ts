@@ -18,6 +18,12 @@ describe('перенос предметов: ключи и замки', () => {
     expect(run(r.state, 'RR').state.outcome).toBe('won');
   });
 
+  it('ключ можно подобрать, если игрок по ошибке наступил прямо на него', () => {
+    const r = run(createLoop(lvl, []), 'RE');
+    expect(player(r.state).carrying).toBe(0);
+    expect(r.events.find((e) => e.type === 'pickup')).toMatchObject({ cell: at(lvl, 2, 1) });
+  });
+
   it('замок без ключа не открыть', () => {
     const r = run(createLoop(lvl, []), 'DRRRUE');
     expect(r.state.cells[at(lvl, 4, 1)]).toBe(0);

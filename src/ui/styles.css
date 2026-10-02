@@ -429,6 +429,20 @@ body.using-pad :focus {
   height: 18px;
 }
 
+.hud-coins {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 34px;
+  color: #ffd166;
+  font: 700 12px var(--mono);
+}
+
+.hud-coins .ico {
+  width: 17px;
+  height: 17px;
+}
+
 /* ————— карта миров ————— */
 
 .worlds {
@@ -1460,6 +1474,52 @@ body.reduced-motion * {
 
 /* Телефон в альбомной ориентации: одна строка сверху, кнопки по бокам, подсказка между ними. */
 @media (orientation: landscape) and (max-height: 520px) {
+  /* Главное меню и заставка должны помещаться и на низких экранах телефона. */
+  body.touch .menu,
+  body.touch .splash {
+    justify-content: flex-start;
+    overflow-y: auto;
+    padding-top: calc(8px + var(--safe-t));
+    padding-bottom: calc(8px + var(--safe-b));
+  }
+  body.touch .menu {
+    align-items: center;
+    padding-left: calc(12px + var(--safe-l));
+    padding-right: calc(12px + var(--safe-r));
+    text-align: center;
+  }
+  body.touch .menu .logo,
+  body.touch .splash .logo {
+    font-size: clamp(42px, 10vh, 64px);
+    margin-bottom: 2px;
+  }
+  body.touch .menu .tag,
+  body.touch .splash .tag {
+    max-width: min(52ch, 92vw);
+    margin-bottom: 8px;
+    font-size: 11px;
+    line-height: 1.25;
+  }
+  body.touch .splash {
+    gap: 12px;
+  }
+  body.touch .splash .press {
+    font-size: 11px;
+  }
+  body.touch .menu-list {
+    min-width: min(280px, 92vw);
+    gap: 5px;
+  }
+  body.touch .menu-list .btn {
+    min-height: 40px;
+    padding: 7px 14px;
+    font-size: 12px;
+  }
+  body.touch .menu-foot {
+    position: static;
+    margin-top: 6px;
+    font-size: 10px;
+  }
   .hud-top {
     grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.6fr) auto;
     grid-template-areas: 'title tl right';

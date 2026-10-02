@@ -47,6 +47,7 @@ export class Hud implements Screen {
   private readonly toasts = h('div.toasts');
   private readonly deathBox = h('div.death.panel');
   private readonly topBar: HTMLElement;
+  private readonly coins = h('span.hud-coins', { title: t('hud.coins') }, icon('coin'), h('b', null, '0'));
   private readonly bottom: HTMLElement;
   private readonly touchPad: HTMLElement;
   private readonly dpad: HTMLElement;
@@ -108,7 +109,13 @@ export class Hud implements Screen {
     );
     const slots = h('div.slots.panel', null, h('span.label', null, ''), this.dots);
     const pauseBtn = btn('pause', 'pause', t('hud.pause'), null, () => cb.pause(), '.icon-only');
-    this.topBar = h('div.hud-top', null, this.title, timeline, h('div.hud-right', null, slots, pauseBtn));
+    this.topBar = h(
+      'div.hud-top',
+      null,
+      this.title,
+      timeline,
+      h('div.hud-right', null, this.coins, slots, pauseBtn),
+    );
 
     // Низ (ПК): действия и камера.
     const actions = h(
@@ -231,6 +238,18 @@ export class Hud implements Screen {
 
   setTickMs(ms: number): void {
     this.tickMs = ms;
+  }
+
+  /** Баланс всегда виден, а кнопка подсказки — только там, где подсказки доступны. */
+  setHintAccess(available: boolean, coins: number, purchased: boolean): void {
+    const balance = this.coins.querySelector('b')!;
+    balance.textContent = String(coins);
+    this.coins.hidden = !available;
+    for (const button of this.buttons.get('hint') ?? []) {
+      button.hidden = !available;
+      button.classList.toggle('disabled', !purchased && coins < 2);
+      button.title = available ? `${t('hud.hint')} · ${t('hud.hintCost', { n: 2 })}` : t('hud.hint');
+    }
   }
 
   /** Новый уровень. */
